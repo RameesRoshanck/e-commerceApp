@@ -1,5 +1,10 @@
 
 const userHomeRoute=(req,res)=>{
+    res.render('user/user-home')
+    
+}
+
+const userSignUp=(req,res)=>{
     res.render('index')
 }
 
@@ -9,5 +14,6 @@ const userHomeRoute=(req,res)=>{
 
 
 module.exports= {
-    userHomeRoute
+    userHomeRoute,
+    userSignUp
 }
