@@ -4,10 +4,17 @@ const userHomeRoute=(req,res)=>{
     
 }
 
-const userSignUp=(req,res)=>{
-    res.render('index')
+const getSignUp=(req,res)=>{
+    res.render('user/user-SignupPage')
 }
 
+const postSignUp=(req,res)=>{
+
+}
+
+const getLogin=(req,res)=>{
+    res.render('user/user-loginPage')
+}
 
 
 
@@ -15,5 +22,7 @@ const userSignUp=(req,res)=>{
 
 module.exports= {
     userHomeRoute,
-    userSignUp
+    getSignUp,
+    getLogin,
+    postSignUp
 }

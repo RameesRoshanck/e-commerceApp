@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const hbs = require("express-handlebars");
+const db=require("./config/connection")
 
 //set in router path
 var userRouter = require("./routes/user");
@@ -12,7 +13,7 @@ const app = express();
 
 // port selection
 
-const PORT=process.env.PORT || 8080
+const PORT=process.env.PORT
 
 
 app.use(express.urlencoded({ extended:true }));
@@ -31,7 +32,11 @@ app.engine(
   })
 );
 
-
+//set to the database connection
+db.connect((err)=>{
+  if(err) console.log("connection error");
+  else  console.log("succesfully created");
+})
 
 // loading route
 app.use('/', userRouter);
