@@ -1,9 +1,11 @@
 require('dotenv').config()
 const express = require("express");
-const bodyParser = require("body-parser");
 const path = require("path");
+var cookieParser = require('cookie-parser');
+const bodyParser = require("body-parser");
 const hbs = require("express-handlebars");
 const db=require("./config/connection")
+const session=require('express-session')
 
 //set in router path
 var userRouter = require("./routes/user");
@@ -18,7 +20,7 @@ const PORT=process.env.PORT
 
 app.use(express.urlencoded({ extended:true }));
 app.use(express.static(path.join(__dirname,'public')));
-
+app.use(cookieParser());
 //view engine set up
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
@@ -37,6 +39,9 @@ db.connect((err)=>{
   if(err) console.log("connection error");
   else  console.log("succesfully created");
 })
+
+// set up the function
+app.use(session({secret:'key',resave:false,saveUninitialized:true,cookie:{maxAge:600000}}))
 
 // loading route
 app.use('/', userRouter);

@@ -25,7 +25,7 @@
 
             <!-- ------------------------------- SIGN UP ------------------------------- -->
 
-              <form onsubmit="return myFunc2()" name="" action="" method="" >
+              <form onsubmit="return myFunc2()" name="" action="/userSignUp" method="POST" >
 
                 <div class="form-group  ">
                   <label for="register-firstname-2">Firstname</label>
@@ -36,14 +36,26 @@
 
                 <div class="form-group">
                   <label for="register-mobile-2">Mobile no</label>
-                  <input type="text" class="form-control" name="mobile" id="mobNumber" onkeyup="mobileValiate2() ">
+                  <input type="text" class="form-control" name="mobile" id="mobNumber" onkeyup="mobileValiate2()" {{#if mobileErr}}value="{{mobileExist}}"{{/if}}>
                   <span class="text-primary" id="mobileerror" style="color:red !important ;"  ></span>
+
+                    {{#if mobileErr}}
+                    <p class="error" style="color:red;">mobile number is exist </p>
+                    {{/if}} 
+
+
                 </div><!-- End .form-group -->
 
                 <div class="form-group">
                   <label for="register-email-2">Your email address</label>
-                  <input type="email" class="form-control"  name="email" id="email" onkeyup="emailValidate2()">
+                  <input type="email" class="form-control"  name="email" id="email" onkeyup="emailValidate2()" {{#if emailErr}}value="{{emailExiist}}"{{/if}} >
                   <span class="" id="emailerror" style="color:red !important ;"  ></span>
+
+                   {{#if emailErr}}
+                    <p class="error" style="color:red;">This email Id is exist </p>
+                    {{/if}} 
+
+
                 </div><!-- End .form-group -->
 
                 <div class="form-group">
@@ -54,7 +66,7 @@
 
                 <div class="form-group">
                   <label for="register-password-2">Confirm Password</label>
-                <input type="password" class="form-control" name="confirmPassword" id="secondPassword" onkeyup="pass2Validate2() ">
+                <input type="password" class="form-control" id="secondPassword" onkeyup="pass2Validate2() ">
                   <span class="" id="CheckPasswordMatch" style="color:rgb(255, 0, 0) !important ;"  ></span>
                 </div><!-- End .form-group -->
 

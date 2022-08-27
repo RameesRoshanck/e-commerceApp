@@ -21,7 +21,7 @@ function myFunc2() {
 function nameValidate2() {
     let name = document.querySelector("#name").value;
     let nameError = document.querySelector("#nameError");
-    let regex = /^[a-zA-Z\-]+$/;
+    let regex =/^(?![\s.]+$)[a-zA-Z\s.]*$/;
     let nameVal = name.match(regex);
     if (nameVal == "" || nameVal == null) {
         nameError.innerHTML = "Please enter a valid name!";
