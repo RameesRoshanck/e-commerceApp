@@ -58,12 +58,36 @@ const postLogin=(req,res)=>{
      })
 }
 
+
 const getOtp=(req,res)=>{
    res.render('user/user-otp') 
 }
 
+let signUpData;
 const postOtp=(req,res)=>{
-    console.log(req.body);
+    userHelpers.doOtp(req.body).then((response)=>{
+        if(response.status){
+            signUpData=response.user
+            res.redirect('/confirmOtp')
+        }else{
+            res.redirect('/otpLogin')
+        }
+    })
+}
+
+
+const getConfirmOtp=(req,res)=>{
+    res.render('user/user-confirmOtp')
+}
+
+const postConfirmOtp=(req,res)=>{
+  userHelpers.doOtpConfirm(req.body,signUpData).then((response)=>{
+    if(response.status){
+        res.redirect('/')
+    }else{
+        res.redirect('/confirmOtp')
+    }
+  })
 }
 
 
@@ -75,5 +99,7 @@ module.exports= {
     postSignUp,
     postLogin,
     getOtp,
-    postOtp
+    postOtp,
+    getConfirmOtp,
+    postConfirmOtp
 }

@@ -19,7 +19,8 @@
     "express-handlebars": "^6.0.6",
     "express-session": "^1.17.3",
     "hbs": "^4.2.0",
-    "mongodb": "^4.9.0"
+    "mongodb": "^4.9.0",
+    "twilio": "^3.81.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"

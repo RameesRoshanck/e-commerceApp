@@ -1,6 +1,8 @@
 const db=require('../config/connection')
 const connection=require('../config/collection')
 const bcrypt=require('bcrypt')
+const otp=require('../config/otpLogin')
+const client=require('twilio')(otp.accountId,otp.authToken)
 
 module.exports={
     doSignup:(userData)=>{
@@ -45,16 +47,34 @@ module.exports={
             }
         })
     },
-    doOtpLogin:(userData)=>{
+    doOtp:(userData)=>{
         let response={};
         return new Promise(async(resolve,reject)=>{
-            let mobile= await db.get().collection(connection.USER_COLLECTION).findOne({mobile:userData.mobile})
-            if(!mobile){
-                response.mobileExist=true
-                reject(response)
+            let user= await db.get().collection(connection.USER_COLLECTION).findOne({mobile:userData.mobile})
+            if(user){
+            response.status=true;
+            response.user=user;
+            client.verify.services(otp.serviceId).verifications.create({ to: `+91${userData.mobile}`, channel: "sms" }).then((verification)=>{})
+            //  console.log(response);
+             resolve(response)
             }else{
-                
+               response.status=false
+               resolve(response) 
             }
+        })
+    },
+    doOtpConfirm:(confimrOtp,userData)=>{
+        return new Promise((resolve,reject)=>{
+            client.verify.services(otp.serviceId).verificationChecks.create({
+                to: `+91${userData.mobile}`,
+                code: confimrOtp.mobile,
+              }).then((data)=>{
+                if(data.status){
+                    resolve({status:true})
+                }else{
+                    resolve({status:false})
+                }
+              })
         })
     }
 }
