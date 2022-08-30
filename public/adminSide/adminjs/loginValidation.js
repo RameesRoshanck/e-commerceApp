@@ -1,9 +1,9 @@
 function myFunc1(){
-    emailValidate();
+    emailValidate3();
     passValidate()
     if(
-        emailValidate() == false ||
-        passValidate() == true
+        emailValidate3() == false ||
+        passValidate() == false
     ){
         return false;
     }else{
@@ -11,16 +11,17 @@ function myFunc1(){
     }
 }
 
-function emailValidate(){
+function emailValidate3(){
     let email=document.querySelector("#loginEmail").value
     let emailError=document.querySelector('#email-error');
-    let regex = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/;
+    let regex =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/;
     let emailVal=email.match(regex);
-    if(email=" " || email==null){
+    if(email="" || email==null){
         emailError.innerHTML="please enter a valid email";
         emailError.style.display = "block";
         return false
-    }else if(!emailVal){
+    }else 
+    if(!emailVal){
         emailError.innerHTML = "Please enter a valid email!";
         emailError.style.display = "block";
         return false;

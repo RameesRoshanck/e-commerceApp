@@ -1,0 +1,70 @@
+ <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+
+        {{>admin-header}}
+	    {{>admin-sideNavbar}}
+        <div class="content-body">
+            <div class="container-fluid">
+				<!-- Add Order -->
+				
+                <div class="page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Users</a></li>
+					</ol>
+                </div>
+                <!-- row -->
+                <div class="row">
+					<div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Fees Collection</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="example4" class="display min-w850">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Mobile</th>
+												<th>action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#each users}}
+                                            <tr>
+                                                <td>{{@index}}</td>
+                                                <td>{{this.name}}</td>
+                                                <td>{{this.email}}</td>
+                                                <td>{{this.mobile}}</td>
+                                                <td>
+                                                    <a href="/admin/admin-users/{{this._id}}" class="badge light badge-danger" >Block</a>
+                                                    <a href="/admin/unblock-user/{{this._id}}" class="badge light badge-success" >UnBlock</a>
+                                                    
+                                                    </td>
+                                            </tr>
+                                            {{/each}}
+                                      </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/adminSide/assets/vendor/global/global.min.js"></script>
+    <!-- Datatable -->
+    <script src="/adminSide/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/adminSide/assets/js/plugins-init/datatables.init.js"></script>
+

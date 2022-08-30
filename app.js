@@ -40,6 +40,15 @@ db.connect((err)=>{
   else  console.log("succesfully created");
 })
 
+app.use((req,res,next)=>{
+  if (!req.admin) {
+    res.header("cache-control", "private,no-cache,no-store,must revalidate");
+    res.header("Express", "-3");
+  }
+  next();
+});
+
+
 // set up the function
 app.use(session({secret:'key',resave:false,saveUninitialized:true,cookie:{maxAge:600000}}))
 

@@ -55,7 +55,7 @@ function emailValidate2() {
     let emailError = document.querySelector("#emailerror");
     let regex =/^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/;
     let emailVal = email.match(regex);
-    if (emailVal == " " || emailVal == null) {
+    if (email == " " || email == null) {
         emailError.innerHTML = "Please enter a valid email!";
         emailError.style.display = "block";
         return false;
