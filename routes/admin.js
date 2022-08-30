@@ -1,6 +1,8 @@
 var express = require('express');
-const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduct, postaddProduct, getUsers, blockUser, unblockUser } = require('../controllers/adminController');
+const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduct, postaddProduct, getUsers, blockUser, unblockUser, getCatagory, postCatagory, deleteCatagory } = require('../controllers/adminController');
+const { adminAuth } = require('../middleware/middleware');
 var router = express.Router();
+
 
 /* -------------------------------------------------------------------------- */
 /*                              admin homes route                             */
@@ -18,15 +20,25 @@ router.get('/adminlogout',adminLogOut)
 /*                           admin side user routers                          */
 /* -------------------------------------------------------------------------- */
 
-router.get('/admin-users',getUsers);
+//get all users router
+router.get('/admin-users',adminAuth,getUsers);
 
-router.get('/admin-users/:id',blockUser);
+// block a single user router
+router.get('/block-users/:id',blockUser);
 
+// unblock the a sigle user router
 router.get('/unblock-user/:id',unblockUser)
 
 
+/* -------------------------------------------------------------------------- */
+/*                         admin side catagory routers                        */
+/* -------------------------------------------------------------------------- */
 
+router.get('/getCatagory',adminAuth,getCatagory)
 
+router.post('/addCatagory',postCatagory)
+
+router.get('/deleteCatagory/:id',deleteCatagory)
 
 
 /* -------------------------------------------------------------------------- */

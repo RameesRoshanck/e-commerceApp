@@ -49,21 +49,23 @@ const adminLogOut=(req,res)=>{
 /*                         admin side user controllers                        */
 /* -------------------------------------------------------------------------- */
 
+
+//get all user details
 const getUsers=(req,res)=>{
     adminHelpers.getAllUsers().then((users)=>{
         res.render('admin/admin-userTable',{admin:true,users})
     })
 }
 
+//block a single user
 const blockUser=(req,res)=>{
-    console.log(req.params.id);
     let proId=req.params.id
     adminHelpers.blockUser(proId).then((data)=>{
         res.redirect('/admin/admin-users')
     })
 }
 
-
+//unblock a single user
 const unblockUser=(req,res)=>{
   let proId=req.params.id;
   adminHelpers.unblockUser(proId).then((data)=>{
@@ -71,11 +73,30 @@ const unblockUser=(req,res)=>{
   })
 }
 
+/* -------------------------------------------------------------------------- */
+/*                             start with catagory                            */
+/* -------------------------------------------------------------------------- */
+
+const getCatagory=(req,res)=>{
+    adminHelpers.getCatagory().then((catagory)=>{
+        res.render('admin/admin-catagory',{admin:true,catagory})
+    })
+}
 
 
+const postCatagory=(req,res)=>{
+  adminHelpers.addCatagory(req.body).then(()=>{
+    res.redirect('/admin/getCatagory')
+  })
+}
 
-
-
+const deleteCatagory=(req,res)=>{
+    let id=req.params.id
+    console.log(id);
+   adminHelpers.deleteCatagory(id).then(()=>{
+    res.redirect('/admin/getCatagory')
+   })
+}
 
 
 
@@ -99,6 +120,9 @@ module.exports={
     getUsers,
     blockUser,
     unblockUser,
+    getCatagory,
+    postCatagory,
+    deleteCatagory,
     getaddProduct,
     postaddProduct
 }

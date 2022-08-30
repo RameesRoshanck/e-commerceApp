@@ -24,7 +24,7 @@
 					<div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Fees Collection</h4>
+                                <h4 class="card-title">Users Table</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -46,9 +46,11 @@
                                                 <td>{{this.email}}</td>
                                                 <td>{{this.mobile}}</td>
                                                 <td>
-                                                    <a href="/admin/admin-users/{{this._id}}" class="badge light badge-danger" >Block</a>
-                                                    <a href="/admin/unblock-user/{{this._id}}" class="badge light badge-success" >UnBlock</a>
-                                                    
+                                                    {{#if this.state}}
+                                                    <a href="/admin/block-users/{{this._id}}" class="badge light badge-success" >Active </a>
+                                                     {{else}}
+                                                    <a href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" >Block </a>
+                                                    {{/if}}
                                                     </td>
                                             </tr>
                                             {{/each}}

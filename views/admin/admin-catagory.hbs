@@ -1,0 +1,97 @@
+ <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+
+        {{>admin-header}}
+	    {{>admin-sideNavbar}}
+
+
+
+        <div class="content-body">
+            <div class="container-fluid">
+				<!-- Add Order -->
+				
+                <div class="page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Catagory</a></li>
+					</ol>
+                </div>
+              <div class="col-xl-6 col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Add Catagory</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                     <form  onsubmit="return myFunc()" action="/admin/addCatagory" method="post" >
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Catagory Name</label>
+                                                <input type="text" class="form-control" placeholder="entet the catagory name" id="catagoryId" name="catagory" onkeyup="ctgrValidate()"  >
+                                                <span class="text-primary"  id="catagoryErr"style="color:red !important ;"  ></span>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">ADD Catagory</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                <!-- row -->
+                <div class="row">
+					<div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Catagorys Table</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="example4" class="display min-w850">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Catagory</th>
+												<th>action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#each catagory}}
+                                            <tr>
+                                                <td>{{@index}}</td>
+                                                <td>{{this.catagory}}</td>
+                                                <td>
+                                              
+                                                   <a href="/admin/deleteCatagory/{{this._id}}" onclick="return confirm('Are you sure you want to delete {{this.catagory}}')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
+                                                   
+                                                    </td>
+                                            </tr>
+                                          {{/each}}
+                                      </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+     
+     {{!-- /* -------------------------------------------------------------------------- */
+     /*                                 validation                                       */
+     /* -------------------------------------------------------------------------- */ --}}
+     
+     {{!-- <script src="/adminSide/adminjs/addCatagory.js"></script> --}}
+
+
+    <script src="/adminSide/assets/vendor/global/global.min.js"></script>
+    <!-- Datatable -->
+    <script src="/adminSide/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/adminSide/assets/js/plugins-init/datatables.init.js"></script>
+
