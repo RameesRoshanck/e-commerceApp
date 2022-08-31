@@ -1,6 +1,6 @@
 const db=require('../config/connection')
 const connection=require('../config/collection')
-const objectId = require('mongodb').ObjectId
+var ObjectId = require('mongodb').ObjectId;
 
 module.exports={
     getAllUsers:()=>{
@@ -11,7 +11,7 @@ module.exports={
     },
     blockUser:(proId)=>{
         return new Promise(async(resolve,reject)=>{
-            await db.get().collection(connection.USER_COLLECTION).updateOne({_id:objectId(proId)},{$set:{state:false}}).then((data)=>{
+            await db.get().collection(connection.USER_COLLECTION).updateOne({_id:ObjectId(proId)},{$set:{state:false}}).then((data)=>{
                 console.log(data);
                 resolve(data)
             })
@@ -19,7 +19,7 @@ module.exports={
     },
     unblockUser:(proId)=>{
         return new Promise(async(resolve,reject)=>{
-            await db.get().collection(connection.USER_COLLECTION).updateOne({_id:objectId(proId)},
+            await db.get().collection(connection.USER_COLLECTION).updateOne({_id:ObjectId(proId)},
             {$set:{state:true}}).then((data)=>{
                 console.log(data);
                 resolve(data)
@@ -41,9 +41,73 @@ module.exports={
     },
     deleteCatagory:(catagoryId)=>{
          return new Promise((resolve,reject)=>{
-            db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:objectId(catagoryId)}).then((data)=>{
+            db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:ObjectId(catagoryId)}).then((data)=>{
                 resolve(data)
             })
          })
-    }
+    },
+    addProduct:(Product)=>{
+        
+        let response={}
+        return new Promise(async(resolve,reject)=>{
+             let prdct=await db.get().collection(connection.PRODUCT_COLLECTION).findOne({prd_Id:Product.prd_Id})
+             console.log(prdct);
+             if(prdct){
+                response.status=true
+                resolve(response)
+             }
+             else{
+                let dt=new Date
+                Product.date=(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear())
+                db.get().collection(connection.PRODUCT_COLLECTION).insertOne(Product).then((result)=>{
+                    resolve(result)
+                   
+                }) 
+                resolve({status:false}) 
+             }
+
+          
+        })
+    },
+    listProduct:()=>{
+        return new Promise((resolve,reject)=>{
+            let Product=db.get().collection(connection.PRODUCT_COLLECTION).find().toArray()
+            resolve(Product)
+        })
+    },
+    deleteProduct:(proId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(connection.PRODUCT_COLLECTION).deleteOne({_id:ObjectId(proId)}).then((data)=>{
+                resolve(data)
+            })
+        })
+    },
+    getProductDetails:(proId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let product=await db.get().collection(connection.PRODUCT_COLLECTION).findOne({_id:ObjectId(proId)})
+            resolve(product)
+        })
+    },
+    updateProduct:(proId,proDetails)=>{
+       
+        return new Promise(async(resolve,reject)=>{
+            
+            await db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId((proId))},
+            {
+                $set:{
+            name:proDetails.name,
+            prd_Id:proDetails.prd_Id,
+            price:proDetails.price,
+            catagory:proDetails.catagory,
+            stock:proDetails.stock,
+            offer:proDetails.offer,
+            description:proDetails.description,
+            image:proDetails.image
+
+        }
+        }).then((response)=>{
+            resolve(response)
+        })
+   })
+ }
 }

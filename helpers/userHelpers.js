@@ -18,6 +18,8 @@ module.exports={
                 response.mobileExist=true
                 resolve(response)
             }else{
+                let dt=new Date
+                userData.date=(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear())
                userData.password=await bcrypt.hash(userData.password,10)
                db.get().collection(connection.USER_COLLECTION).insertOne(userData).then((data)=>{
                 resolve(data)

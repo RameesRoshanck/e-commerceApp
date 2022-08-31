@@ -1,5 +1,6 @@
 const adminHelpers = require("../helpers/adminHelpers");
 const userHelpers = require("../helpers/userHelpers");
+const multer=require('../helpers/multer')
 
 const emailId="ckmhdramees@gmail.com"; //admin login emailId
 const passwordId="1234567"              // admin ligin password
@@ -105,11 +106,59 @@ const deleteCatagory=(req,res)=>{
  /* -------------------------------------------------------------------------- */
 
 const getaddProduct=(req,res)=>{
-    res.render('admin/admin-addProduct')
+    adminHelpers.getCatagory().then((catagory)=>{
+        res.render('admin/admin-addProduct',{admin:true,catagory})
+    })
 }
 
+
 const postaddProduct=(req,res)=>{
-   
+    console.log(req.files);
+    const filename=req.files.map(function(file){
+        return file.filename
+    })
+    req.body.image=filename
+   adminHelpers.addProduct(req.body).then((response)=>{
+    if(response.status){
+        res.redirect('/admin/addProduct')
+    }else{
+        res.redirect('/admin/addProduct') 
+    }
+})
+}
+
+const listAllProduct=(req,res)=>{
+    adminHelpers.listProduct().then((products)=>{
+        res.render('admin/admin-allProduct',{admin:true,products})
+    })
+}
+
+const deleteProduct=(req,res)=>{
+    let id=req.params.id
+     adminHelpers.deleteProduct(id).then(()=>{
+        res.redirect('/admin/listAllProduct') 
+
+     })
+}
+
+const getEditProduct=(req,res)=>{
+    let id=req.params.id
+    adminHelpers.getProductDetails(id).then((product)=>{
+       
+        res.render('admin/admin-editProduct',{admin:true,product})
+    })
+}
+
+const updateProduct=(req,res)=>{
+    const filename = req.files.map(function (file) {
+        return file.filename
+    })
+    req.body.image=filename
+     let id=req.params.id
+    adminHelpers.updateProduct(id,req.body).then((data)=>{
+        console.log(data);
+        res.redirect('/admin/listAllProduct') 
+    })
 }
 
 module.exports={
@@ -124,5 +173,9 @@ module.exports={
     postCatagory,
     deleteCatagory,
     getaddProduct,
-    postaddProduct
+    postaddProduct,
+    listAllProduct,
+    deleteProduct,
+    getEditProduct,
+    updateProduct
 }

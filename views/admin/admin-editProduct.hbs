@@ -24,50 +24,53 @@
 					<div class="col-xl-8 col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Products</h4>
+                                <h4 class="card-title">Edit Products</h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">
-                                    <form action="/admin/addProduct" method="post" enctype="multipart/form-data" >
+                                    <form action="/admin/editProduct/{{product._id}}" method="POST" enctype="multipart/form-data" >
 
                                         {{!-- <div class="form-row"> --}}
                                             <div class="form-group">
                                                 <label>Product Name</label>
-                                                <input type="text" class="form-control" name="name" placeholder="enter the Product Name">
+                                                <input type="text" class="form-control" value="{{product.name}}" name="name">
                                             </div>
                                             <div class="form-group">
                                                 <label>Product Id</label>
-                                                <input type="Text" class="form-control" name="prd_Id" placeholder="enter the product Id ">
+                                                <input type="Text" class="form-control" name="prd_Id" value="{{product.prd_Id}}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Price</label>
-                                                <input type="text" class="form-control" name="price" placeholder="enter the product price">
+                                                <input type="text" class="form-control" name="price" value="{{product.price}}">
                                             </div>
 											 <div class="form-group">
 											      <label>Choose Catagory</label>
-                                                  <select class="form-control form-control-lg default-select" name="catagory">
-											    	 {{#each catagory}}
-                                                   <option>{{this.catagory}}</option>
-                                                    {{/each}}
-                                                   </select>
+                                                   <input type="text" class="form-control" name="catagory" value="{{product.catagory}}" >
                                             </div>
                                             <div class="form-group">
                                                 <label>Stock</label>
-                                                <input type="text" class="form-control" name="stock" placeholder="enter the product stock" >
+                                                <input type="text" class="form-control" name="stock" value="{{product.stock}}" >
                                             </div>
 											 <div class="form-group">
                                                 <label>Offer</label>
-                                                <input type="text" class="form-control" name="offer" placeholder="enter the product offer" >
+                                                <input type="text" class="form-control" name="offer" value="{{product.offer}}" >
                                             </div>
 										
                                                   <div class="form-group">
 											      <label>Description</label>
-                                                  <input type="text" class="form-control" name="description" placeholder="enter the product description" style="height:80px ;" >
+                                                  <input type="text" class="form-control" name="description" value="{{product.description}}" style="height:80px ;" >
                                               </div>
 										
 										      <div class="form-group">
                                                  <label>Choose Image File</label>
-                                                 <input multiple type="file" id="product_images[]" accept="image/*r" name="image" class="form-control" >
+                                                 <br>
+                                                 <img src="/product-images/{{product.image.[0]}}" alt="" style="width: 100px; height: auto;">
+                                                 <img src="/product-images/{{product.image.[1]}}" alt="" style="width: 100px; height: auto;">
+                                                 <img src="/product-images/{{product.image.[2]}}" alt="" style="width: 100px; height: auto;">
+                                                 <img src="/product-images/{{product.image.[3]}}" alt="" style="width: 100px; height: auto;">
+                                                 <img src="/product-images/{{product.image.[4]}}" alt="" style="width: 100px; height: auto;">
+                                                 <img src="/product-images/{{product.image.[5]}}" alt="" style="width: 100px; height: auto;">
+                                                 <input multiple type="file" accept="image/*r" name="image" class="form-control" >
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary m-5 px-5">Add Products</button>
