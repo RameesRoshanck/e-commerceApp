@@ -1,3 +1,4 @@
+ {{>user-header}}
     <div class="page-wrapper">
         <main class="main">
             <div class="intro-slider-container mb-5">
@@ -68,77 +69,20 @@
                 
                 <div class="cat-blocks-container">
                     <div class="row">
+                        {{#each product}}
                         <div class="col-6 col-sm-4 col-lg-2">
-                            <a href="category.html" class="cat-block">
+                            <a href="/productView/{{this._id}}" class="cat-block">
                                 <figure>
                                     <span>
-                                        <img src="userSide/assets/images/demos/demo-4/cats/1.png" alt="Category image">
+                                        <img src="/product-images/{{this.image.[0]}}" alt="Category image">
                                     </span>
                                 </figure>
 
-                                <h3 class="cat-block-title">Computer & Laptop</h3><!-- End .cat-block-title -->
+                                <h3 class="cat-block-title">{{this.name}}</h3><!-- End .cat-block-title -->
                             </a>
                         </div><!-- End .col-sm-4 col-lg-2 -->
-
-                        <div class="col-6 col-sm-4 col-lg-2">
-                            <a href="category.html" class="cat-block">
-                                <figure>
-                                    <span>
-                                        <img src="userSide/assets/images/demos/demo-4/cats/2.png" alt="Category image">
-                                    </span>
-                                </figure>
-
-                                <h3 class="cat-block-title">Digital Cameras</h3><!-- End .cat-block-title -->
-                            </a>
-                        </div><!-- End .col-sm-4 col-lg-2 -->
-
-                        <div class="col-6 col-sm-4 col-lg-2">
-                            <a href="category.html" class="cat-block">
-                                <figure>
-                                    <span>
-                                        <img src="userSide/assets/images/demos/demo-4/cats/3.png" alt="Category image">
-                                    </span>
-                                </figure>
-
-                                <h3 class="cat-block-title">Smart Phones</h3><!-- End .cat-block-title -->
-                            </a>
-                        </div><!-- End .col-sm-4 col-lg-2 -->
-
-                        <div class="col-6 col-sm-4 col-lg-2">
-                            <a href="category.html" class="cat-block">
-                                <figure>
-                                    <span>
-                                        <img src="userSide/assets/images/demos/demo-4/cats/4.png" alt="Category image">
-                                    </span>
-                                </figure>
-
-                                <h3 class="cat-block-title">Televisions</h3><!-- End .cat-block-title -->
-                            </a>
-                        </div><!-- End .col-sm-4 col-lg-2 -->
-
-                        <div class="col-6 col-sm-4 col-lg-2">
-                            <a href="category.html" class="cat-block">
-                                <figure>
-                                    <span>
-                                        <img src="userSide/assets/images/demos/demo-4/cats/5.png" alt="Category image">
-                                    </span>
-                                </figure>
-
-                                <h3 class="cat-block-title">Audio</h3><!-- End .cat-block-title -->
-                            </a>
-                        </div><!-- End .col-sm-4 col-lg-2 -->
-
-                        <div class="col-6 col-sm-4 col-lg-2">
-                            <a href="category.html" class="cat-block">
-                                <figure>
-                                    <span>
-                                        <img src="userSide/assets/images/demos/demo-4/cats/6.png" alt="Category image">
-                                    </span>
-                                </figure>
-
-                                <h3 class="cat-block-title">Smart Watches</h3><!-- End .cat-block-title -->
-                            </a>
-                        </div><!-- End .col-sm-4 col-lg-2 -->
+                       {{/each}}
+                        
                     </div><!-- End .row -->
                 </div><!-- End .cat-blocks-container -->
             </div><!-- End .container -->

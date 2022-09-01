@@ -2,6 +2,7 @@ const db=require('../config/connection')
 const connection=require('../config/collection')
 const bcrypt=require('bcrypt')
 const otp=require('../config/otpLogin')
+const { ObjectId } = require('mongodb')
 const client=require('twilio')(otp.accountId,otp.authToken)
 
 module.exports={
@@ -69,14 +70,26 @@ module.exports={
         return new Promise((resolve,reject)=>{
             client.verify.services(otp.serviceId).verificationChecks.create({
                 to: `+91${userData.mobile}`,
-                code: confimrOtp.mobile,
+                code: confimrOtp.otp,
               }).then((data)=>{
-                if(data.status){
+                if(data.status=='approved'){
                     resolve({status:true})
                 }else{
                     resolve({status:false})
                 }
               })
+        })
+    },
+    viewProducts:()=>{
+        return new Promise((resolve,reject)=>{
+           let product= db.get().collection(connection.PRODUCT_COLLECTION).find().toArray()
+            resolve(product)
+        })
+    },
+    viewSigleProduct:(proId)=>{
+        return new Promise(async(resolve,reject)=>{
+          let product=await db.get().collection(connection.PRODUCT_COLLECTION).findOne({_id:ObjectId(proId)})
+          resolve(product) 
         })
     }
 }

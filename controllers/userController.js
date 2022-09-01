@@ -4,9 +4,12 @@ const userHelpers = require("../helpers/userHelpers")
 
 // user home page
 const userHomeRoute=(req,res)=>{
-    res.render('user/user-home')
-    
+    userHelpers.viewProducts().then((product)=>{
+        res.render('user/user-home',{product})
+    })
 }
+
+    
 
 //user get signup
 const getSignUp=(req,res)=>{
@@ -46,7 +49,7 @@ const getLogin=(req,res)=>{
 }
 
 const postLogin=(req,res)=>{
-//    console.log(req.body);
+  console.log(req.body);
      userHelpers.doLogin(req.body).then((response)=>{
         if(response.status){
             req.session.loggedIn=true
@@ -60,8 +63,13 @@ const postLogin=(req,res)=>{
 
 
 const getOtp=(req,res)=>{
-   res.render('user/user-otp') 
+    if(req.session.loggedIn){
+        res.redirect('/') 
+    }else{
+        res.render('user/user-otp') 
+    }
 }
+
 
 let signUpData;
 const postOtp=(req,res)=>{
@@ -77,17 +85,29 @@ const postOtp=(req,res)=>{
 
 
 const getConfirmOtp=(req,res)=>{
+    if(req.session.loggedIn){
+        res.redirect('/') 
+    }else{
     res.render('user/user-confirmOtp')
+    }
 }
 
 const postConfirmOtp=(req,res)=>{
   userHelpers.doOtpConfirm(req.body,signUpData).then((response)=>{
     if(response.status){
+        req.session.loggedIn=true
         res.redirect('/')
     }else{
         res.redirect('/confirmOtp')
     }
   })
+}
+
+const productView=(req,res)=>{
+    let id=req.params.id
+    userHelpers.viewSigleProduct(id).then((product)=>{
+        res.render('user/user-productView',{product})
+    })
 }
 
 
@@ -101,5 +121,6 @@ module.exports= {
     getOtp,
     postOtp,
     getConfirmOtp,
-    postConfirmOtp
+    postConfirmOtp,
+    productView
 }

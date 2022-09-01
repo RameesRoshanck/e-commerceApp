@@ -1,5 +1,5 @@
 var express = require('express');
-const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp, postOtp, getConfirmOtp, postConfirmOtp } = require('../controllers/userController');
+const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp, postOtp, getConfirmOtp, postConfirmOtp, productView } = require('../controllers/userController');
 var router = express.Router();
 var auth=require('../middleware/middleware')
 
@@ -21,5 +21,8 @@ router.post('/otpLogin',postOtp)
 
 router.get('/confirmOtp',getConfirmOtp)
 router.post('/confirmOtp',postConfirmOtp)
+
+
+router.get('/productView/:id',productView)
 
 module.exports = router;
