@@ -49,9 +49,14 @@
                                                 <td>{{this.date}}</td>
                                                 <td>
                                                     {{#if this.state}}
-                                                    <a href="/admin/block-users/{{this._id}}" class="badge light badge-success" >Active </a>
+                                                                                                        
+                                                    <a  href="/admin/block-users/{{this._id}}" class="badge light badge-success" data-toggle="modal" data-target="#myModal">Active</a>
+
+                                                    {{!-- <a href="/admin/block-users/{{this._id}}" class="badge light badge-success" >Active </a> --}}
                                                      {{else}}
-                                                    <a href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" >Block </a>
+                                                    
+                                                    <a  href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" data-toggle="modal" data-target="#myModal">Block</a>
+                                                    {{!-- <a href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" >Block </a> --}}
                                                     {{/if}}
                                                     </td>
                                             </tr>
@@ -65,6 +70,43 @@
 				</div>
             </div>
         </div>
+
+        
+           {{#each users}}
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabelLogout">Ohh No!!!!</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                     {{#if this.state}}
+                  <p>Are you sure you want to Block the user?</p>
+                  {{else}}
+                  <p>Are you sure you want to Unblock the user?</p>
+                  {{/if}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
+                  {{#if this.state}}
+                  <a href="/admin/block-users/{{this._id}}" class="btn btn-danger">Block</a>
+                  {{else}}
+                    <a href="/admin/unblock-user/{{this._id}}" class="btn btn-success">UNBlock</a>
+                   {{/if}}
+                </div>
+              </div>
+            </div>
+          </div>
+           {{/each}}
+
+
+
+
+
+
     </div>
 
     <script src="/adminSide/assets/vendor/global/global.min.js"></script>

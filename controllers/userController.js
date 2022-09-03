@@ -103,6 +103,13 @@ const postConfirmOtp=(req,res)=>{
   })
 }
 
+const getProducts=(req,res)=>{
+     res.render('user/user-products')
+}
+
+
+
+
 const productView=(req,res)=>{
     let id=req.params.id
     userHelpers.viewSigleProduct(id).then((product)=>{
@@ -110,6 +117,14 @@ const productView=(req,res)=>{
     })
 }
 
+
+const cartView=(req,res)=>{
+    res.render('user/user-cart.hbs')
+}
+
+const checkOut=(req,res)=>{
+    res.render('user/user-checkout')
+}
 
 
 module.exports= {
@@ -122,5 +137,8 @@ module.exports= {
     postOtp,
     getConfirmOtp,
     postConfirmOtp,
-    productView
+    getProducts,
+    productView,
+    cartView,
+    checkOut
 }
