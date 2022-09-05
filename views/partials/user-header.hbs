@@ -32,16 +32,29 @@
                                 <div class="icon">
                                     <i class="fa-solid fa-user"></i>
                                 </div>
+                                {{#if user}}
+                                <p>Welcome</p>
+                                {{else}}
                                 <p>Sign in</p>
+                                {{/if}}
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right">
                                 <ul class="compare-products">
+                                    
                                     <li class="compare-product">
-                                          <a href="/userLogin" class="btn btn-primary" >Log in</a>  
+                                        {{#if user}}
+                                            <a class="btn btn-primary" >{{user.name}}</a>
+                                        {{else}}
+                                          <a href="/userLogin" class="btn btn-primary" >Log in</a>
+                                          {{/if}}  
                                     </li>
                                     <li class="compare-product">
-                                      <a href="/userSignUp" class="btn btn-info">Sign Up</a>   
+                                        {{#if user}}
+                                       <a href="/userLogout" class="btn btn-info">logout</a> 
+                                        {{else}}
+                                      <a href="/userSignUp" class="btn btn-info">Sign Up</a> 
+                                      {{/if}}  
                                     </li>
                                 </ul>
 {{!-- 
@@ -66,7 +79,9 @@
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <div class="icon">
                                     <i class="icon-shopping-cart"></i>
-                                    <span class="cart-count">2</span>
+                                  
+                                    <span class="cart-count" id="cart-count">{{cartCount}}</span>
+                                    
                                 </div>
                                 <p>Cart</p>
                             </a>
@@ -121,7 +136,7 @@
                                 </div><!-- End .dropdown-cart-total -->
 
                                 <div class="dropdown-cart-action">
-                                    <a href="cart.html" class="btn btn-primary">View Cart</a>
+                                    <a href="/cart" class="btn btn-primary">View Cart</a>
                                     <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .dropdown-cart-total -->
                             </div><!-- End .dropdown-menu -->

@@ -1,8 +1,9 @@
 var express = require('express');
 const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp, postOtp,
-     getConfirmOtp, postConfirmOtp, productView, cartView, checkOut, getProducts} = require('../controllers/userController');
+     getConfirmOtp, postConfirmOtp, productView, cartView, checkOut, getProducts,
+      addToCart, logout} = require('../controllers/userController');
 var router = express.Router();
-var auth=require('../middleware/middleware')
+const { auth } = require('../middleware/middleware');
 
 //router path
 router.get('/',userHomeRoute)
@@ -15,6 +16,9 @@ router.post('/userSignUp',postSignUp)
 router.get('/userLogin',getLogin)
 router.post('/userLogin',postLogin)
 
+
+router.get('/userLogout',logout)
+
 //login otp rputer
 router.get('/otpLogin',getOtp)
 router.post('/otpLogin',postOtp)
@@ -24,13 +28,16 @@ router.get('/confirmOtp',getConfirmOtp)
 router.post('/confirmOtp',postConfirmOtp)
 
 // products page router
-router.get('/products',getProducts)
+router.get('/products',auth,getProducts)
 
 //product in a single page router
 router.get('/productView/:id',productView)
 
 // cart page router
-router.get('/cart',cartView)
+router.get('/cart',auth,cartView)
+
+
+router.get('/add-to-cart/:id',addToCart)
 
 // checkout page router
 router.get('/checkout',checkOut)
