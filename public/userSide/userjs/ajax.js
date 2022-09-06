@@ -1,3 +1,4 @@
+// const { response } = require("express")
 
 
 function addToCart(proId){
@@ -10,6 +11,20 @@ function addToCart(proId){
                 count=parseInt(count)+1
                 $('#cart-count').html(count)
             }
+        }
+    })
+}
+
+function changeQuantity(cartId,proId,count){
+    $.ajax({
+        url:'/change-product-quantity',
+        data:{
+            cart:cartId,
+            product:proId,
+            count:count
+        },
+        success:(response)=>{
+            alert(response)
         }
     })
 }

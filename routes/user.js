@@ -1,7 +1,7 @@
 var express = require('express');
 const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp, postOtp,
      getConfirmOtp, postConfirmOtp, productView, cartView, checkOut, getProducts,
-      addToCart, logout} = require('../controllers/userController');
+      addToCart, logout, changeProductQuantity} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -38,6 +38,9 @@ router.get('/cart',auth,cartView)
 
 
 router.get('/add-to-cart/:id',addToCart)
+
+
+router.get('/change-product-quantity',changeProductQuantity)
 
 // checkout page router
 router.get('/checkout',checkOut)

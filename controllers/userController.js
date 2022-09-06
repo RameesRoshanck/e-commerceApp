@@ -148,6 +148,16 @@ const addToCart=(req,res)=>{
     })
 }
 
+
+const changeProductQuantity=(req,res,next)=>{
+    
+    userHelpers.changeProductQuantity(req.body).then(()=>{
+        
+    })
+}
+
+
+
 const checkOut=(req,res)=>{
     res.render('user/user-checkout')
 }
@@ -168,5 +178,6 @@ module.exports= {
     productView,
     cartView,
     addToCart,
+    changeProductQuantity,
     checkOut
 }
