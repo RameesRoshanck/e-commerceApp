@@ -231,5 +231,139 @@ module.exports={
             resolve(response)
            })
        })
-    }
+    },
+    getTotalAmout:(userId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let total=await db.get().collection(connection.CART_COLLECTION).aggregate([
+                {
+                    $match:{user:ObjectId(userId)}
+                },
+                {
+                   $unwind:'$products'
+                },
+                {
+                    $project:{
+                        item:'$products.item',
+                        quantity:'$products.quantity'
+                        // price:'$products.price'
+                    }
+                },
+                {
+                    $lookup:{
+                        from:connection.PRODUCT_COLLECTION,
+                        localField:'item',
+                        foreignField:'_id',
+                        as:'product'
+                    }
+                },
+                {
+                    $project:{
+                        item:1,
+                        quantity:1,
+                        product:{$arrayElemAt:['$product',0]}
+                    }
+                },
+                 { $group:{_id:null,
+                      total:{$sum:{ $multiply:['$quantity','$product.price']}}
+                  }
+                }
+              
+            ]).toArray()
+            // console.log(total[0].total);
+            resolve(total[0].total)
+        })
+    },
+    //sub cartproducttotal
+    getProductTotal:(userId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let subproductTotal=await db.get().collection(connection.CART_COLLECTION).aggregate([
+                {
+                    $match:{user:ObjectId(userId)}
+                },
+                {
+                   $unwind:'$products'
+                },
+                {
+                    $project:{
+                        item:'$products.item',
+                        quantity:'$products.quantity'
+                        // price:'$products.price'
+                    }
+                },
+                {
+                    $lookup:{
+                        from:connection.PRODUCT_COLLECTION,
+                        localField:'item',
+                        foreignField:'_id',
+                        as:'product'
+                    }
+                },
+                {
+                    $project:{
+                        item:1,
+                        quantity:1,
+                        product:{$arrayElemAt:['$product',0]}
+                    }
+                },
+                 { $project:{total:{ $multiply:['$quantity','$product.price']}
+                  }
+                }
+              
+            ]).toArray()
+            if(subproductTotal.length!=0){
+                resolve(subproductTotal)
+            }else{
+                resolve()
+            }
+        })
+    },
+    //ajax wrk to change product price in cart page
+    getSubTotal:(details)=>{
+        return new Promise(async(resolve,reject)=>{
+          let subTotal=await db.get().collection(connection.CART_COLLECTION).aggregate([
+            {
+                $match:{user:ObjectId(details.user)}
+            },
+            {
+               $unwind:'$products'
+            },
+            {
+                $project:{
+                    item:'$products.item',
+                    quantity:'$products.quantity'
+                    // price:'$products.price'
+                }
+            },
+            {
+                $match:{item:ObjectId(details.product)}
+            },
+            {
+                $lookup:{
+                    from:connection.PRODUCT_COLLECTION,
+                    localField:'item',
+                    foreignField:'_id',
+                    as:'product'
+                }
+            },
+            {
+                $project:{
+                    item:1,
+                    quantity:1,
+                    product:{$arrayElemAt:['$product',0]}
+                }
+            },
+             { $project:{
+                total:{ $multiply:['$quantity','$product.price']}
+              }
+            }  
+            ]).toArray()
+            
+            if(subTotal.length!=0){
+                console.log(subTotal[0].total);
+               resolve(subTotal[0].total)
+            }else{
+                resolve()
+            }
+        })
+    } 
 }

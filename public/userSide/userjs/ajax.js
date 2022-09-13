@@ -1,6 +1,5 @@
 // const { response } = require("express")
 
-const { response } = require("express")
 
 
 
@@ -22,7 +21,7 @@ function addToCart(proId){
 function changeQuantity(cartId,proId,userId,count){
     event.preventDefault()
     let quantity=parseInt(document.getElementById(proId).innerHTML)
-    console.log(quantity);
+    console.log(userId);
     count=parseInt(count)
     $.ajax({
         url:'/change-product-quantity',
@@ -39,7 +38,10 @@ function changeQuantity(cartId,proId,userId,count){
             alert("remove one product")
             location.reload()
            }else{
+            console.log(response.subTotal);
             document.getElementById(proId).innerHTML=quantity+count
+            document.getElementById('total').innerHTML=response.total
+            document.getElementById('q'+proId).innerHTML= response.proTotal
            }
         }
     })

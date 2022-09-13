@@ -50,6 +50,7 @@ module.exports={
         
         let response={}
         return new Promise(async(resolve,reject)=>{
+            
              let prdct=await db.get().collection(connection.PRODUCT_COLLECTION).findOne({prd_Id:Product.prd_Id})
              console.log(prdct);
              if(prdct){
@@ -59,6 +60,7 @@ module.exports={
              else{
                 let dt=new Date
                 Product.date=(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear())
+                Product.price=parseInt(Product.price)
                 db.get().collection(connection.PRODUCT_COLLECTION).insertOne(Product).then((result)=>{
                     resolve(result)
                    
@@ -91,7 +93,7 @@ module.exports={
     updateProduct:(proId,proDetails)=>{
        
         return new Promise(async(resolve,reject)=>{
-            
+            proDetails.price=parseInt(proDetails.price)
             await db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId((proId))},
             {
                 $set:{

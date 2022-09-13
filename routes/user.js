@@ -1,7 +1,7 @@
 var express = require('express');
 const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp, postOtp,
-     getConfirmOtp, postConfirmOtp, productView, cartView, checkOut, getProducts,
-      addToCart, logout, changeProductQuantity, deleteCartItem} = require('../controllers/userController');
+     getConfirmOtp, postConfirmOtp, productView, cartView, getProducts,
+      addToCart, logout, changeProductQuantity, deleteCartItem, placeOrder} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -46,6 +46,6 @@ router.post('/change-product-quantity',changeProductQuantity)
 router.post('/deleteCartItems',deleteCartItem)
 
 // checkout page router
-router.get('/checkout',checkOut)
+router.get('/placeOrder',auth,placeOrder)
 
 module.exports = router;

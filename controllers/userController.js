@@ -156,7 +156,12 @@ const cartView=async(req,res)=>{
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
     let products= await userHelpers.getCartProduct(req.session.user._id)
-    res.render('user/user-cart',{products,cartCount,user:req.session.user})
+    let total=await userHelpers.getTotalAmout(req.session.user._id) 
+    let productTotal=await userHelpers.getProductTotal(req.session.user._id)
+    for(var i=0;i<products.length;i++){
+        products[i].productTotal=productTotal[i].total
+    }
+    res.render('user/user-cart',{products,total,cartCount,user:req.session.user})
 }
 
 
@@ -172,8 +177,11 @@ const addToCart=(req,res)=>{
 
 // change quantity
 const changeProductQuantity=(req,res,next)=>{
+    let response={}
     // console.log(req.body);
-    userHelpers.changeProductQuantity(req.body).then((response)=>{
+    userHelpers.changeProductQuantity(req.body).then(async(response)=>{
+    response.total=await userHelpers.getTotalAmout(req.body.user)
+    response.proTotal= await userHelpers.getSubTotal(req.body) 
        res.json(response) 
     })
 }
@@ -186,8 +194,9 @@ const deleteCartItem=(req,res)=>{
      })
 }
 
-const checkOut=(req,res)=>{
-    res.render('user/user-checkout')
+const placeOrder=async(req,res)=>{
+    let total=await userHelpers.getTotalAmout(req.session.user._id) 
+    res.render('user/user-placeOrder',{total})
 }
 
 
@@ -208,5 +217,5 @@ module.exports= {
     addToCart,
     changeProductQuantity,
     deleteCartItem,
-    checkOut
+    placeOrder
 }
