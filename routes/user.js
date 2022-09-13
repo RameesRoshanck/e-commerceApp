@@ -16,10 +16,10 @@ router.post('/userSignUp',postSignUp)
 router.get('/userLogin',getLogin)
 router.post('/userLogin',postLogin)
 
-
+//user logout
 router.get('/userLogout',logout)
 
-//login otp rputer
+//login otp router
 router.get('/otpLogin',getOtp)
 router.post('/otpLogin',postOtp)
 
@@ -36,11 +36,11 @@ router.get('/productView/:id',productView)
 // cart page router
 router.get('/cart',auth,cartView)
 
-
+// add to cart in product
 router.get('/add-to-cart/:id',addToCart)
 
-
-router.get('/change-product-quantity',changeProductQuantity)
+//change product quatity
+router.post('/change-product-quantity',changeProductQuantity)
 
 // checkout page router
 router.get('/checkout',checkOut)

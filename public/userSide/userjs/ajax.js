@@ -1,6 +1,7 @@
 // const { response } = require("express")
 
 
+
 function addToCart(proId){
     $.ajax({
         url:'/add-to-cart/'+proId,
@@ -15,16 +16,28 @@ function addToCart(proId){
     })
 }
 
-function changeQuantity(cartId,proId,count){
+function changeQuantity(cartId,proId,userId,count){
+    event.preventDefault()
+    let quantity=parseInt(document.getElementById(proId).innerHTML)
+    console.log(quantity);
+    count=parseInt(count)
     $.ajax({
         url:'/change-product-quantity',
         data:{
+            user:userId,
             cart:cartId,
             product:proId,
-            count:count
-        },
+            count:count,
+            quantity:quantity
+             },
+        method:'post',
         success:(response)=>{
-            alert(response)
+           if(response.removeProduct){
+            alert("remove one product")
+            location.reload()
+           }else{
+            document.getElementById(proId).innerHTML=quantity+count
+           }
         }
     })
 }

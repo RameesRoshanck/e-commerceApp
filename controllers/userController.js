@@ -45,6 +45,7 @@ const postSignUp=(req,res)=>{
 }
 
 
+//user get login
 const getLogin=(req,res)=>{
     if(req.session.loggedIn){
         res.redirect('/')
@@ -54,6 +55,8 @@ const getLogin=(req,res)=>{
 
 }
 
+
+//user post login
 const postLogin=(req,res)=>{
 //   console.log(req.body);
      userHelpers.doLogin(req.body).then((response)=>{
@@ -67,13 +70,15 @@ const postLogin=(req,res)=>{
      })
 }
 
+
+// user logout
 const logout=(req,res)=>{
     req.session.loggedIn=false
     res.redirect('/')
 }
 
 
-
+//user getotp
 const getOtp=(req,res)=>{
     if(req.session.loggedIn){
         res.redirect('/') 
@@ -83,6 +88,7 @@ const getOtp=(req,res)=>{
 }
 
 
+//user postotp
 let signUpData;
 const postOtp=(req,res)=>{
     userHelpers.doOtp(req.body).then((response)=>{
@@ -96,6 +102,7 @@ const postOtp=(req,res)=>{
 }
 
 
+//user get confirm otp
 const getConfirmOtp=(req,res)=>{
     if(req.session.loggedIn){
         res.redirect('/') 
@@ -104,6 +111,8 @@ const getConfirmOtp=(req,res)=>{
     }
 }
 
+
+//user post confirm otp
 const postConfirmOtp=(req,res)=>{
   userHelpers.doOtpConfirm(req.body,signUpData).then((response)=>{
     if(response.status){
@@ -115,17 +124,21 @@ const postConfirmOtp=(req,res)=>{
   })
 }
 
-const getProducts=(req,res)=>{
-    userHelpers.viewProducts().then(async(product)=>{
+
+//get product
+const getProducts=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
         cartCount= await userHelpers.getCartCount(req.session.user._id)
-    
+    }
+    userHelpers.viewProducts().then(async(product)=>{
      res.render('user/user-products',{product,user:req.session.user,cartCount})
     })
 }
 
 
 
-
+//user product view
 const productView=(req,res)=>{
     let id=req.params.id
     userHelpers.viewSigleProduct(id).then((product)=>{
@@ -134,25 +147,32 @@ const productView=(req,res)=>{
 }
 
 
+// user cart view
 const cartView=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
     let products= await userHelpers.getCartProduct(req.session.user._id)
-    // console.log(products)
-    res.render('user/user-cart',{products,user:req.session.user})
+    res.render('user/user-cart',{products,cartCount,user:req.session.user})
 }
 
+
+// add to cart
 const addToCart=(req,res)=>{
     // console.log("api call");
     userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
-        // res.redirect('/products')
-        res.json({status:true})
+         res.redirect('/products')
+        // res.json({status:true})
     })
 }
 
 
+// change quantity
 const changeProductQuantity=(req,res,next)=>{
-    
-    userHelpers.changeProductQuantity(req.body).then(()=>{
-        
+    // console.log(req.body);
+    userHelpers.changeProductQuantity(req.body).then((response)=>{
+       res.json(response) 
     })
 }
 

@@ -3,6 +3,7 @@ const connection=require('../config/collection')
 const bcrypt=require('bcrypt')
 const otp=require('../config/otpLogin')
 const { ObjectId } = require('mongodb')
+const { response } = require('express')
 const client=require('twilio')(otp.accountId,otp.authToken)
 
 module.exports={
@@ -103,7 +104,7 @@ module.exports={
                 let proExist=userCart.products.findIndex(product=>product.item==proId)
                 // console.log(proExist);
                 if(proExist!=-1){
-                    db.get().collection(connection.CART_COLLECTION).updateOne({'products.item':ObjectId(proId)},{
+                    db.get().collection(connection.CART_COLLECTION).updateOne({user:ObjectId(userId),'products.item':ObjectId(proId)},{
                         $inc:{'products.$.quantity':1}
                     }).then(()=>{
                         resolve()
@@ -193,14 +194,30 @@ module.exports={
             resolve(count)
         })
     },
-    changeProductQuantity:(cartId,proId,count)=>{
+    changeProductQuantity:(details)=>{
+        details.count = parseInt(details.count)
+        details.quantity=parseFloat(details.quantity)
+        // console.log(cartId.proId);
         return new Promise((resolve,reject)=>{
-            db.get().collection(connection.CART_COLLECTION).updateOne({'products.item':ObjectId(proId)},
+            if(details.count==-1 && details.quantity==1){
+              db.get().collection(connection.CART_COLLECTION)
+              .updateOne({_id:ObjectId(details.cart)},{
+                $pull:{
+                    products:{item:ObjectId(details.product)}
+                }
+              }).then((response)=>{
+                resolve({removeProduct:true})
+              })
+            }else
             {
-                $inc:{'products.$.quantity':count}
-            }).then(()=>{
-                resolve()
-            }) 
+            db.get().collection(connection.CART_COLLECTION)
+            .updateOne({_id:ObjectId(details.cart),'products.item':ObjectId(details.product)},
+            {
+                $inc:{'products.$.quantity':details.count}
+            }).then((response)=>{
+                resolve({status:true})
+            })
+        } 
         })
     }
 }
