@@ -11,6 +11,7 @@ const userHomeRoute=async(req,res)=>{
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
     userHelpers.viewProducts().then((product)=>{
+        // console.log(user)
         res.render('user/user-home',{product,user,cartCount})
     })
 }
@@ -74,6 +75,7 @@ const postLogin=(req,res)=>{
 // user logout
 const logout=(req,res)=>{
     req.session.loggedIn=false
+    req.session.user=null;
     res.redirect('/')
 }
 
@@ -162,8 +164,8 @@ const cartView=async(req,res)=>{
 const addToCart=(req,res)=>{
     // console.log("api call");
     userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
-         res.redirect('/products')
-        // res.json({status:true})
+        //  res.redirect('/products')
+        res.json({status:true})
     })
 }
 
@@ -177,6 +179,12 @@ const changeProductQuantity=(req,res,next)=>{
 }
 
 
+//delete cart
+const deleteCartItem=(req,res)=>{
+     userHelpers.DeleteCartItem(req.body).then((response)=>{
+        res.json(response)
+     })
+}
 
 const checkOut=(req,res)=>{
     res.render('user/user-checkout')
@@ -199,5 +207,6 @@ module.exports= {
     cartView,
     addToCart,
     changeProductQuantity,
+    deleteCartItem,
     checkOut
 }

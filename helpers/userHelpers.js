@@ -219,5 +219,17 @@ module.exports={
             })
         } 
         })
+    },
+    DeleteCartItem:(details)=>{
+       return new Promise((resolve,reject)=>{
+           db.get().collection(connection.CART_COLLECTION)
+           .updateOne({_id:ObjectId(details.cart)},{
+            $pull:{
+                products:{item:ObjectId(details.product)}
+            }
+           }).then((response)=>{
+            resolve(response)
+           })
+       })
     }
 }

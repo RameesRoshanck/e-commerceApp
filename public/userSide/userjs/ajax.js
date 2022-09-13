@@ -1,5 +1,7 @@
 // const { response } = require("express")
 
+const { response } = require("express")
+
 
 
 function addToCart(proId){
@@ -11,6 +13,7 @@ function addToCart(proId){
                 let count=$('#cart-count').html()
                 count=parseInt(count)+1
                 $('#cart-count').html(count)
+                location.reload()
             }
         }
     })
@@ -40,4 +43,19 @@ function changeQuantity(cartId,proId,userId,count){
            }
         }
     })
+}
+
+function deleteCartProduct(cartId,proId){
+        $.ajax({
+            url:'/deleteCartItems',
+            data:{
+                product:proId,
+                cart:cartId
+            },
+            method:'post',
+            success:(response=>{
+                alert("this item is deleted")
+                location.reload()
+            })
+        })
 }
