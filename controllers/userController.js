@@ -51,7 +51,8 @@ const getLogin=(req,res)=>{
     if(req.session.loggedIn){
         res.redirect('/')
     }else{
-        res.render('user/user-loginPage')
+        res.render('user/user-loginPage',{"logedErr":req.session.loggedErr})
+        req.session.loggedErr=false
     }
 
 }
@@ -66,6 +67,7 @@ const postLogin=(req,res)=>{
             req.session.user=response.user
             res.redirect('/')
         }else{
+            req.session.loggedErr=true
        res.redirect('/userLogin')
         }
      })
@@ -82,12 +84,9 @@ const logout=(req,res)=>{
 
 //user getotp
 const getOtp=(req,res)=>{
-    if(req.session.loggedIn){
-        res.redirect('/') 
-    }else{
-        res.render('user/user-otp') 
+        res.render('user/user-otp',{"blockedOtp": req.session.Blocked}) 
+        req.session.Blocked=false
     }
-}
 
 
 //user postotp
@@ -98,6 +97,7 @@ const postOtp=(req,res)=>{
             signUpData=response.user
             res.redirect('/confirmOtp')
         }else{
+            req.session.Blocked=true
             res.redirect('/otpLogin')
         }
     })
@@ -106,11 +106,8 @@ const postOtp=(req,res)=>{
 
 //user get confirm otp
 const getConfirmOtp=(req,res)=>{
-    if(req.session.loggedIn){
-        res.redirect('/') 
-    }else{
-    res.render('user/user-confirmOtp')
-    }
+    res.render('user/user-confirmOtp',{"otpErr":req.session.otpErr})
+    req.session.otpErr=false
 }
 
 
@@ -119,8 +116,10 @@ const postConfirmOtp=(req,res)=>{
   userHelpers.doOtpConfirm(req.body,signUpData).then((response)=>{
     if(response.status){
         req.session.loggedIn=true
+        req.session.user=signUpData
         res.redirect('/')
     }else{
+        req.session.otpErr=true
         res.redirect('/confirmOtp')
     }
   })
@@ -133,7 +132,7 @@ const getProducts=async(req,res)=>{
     if(req.session.loggedIn){
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
-    userHelpers.viewProducts().then(async(product)=>{
+    userHelpers.viewProducts().then((product)=>{
      res.render('user/user-products',{product,user:req.session.user,cartCount})
     })
 }
@@ -194,11 +193,54 @@ const deleteCartItem=(req,res)=>{
      })
 }
 
+//user placeorder page
 const placeOrder=async(req,res)=>{
     let total=await userHelpers.getTotalAmout(req.session.user._id) 
     res.render('user/user-placeOrder',{total})
 }
 
+
+// user profile
+const userProfile=async(req,res)=>{
+    let userDetails=await userHelpers.getuserDetails(req.session.user._id)
+    res.render('user/user-profile',{userDetails,user:req.session.user})
+}
+
+// user profile add address
+const userAddAddress=(req,res)=>{
+    res.render('user/user-profileAddAddress')
+}
+
+//user profile post add address
+const postUserAddAddress=(req,res)=>{
+    console.log(req.body);
+    userHelpers.addUserAddress(req.session.user._id,req.body)
+    res.redirect('/userProfile')
+}
+
+// user profile edit address
+const editUserAddress=async(req,res)=>{
+    let id =req.query.id
+   let editAddress=await userHelpers.editUserAddress(id)
+    res.render('user/user-editProfileAddress',{editAddress})
+}
+
+//user profile update address
+const updateUserAddress=(req,res)=>{
+    console.log(req.body);
+   let id=req.params.id
+   userHelpers.updateUserAddress(id,req.body).then((data)=>{
+    res.redirect('/userProfile')
+   })
+}
+
+//user profile delete address
+const deleteUserAddress=(req,res)=>{
+    let id=req.params.id
+    userHelpers.deleteUserAddress(id).then(()=>{
+        res.redirect('/userProfile')
+    })
+}
 
 module.exports= {
     userHomeRoute,
@@ -217,5 +259,11 @@ module.exports= {
     addToCart,
     changeProductQuantity,
     deleteCartItem,
-    placeOrder
+    placeOrder,
+    userProfile,
+    userAddAddress,
+    postUserAddAddress,
+    editUserAddress,
+    updateUserAddress,
+    deleteUserAddress
 }

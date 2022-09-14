@@ -41,8 +41,8 @@ module.exports={
     },
     deleteCatagory:(catagoryId)=>{
          return new Promise((resolve,reject)=>{
-            db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:ObjectId(catagoryId)}).then((data)=>{
-                resolve(data)
+            db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:ObjectId(catagoryId)}).then(()=>{
+                resolve()
             })
          })
     },

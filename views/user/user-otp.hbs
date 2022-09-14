@@ -24,7 +24,10 @@
                 </div><!-- End .form-footer -->
               </form>
               <div>
-         
+               
+                {{#if blockedOtp}}
+                    <p class="error" style="color:red;">This user is Blocked</p>
+                    {{/if}} 
 
               <br><br>
 

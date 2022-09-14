@@ -1,7 +1,9 @@
 var express = require('express');
-const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp, postOtp,
-     getConfirmOtp, postConfirmOtp, productView, cartView, getProducts,
-      addToCart, logout, changeProductQuantity, deleteCartItem, placeOrder} = require('../controllers/userController');
+const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
+        postOtp,  getConfirmOtp, postConfirmOtp, productView, cartView,
+        getProducts,addToCart, logout, changeProductQuantity, deleteCartItem,
+        placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
+         updateUserAddress, deleteUserAddress} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -42,10 +44,26 @@ router.get('/add-to-cart/:id',addToCart)
 //change product quatity
 router.post('/change-product-quantity',changeProductQuantity)
 
-//
+// delete cart product items
 router.post('/deleteCartItems',deleteCartItem)
 
 // checkout page router
 router.get('/placeOrder',auth,placeOrder)
+
+//user profile router
+router.get('/userProfile',auth,userProfile)
+
+//user profile get add address
+router.get('/addAddress',auth,userAddAddress)
+
+// user profile post add address
+router.post('/addAddress',auth,postUserAddAddress)
+
+//user edit profile address
+router.get('/editUserAddress',auth,editUserAddress)
+router.post('/editUserAddress/:id',auth,updateUserAddress)
+
+//user delete profile address
+router.delete('/deleteUserAddress/:id',auth,deleteUserAddress)
 
 module.exports = router;

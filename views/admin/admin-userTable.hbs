@@ -50,13 +50,13 @@
                                                 <td>
                                                     {{#if this.state}}
                                                                                                         
-                                                    <a  href="/admin/block-users/{{this._id}}" class="badge light badge-success" data-toggle="modal" data-target="#myModal">Active</a>
+                                                    {{!-- <a  href="/admin/block-users/{{this._id}}" class="badge light badge-success" data-toggle="modal" data-target="#myModal">Active</a> --}}
 
-                                                    {{!-- <a href="/admin/block-users/{{this._id}}" class="badge light badge-success" >Active </a> --}}
+                                                    <a href="/admin/block-users/{{this._id}}" class="badge light badge-success" onclick="return confirm('Are you sure you want to Block user?')" >Active </a>
                                                      {{else}}
                                                     
-                                                    <a  href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" data-toggle="modal" data-target="#myModal">Block</a>
-                                                    {{!-- <a href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" >Block </a> --}}
+                                                    {{!-- <a  href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" data-toggle="modal" data-target="#myModal">Block</a> --}}
+                                                    <a href="/admin/unblock-user/{{this._id}}" class="badge light badge-danger" onclick="return confirm('Are you sure you want to Active user?')"  >Block </a>
                                                     {{/if}}
                                                     </td>
                                             </tr>

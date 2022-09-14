@@ -32,14 +32,21 @@ module.exports={
     doLogin:(userData)=>{
         return new Promise(async(resolve,reject)=>{
             let response={}
-            const user= await db.get().collection(connection.USER_COLLECTION).findOne({email:userData.email})
+            const user= await db.get().collection(connection.USER_COLLECTION).
+            findOne({email:userData.email})
             if(user){
                 bcrypt.compare(userData.password,user.password).then((status)=>{
                     if(status){
-                        console.log("login succed");
-                        response.user=user
-                        response.status=true
-                        resolve(response)
+                        if(user.state)
+                        {
+                            console.log("login succed");
+                            response.user=user
+                            response.status=true
+                            resolve(response)
+                        }else{
+                            console.log("blocked");
+                            resolve(response)
+                    }
                     }else{
                         console.log("login failes");
                         resolve({status:false})
@@ -47,6 +54,8 @@ module.exports={
                 })
             }else{
                 console.log("email incorect");
+                // response.status=false
+                // response.blockuser=true
                 resolve({status:false})
             }
         })
@@ -56,11 +65,17 @@ module.exports={
         return new Promise(async(resolve,reject)=>{
             let user= await db.get().collection(connection.USER_COLLECTION).findOne({mobile:userData.mobile})
             if(user){
-            response.status=true;
-            response.user=user;
-            client.verify.services(otp.serviceId).verifications.create({ to: `+91${userData.mobile}`, channel: "sms" }).then((verification)=>{})
-            //  console.log(response);
-             resolve(response)
+                if(user.state){
+
+                    response.status=true;
+                    response.user=user;
+                    client.verify.services(otp.serviceId).verifications.create({ to: `+91${userData.mobile}`, channel: "sms" }).then((verification)=>{})
+                    //  console.log(response);
+                     resolve(response)
+                }else{
+                    console.log("blocked user");
+                    resolve(response)
+                }
             }else{
                response.status=false
                resolve(response) 
@@ -365,5 +380,70 @@ module.exports={
                 resolve()
             }
         })
-    } 
+    },
+    // insert user address or add user address 
+    addUserAddress:(userId,details)=>{
+        return new Promise((resolve,reject)=>{
+            let dt=new Date
+            db.get().collection(connection.ADDRESS_COLLECTION).insertOne({
+                user:ObjectId(userId),
+                name:details.name,
+                email:details.email,
+                address:details.address,
+                landmark:details.landmark,
+                town:details.town,
+                state:details.state,
+                pincode:details.pincode,
+                phone:details.phone,
+                date:details.date=(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear())
+            }).then((data)=>{
+                resolve(data)
+            })
+        })
+    },
+    //get all useradress
+    getuserDetails:(userId)=>{
+        return new Promise((resolve,reject)=>{
+            let address=db.get().collection(connection.ADDRESS_COLLECTION)
+            .find({user:ObjectId(userId)}).toArray()
+            resolve(address)
+        })
+    },
+    //get edit user profile address
+    editUserAddress:(userId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(connection.ADDRESS_COLLECTION)
+            .findOne({_id:ObjectId(userId)}).then((editAddress)=>{
+                resolve(editAddress)
+            })
+        })
+    },
+    updateUserAddress:(userId,details)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(connection.ADDRESS_COLLECTION).updateOne({_id:ObjectId(userId)},
+            {
+                $set:{
+                    name:details.name,
+                    email:details.email,
+                    address:details.address,
+                    landmark:details.landmark,
+                    town:details.town,
+                    state:details.state,
+                    pincode:details.pincode,
+                    phone:details.phone
+                }
+            }).then((data)=>{
+                resolve(data)
+            })
+        })
+    },
+    //user delete profile address
+    deleteUserAddress:(addressId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(connection.ADDRESS_COLLECTION)
+            .deleteOne({_id:ObjectId(addressId)}).then((data)=>{
+                resolve(data)
+            })
+        })
+    }
 }
