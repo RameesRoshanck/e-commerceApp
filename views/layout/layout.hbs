@@ -142,7 +142,7 @@
     <!-- Main JS File -->
     <script src="userSide/assets/js/main.js"></script>
     <script src="userSide/assets/js/demos/demo-4.js"></script>
-        <script>
+    <script>
 	$('#checkout-form').submit((e)=>{
 		e.preventDefault()
 		$.ajax({
@@ -150,11 +150,14 @@
 			method:'post',
 			data:$('#checkout-form').serialize(),
 			success:(response)=>{
-				alert(response)
+				if(response.status){
+                    location.href='/orderSuccess'
+                }
 			}
 		})
 	})
    </script>
+ 
 
        {{/if}}
 </body>

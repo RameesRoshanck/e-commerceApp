@@ -68,18 +68,18 @@
 												{{#each products}}
 		                						<tr>
 		                							<td  >{{this.product.name}}</td>
-													<input type="hidden" name="name" value="{{this.product.name}}">
+													<input type="text" name="name" value="{{this.product.name}}" hidden>
 		                							<td>{{this.productTotal}}</td>
-													<input type="hidden" name="proTotal" value="{{this.productTotal}}">
+													<input type="text" name="proTotal" value="{{this.productTotal}}" hidden>
 		                						</tr>
 												{{/each}}
-												<tr>
-													<td><input type="hidden" name="userId" value="{{user._id}}"></td>
-												</tr>
+												
+											
 		                						<tr class="summary-subtotal">
+													<input type="text" name="userId" value="{{user._id}}" hidden>
 		                							<td>Subtotal:</td>
 		                							<td>₹{{total}}</td>
-													<input type="hidden" name="subTotal" value="{{total}}">
+													<input type="text" name="subTotal" value="{{total}}" hidden>
 		                						</tr><!-- End .summary-subtotal -->
 		                						<tr>
 		                							<td>Shipping:</td>
@@ -198,18 +198,4 @@
 
           {{>user-footer}}
 
-           <script>
-	$('#checkout-form').submit((e)=>{
-		e.preventDefault()
-		$.ajax({
-			url:'/placeOrder',
-			method:'post',
-			data:$('#checkout-form').serialize(),
-			success:(response)=>{
-				if(response.status){
-					location.href='/orderSuccess'
-				}
-			}
-		})
-	})
-   </script>
+           

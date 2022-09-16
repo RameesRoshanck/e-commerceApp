@@ -50,14 +50,14 @@ router.post('/deleteCartItems',auth,deleteCartItem)
 
 // checkout page get & post router
 router.get('/placeOrder',auth,placeOrder)
-router.post('/placeOrder',postPlaceOrder)
+router.post('/placeOrder',auth,postPlaceOrder)
 
 //checkout add user address
 router.get('/AddPlaceOrderAddress',auth,getAddPlaceOrderAddress)
 router.post('/AddPlaceOrderAddress',auth,postAddPlaceOrderAddress)
 
 // order success page
-router.get('/orderSuccess',orderSuccess)
+router.get('/orderSuccess',auth,orderSuccess)
 
 
 

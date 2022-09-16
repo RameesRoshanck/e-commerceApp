@@ -225,7 +225,9 @@ const orderSuccess=(req,res)=>{
     res.render('user/user-orderSuccess',{user:req.session.user})
 }
 
-// const order
+const orderDetails=(req,res)=>{
+    res.render('')
+}
 
 
 
