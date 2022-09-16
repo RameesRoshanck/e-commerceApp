@@ -48,6 +48,8 @@
     <link rel="stylesheet" href="userSide/assets/css/skins/skin-demo-4.css">
     <link rel="stylesheet" href="userSide/assets/css/demos/demo-4.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!--ajax-->
+     {{!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
       {{/if}}
 </head>
 
@@ -140,6 +142,20 @@
     <!-- Main JS File -->
     <script src="userSide/assets/js/main.js"></script>
     <script src="userSide/assets/js/demos/demo-4.js"></script>
+        <script>
+	$('#checkout-form').submit((e)=>{
+		e.preventDefault()
+		$.ajax({
+			url:'/placeOrder',
+			method:'post',
+			data:$('#checkout-form').serialize(),
+			success:(response)=>{
+				alert(response)
+			}
+		})
+	})
+   </script>
+
        {{/if}}
 </body>
 

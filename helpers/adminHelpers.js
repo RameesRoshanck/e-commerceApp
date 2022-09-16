@@ -73,20 +73,23 @@ module.exports={
     },
     listProduct:()=>{
         return new Promise((resolve,reject)=>{
-            let Product=db.get().collection(connection.PRODUCT_COLLECTION).find().toArray()
+            let Product=db.get().collection(connection.PRODUCT_COLLECTION)
+            .find().toArray()
             resolve(Product)
         })
     },
     deleteProduct:(proId)=>{
         return new Promise((resolve,reject)=>{
-            db.get().collection(connection.PRODUCT_COLLECTION).deleteOne({_id:ObjectId(proId)}).then((data)=>{
+            db.get().collection(connection.PRODUCT_COLLECTION)
+            .deleteOne({_id:ObjectId(proId)}).then((data)=>{
                 resolve(data)
             })
         })
     },
     getProductDetails:(proId)=>{
         return new Promise(async(resolve,reject)=>{
-            let product=await db.get().collection(connection.PRODUCT_COLLECTION).findOne({_id:ObjectId(proId)})
+            let product=await db.get().collection(connection.PRODUCT_COLLECTION)
+            .findOne({_id:ObjectId(proId)})
             resolve(product)
         })
     },

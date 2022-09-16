@@ -114,12 +114,14 @@ module.exports={
             quantity:1
         }
            return new Promise(async(resolve,reject)=>{
-            let userCart=await db.get().collection(connection.CART_COLLECTION).findOne({user:ObjectId(userId)})
+            let userCart=await db.get().collection(connection.CART_COLLECTION)
+            .findOne({user:ObjectId(userId)})
             if(userCart){
                 let proExist=userCart.products.findIndex(product=>product.item==proId)
                 // console.log(proExist);
                 if(proExist!=-1){
-                    db.get().collection(connection.CART_COLLECTION).updateOne({user:ObjectId(userId),'products.item':ObjectId(proId)},{
+                    db.get().collection(connection.CART_COLLECTION)
+                    .updateOne({user:ObjectId(userId),'products.item':ObjectId(proId)},{
                         $inc:{'products.$.quantity':1}
                     }).then(()=>{
                         resolve()
@@ -247,6 +249,7 @@ module.exports={
            })
        })
     },
+    //......................
     getTotalAmout:(userId)=>{
         return new Promise(async(resolve,reject)=>{
             let total=await db.get().collection(connection.CART_COLLECTION).aggregate([
@@ -410,17 +413,18 @@ module.exports={
         })
     },
     //get edit user profile address
-    editUserAddress:(userId)=>{
+    editUserAddress:(Id,userId)=>{
         return new Promise((resolve,reject)=>{
             db.get().collection(connection.ADDRESS_COLLECTION)
-            .findOne({_id:ObjectId(userId)}).then((editAddress)=>{
+            .findOne({$and:[{_id:ObjectId(Id)},{user:ObjectId(userId)}]}).then((editAddress)=>{
                 resolve(editAddress)
             })
         })
     },
-    updateUserAddress:(userId,details)=>{
+    updateUserAddress:(Id,userId,details)=>{
         return new Promise((resolve,reject)=>{
-            db.get().collection(connection.ADDRESS_COLLECTION).updateOne({_id:ObjectId(userId)},
+            db.get().collection(connection.ADDRESS_COLLECTION)
+            .updateOne({_id:ObjectId(Id),user:ObjectId(userId)},
             {
                 $set:{
                     name:details.name,
@@ -438,12 +442,54 @@ module.exports={
         })
     },
     //user delete profile address
-    deleteUserAddress:(addressId)=>{
-        return new Promise((resolve,reject)=>{
+    deleteProfileAddress:(Id,addressId)=>{
+        console.log(Id);
+        console.log(addressId);
+        return new Promise(async(resolve,reject)=>{
             db.get().collection(connection.ADDRESS_COLLECTION)
-            .deleteOne({_id:ObjectId(addressId)}).then((data)=>{
+            .deleteOne({_id:ObjectId(Id),user:ObjectId(addressId)}).then((data)=>{
                 resolve(data)
             })
         })
+    },
+    //place order
+    placeOrder:(order,proAdrress,products,Total)=>{
+        // Total=parseInt(Total)
+        return new Promise(async(resolve,reject)=>{
+             console.log(order);
+
+             let getAddress=await db.get().collection(connection.ADDRESS_COLLECTION).findOne({_id:ObjectId(proAdrress)})
+             console.log(getAddress);
+            if(getAddress){
+                let status=order['Payment']==='cod'?'placed':'pending'
+                let orderObj={
+                    delivaryDtails:{
+                         name:getAddress.name,
+                         address:getAddress.address,
+                         landmark:getAddress.landmark
+                    },
+                    userId:ObjectId(order.userId),
+                    paymentMethod:order['Payment'],
+                    product:products,
+                    data:new Date,
+                    total:Total,
+                    status:status
+                }
+                db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
+                    db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
+                    resolve()
+                })
+                
+            }
+
+          
+        })
+    },
+    getCartProductList:(userId)=>{
+      return new Promise(async(resolve,reject)=>{
+        let cart=await db.get().collection(connection.CART_COLLECTION)
+        .findOne({user:ObjectId(userId)},{_id:0,user:0,products:1})
+        resolve(cart)
+      })
     }
 }

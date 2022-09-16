@@ -1,5 +1,7 @@
-<div class="page-wrapper">
+
+
         {{>user-header}}
+<div class="page-wrapper">
 
         <main class="main">
         	<div class="page-header text-center" style="background-image: url('/userSide/assets/images/page-header-bg.jpg')">
@@ -25,71 +27,30 @@
             					<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
             				</form>
             			</div><!-- End .checkout-discount -->
-            			<form action="#">
+						<br>
+            			<form action="#" id="checkout-form">
 		                	<div class="row">
 		                		<div class="col-lg-9">
-		                			<h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
-		                				<div class="row">
-		                					<div class="col-sm-6">
-		                						<label>First Name *</label>
-		                						<input type="text" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
+									<div>
+								    <label class="pl-5 pt-1" style="border: 1px solid ; width: 100%;
+									 background-color: rgb(11, 11, 70);"><h3 style="color:white ;">Billing Address</h3></label>
+									</div>
+									<br>
 
-		                					<div class="col-sm-6">
-		                						<label>Last Name *</label>
-		                						<input type="text" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-		                				</div><!-- End .row -->
-
-                                        <label>Email address *</label>
-	        							<input type="email" class="form-control" required>
-
-	            						<label>Street address *</label>
-                                        <select class="form-control" id="exampleFormControlSelect1">
-                                                   <option>1</option>
-                                         </select>
-	            						{{!-- <input type="text" class="form-control" placeholder="House number and Street name" required>
-	            						<input type="text" class="form-control" placeholder="Appartments, suite, unit etc ..." required>
-                                          --}}
-                                            
-	            						<div class="row">
-		                					<div class="col-sm-6">
-		                						<label>Town / City *</label>
-		                						<input type="text" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-
-		                					<div class="col-sm-6">
-		                						<label>State / County *</label>
-		                						<input type="text" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-		                				</div><!-- End .row -->
-
-		                				<div class="row">
-		                					<div class="col-sm-6">
-		                						<label>Postcode *</label>
-		                						<input type="text" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-
-		                					<div class="col-sm-6">
-		                						<label>Phone *</label>
-		                						<input type="tel" class="form-control" required>
-		                					</div><!-- End .col-sm-6 -->
-		                				</div><!-- End .row -->
-
-	                					
-                                       {{!-- 
-	        							<div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input" id="checkout-create-acc">
-											<label class="custom-control-label" for="checkout-create-acc">Create an account?</label>
-										</div><!-- End .custom-checkbox --> --}}
-
-										{{!-- <div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input" id="checkout-diff-address">
-											<label class="custom-control-label" for="checkout-diff-address">Ship to a different address?</label>
-										</div><!-- End .custom-checkbox --> --}}
-
-	                					{{!-- <label>Order notes (optional)</label>
-	        							<textarea class="form-control" cols="30" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></textarea> --}}
+									<div class="list-group">
+										{{#each userDetails}}
+                                       <label class="list-group-item">&nbsp;
+                                         <input value="{{this._id}}" class="form-check-input me-1" type="radio" name="address" id="flexRadioDefault1">
+                                           &nbsp; &nbsp;<b> {{this.name}}</b>
+										   <p> &nbsp;    &nbsp; &nbsp;{{this.email}}</p>
+										   <P>&nbsp;    &nbsp; &nbsp;<span>{{this.address}}, {{this.landmark}}, {{this.pincode}}</span></span></P>
+                                           <p>&nbsp;    &nbsp; &nbsp;<span>{{this.town}},  {{this.state}}</span></p>
+										   <p> &nbsp;    &nbsp; &nbsp;{{this.phone}}</p>
+									   </label>
+									   <br>
+									   {{/each}}
+                                    </div>
+									<a href="/AddPlaceOrderAddress" class="btn btn-primary">Add Address &nbsp;<b style="color:blue ;">+</b></a>
 		                		</div><!-- End .col-lg-9 -->
 		                		<aside class="col-lg-3">
 		                			<div class="summary">
@@ -104,18 +65,21 @@
 		                					</thead>
 
 		                					<tbody>
+												{{#each products}}
 		                						<tr>
-		                							<td><a href="#">Beige knitted elastic runner shoes</a></td>
-		                							<td>$84.00</td>
+		                							<td  >{{this.product.name}}</td>
+													<input type="hidden" name="name" value="{{this.product.name}}">
+		                							<td>{{this.productTotal}}</td>
+													<input type="hidden" name="proTotal" value="{{this.productTotal}}">
 		                						</tr>
-
-		                						<tr>
-		                							<td><a href="#">Blue utility pinafore denimdress</a></td>
-		                							<td>$76,00</td>
-		                						</tr>
+												{{/each}}
+												<tr>
+													<td><input type="hidden" name="userId" value="{{user._id}}"></td>
+												</tr>
 		                						<tr class="summary-subtotal">
 		                							<td>Subtotal:</td>
-		                							<td>$160.00</td>
+		                							<td>₹{{total}}</td>
+													<input type="hidden" name="subTotal" value="{{total}}">
 		                						</tr><!-- End .summary-subtotal -->
 		                						<tr>
 		                							<td>Shipping:</td>
@@ -124,6 +88,7 @@
 		                						<tr class="summary-total">
 		                							<td>Total:</td>
 		                							<td>₹{{total}}</td>
+													<input type="hidden" name="total" value="{{total}}">
 		                						</tr><!-- End .summary-total -->
 		                					</tbody>
 		                				</table><!-- End .table table-summary -->
@@ -196,19 +161,22 @@
 										                    <img src="/userSide/assets/images/payments-summary.png" alt="payments cards">
 										                </a>
 										            </h2>
-										        </div><!-- End .card-header -->
+										        </div>
 										        <div id="collapse-5" class="collapse" aria-labelledby="heading-5" data-parent="#accordion-payment">
 										            <div class="card-body"> Donec nec justo eget felis facilisis fermentum.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Lorem ipsum dolor sit ame.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
+										            </div>
+										        </div>
+										    </div>
+											<!-- End .card -->
 										</div><!-- End .accordion --> --}}
                                         <div>
-                                             <p><b> Please select your favorite Web language: </b></p>
+                                             <p><b> Please select your : </b></p>
                                              <input type="radio" id="cod" name="Payment" value="cod">
-                                             <label for="html"><b>COD</b></label><br>
-                                             <input type="radio" id="onlinePayment" name="Payment" value="onlinePayment">
-                                             <label for="css"><b>Online Payment</b></label><br>
+                                             <label><b>COD</b></label><br>
+                                             <input type="radio" id="razorpay" name="Payment" value="razorpay">
+                                             <label><b>RazorPay</b></label><br>
+											  <input type="radio" id="paypal" name="Payment" value="paypal">
+                                             <label><b>PayPal</b></label><br>
                                         </div>
                                         <br>    
 
@@ -230,3 +198,18 @@
 
           {{>user-footer}}
 
+           <script>
+	$('#checkout-form').submit((e)=>{
+		e.preventDefault()
+		$.ajax({
+			url:'/placeOrder',
+			method:'post',
+			data:$('#checkout-form').serialize(),
+			success:(response)=>{
+				if(response.status){
+					location.href='/orderSuccess'
+				}
+			}
+		})
+	})
+   </script>

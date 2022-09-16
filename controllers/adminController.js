@@ -62,6 +62,7 @@ const getUsers=(req,res)=>{
 const blockUser=(req,res)=>{
     let proId=req.params.id
     adminHelpers.blockUser(proId).then((data)=>{
+        req.session.loggedIn=false
         res.redirect('/admin/admin-users')
     })
 }

@@ -3,7 +3,8 @@ const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
         postOtp,  getConfirmOtp, postConfirmOtp, productView, cartView,
         getProducts,addToCart, logout, changeProductQuantity, deleteCartItem,
         placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
-         updateUserAddress, deleteUserAddress} = require('../controllers/userController');
+        updateUserAddress,deleteUserAddress, getAddPlaceOrderAddress, postAddPlaceOrderAddress,
+        postPlaceOrder,orderSuccess} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -39,24 +40,33 @@ router.get('/productView/:id',productView)
 router.get('/cart',auth,cartView)
 
 // add to cart in product
-router.get('/add-to-cart/:id',addToCart)
+router.get('/add-to-cart/:id',auth,addToCart)
 
 //change product quatity
-router.post('/change-product-quantity',changeProductQuantity)
+router.post('/change-product-quantity',auth,changeProductQuantity)
 
 // delete cart product items
-router.post('/deleteCartItems',deleteCartItem)
+router.post('/deleteCartItems',auth,deleteCartItem)
 
-// checkout page router
+// checkout page get & post router
 router.get('/placeOrder',auth,placeOrder)
+router.post('/placeOrder',postPlaceOrder)
+
+//checkout add user address
+router.get('/AddPlaceOrderAddress',auth,getAddPlaceOrderAddress)
+router.post('/AddPlaceOrderAddress',auth,postAddPlaceOrderAddress)
+
+// order success page
+router.get('/orderSuccess',orderSuccess)
+
+
+
 
 //user profile router
 router.get('/userProfile',auth,userProfile)
 
 //user profile get add address
 router.get('/addAddress',auth,userAddAddress)
-
-// user profile post add address
 router.post('/addAddress',auth,postUserAddAddress)
 
 //user edit profile address
@@ -64,6 +74,6 @@ router.get('/editUserAddress',auth,editUserAddress)
 router.post('/editUserAddress/:id',auth,updateUserAddress)
 
 //user delete profile address
-router.delete('/deleteUserAddress/:id',auth,deleteUserAddress)
+router.get('/deleteUserAddress/:id',auth,deleteUserAddress)
 
 module.exports = router;

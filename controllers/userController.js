@@ -195,41 +195,125 @@ const deleteCartItem=(req,res)=>{
 
 //user placeorder page
 const placeOrder=async(req,res)=>{
-    let total=await userHelpers.getTotalAmout(req.session.user._id) 
-    res.render('user/user-placeOrder',{total})
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
+    let userDetails=await userHelpers.getuserDetails(req.session.user._id)
+    let products= await userHelpers.getCartProduct(req.session.user._id)
+    let total=await userHelpers.getTotalAmout(req.session.user._id)
+    let productTotal=await userHelpers.getProductTotal(req.session.user._id)
+    for(var i=0;i<products.length;i++){
+        products[i].productTotal=productTotal[i].total
+    }
+    res.render('user/user-placeOrder',{total,products,userDetails,cartCount,user:req.session.user})
 }
+
+//user post placeOrder page
+const postPlaceOrder=async(req,res)=>{
+    let product=await userHelpers.getCartProductList(req.body.userId)
+    let totalPrice=await userHelpers.getTotalAmout(req.body.userId)
+     userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then(()=>{
+         res.json({status:true})
+        })
+    } 
+
+
+ 
+
+const orderSuccess=(req,res)=>{
+    res.render('user/user-orderSuccess',{user:req.session.user})
+}
+
+// const order
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//add place order address page get
+const getAddPlaceOrderAddress=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
+    res.render('user/user-addPlaceOrderAddress',{cartCount,user:req.session.user})
+}
+
+
+//post add place order address
+const postAddPlaceOrderAddress=(req,res)=>{
+    userHelpers.addUserAddress(req.session.user._id,req.body).then(()=>{
+        res.redirect('/placeOrder')
+    })
+}
+
+
+
+
+
+
+
+
+
 
 
 // user profile
 const userProfile=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
     let userDetails=await userHelpers.getuserDetails(req.session.user._id)
-    res.render('user/user-profile',{userDetails,user:req.session.user})
+    res.render('user/user-profile',{userDetails,cartCount,user:req.session.user})
 }
 
 // user profile add address
-const userAddAddress=(req,res)=>{
-    res.render('user/user-profileAddAddress')
+const userAddAddress=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
+    res.render('user/user-profileAddAddress',{cartCount,user:req.session.user})
 }
 
 //user profile post add address
 const postUserAddAddress=(req,res)=>{
     console.log(req.body);
-    userHelpers.addUserAddress(req.session.user._id,req.body)
-    res.redirect('/userProfile')
+    userHelpers.addUserAddress(req.session.user._id,req.body).then(()=>{
+        res.redirect('/userProfile')
+    })
 }
+
 
 // user profile edit address
 const editUserAddress=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
     let id =req.query.id
-   let editAddress=await userHelpers.editUserAddress(id)
-    res.render('user/user-editProfileAddress',{editAddress})
+  userHelpers.editUserAddress(id,req.session.user._id).then((editAddress)=>{
+      res.render('user/user-editProfileAddress',{editAddress,cartCount,user:req.session.user})
+    })
 }
+
 
 //user profile update address
 const updateUserAddress=(req,res)=>{
     console.log(req.body);
    let id=req.params.id
-   userHelpers.updateUserAddress(id,req.body).then((data)=>{
+   userHelpers.updateUserAddress(id,req.session.user._id,req.body).then((data)=>{
     res.redirect('/userProfile')
    })
 }
@@ -237,7 +321,8 @@ const updateUserAddress=(req,res)=>{
 //user profile delete address
 const deleteUserAddress=(req,res)=>{
     let id=req.params.id
-    userHelpers.deleteUserAddress(id).then(()=>{
+    console.log(id);
+    userHelpers.deleteProfileAddress(id,req.session.user._id).then(()=>{
         res.redirect('/userProfile')
     })
 }
@@ -260,6 +345,10 @@ module.exports= {
     changeProductQuantity,
     deleteCartItem,
     placeOrder,
+    postPlaceOrder,
+    getAddPlaceOrderAddress,
+    postAddPlaceOrderAddress,
+    orderSuccess,
     userProfile,
     userAddAddress,
     postUserAddAddress,
