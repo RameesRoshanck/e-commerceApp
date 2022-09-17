@@ -162,6 +162,20 @@ const updateProduct=(req,res)=>{
     })
 }
 
+  /* -------------------------------------------------------------------------- */
+  /*                                  orderlist                                 */
+  /* -------------------------------------------------------------------------- */
+
+//get order list
+const adminOrderList=(req,res)=>{
+    res.render('admin/admin-orderLiser',{admin:true})
+}
+
+
+
+
+
+
 module.exports={
     adminHomeRoute,
     admimGetlogin,
@@ -178,5 +192,6 @@ module.exports={
     listAllProduct,
     deleteProduct,
     getEditProduct,
-    updateProduct
+    updateProduct,
+    adminOrderList
 }

@@ -155,7 +155,10 @@ const cartView=async(req,res)=>{
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
     let products= await userHelpers.getCartProduct(req.session.user._id)
-    let total=await userHelpers.getTotalAmout(req.session.user._id) 
+    let total=0
+    if(products.length>0){
+         total=await userHelpers.getTotalAmout(req.session.user._id) 
+    }
     let productTotal=await userHelpers.getProductTotal(req.session.user._id)
     for(var i=0;i<products.length;i++){
         products[i].productTotal=productTotal[i].total
@@ -219,29 +222,6 @@ const postPlaceOrder=async(req,res)=>{
     } 
 
 
- 
-
-const orderSuccess=(req,res)=>{
-    res.render('user/user-orderSuccess',{user:req.session.user})
-}
-
-const orderDetails=(req,res)=>{
-    res.render('')
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //add place order address page get
 const getAddPlaceOrderAddress=async(req,res)=>{
@@ -259,6 +239,42 @@ const postAddPlaceOrderAddress=(req,res)=>{
         res.redirect('/placeOrder')
     })
 }
+
+
+
+
+ 
+//order sucdess page
+const orderSuccess=(req,res)=>{
+    res.render('user/user-orderSuccess',{user:req.session.user})
+}
+
+//orders list page
+const orderDetails=async(req,res)=>{
+    let order=await userHelpers.getUserOders(req.session.user._id)   
+    res.render('user/user-ordersList',{user:req.session.user,order})
+}
+
+//order more details
+const orderMoreDetails=async(req,res)=>{
+    console.log(req.query.id);
+    let order=await userHelpers.getOrderDetails(req.query.id)
+    res.render('user/user-orderMoreDetails',{order,user:req.session.user})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -351,6 +367,8 @@ module.exports= {
     getAddPlaceOrderAddress,
     postAddPlaceOrderAddress,
     orderSuccess,
+    orderDetails,
+    orderMoreDetails,
     userProfile,
     userAddAddress,
     postUserAddAddress,

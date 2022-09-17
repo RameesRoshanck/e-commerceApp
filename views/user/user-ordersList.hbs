@@ -1,0 +1,54 @@
+ {{>user-header}}
+ <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+ <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+  
+{{!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>  --}}
+
+
+
+<div class="container-fluid my-5">
+<table id="table_id" class="display">
+    <thead>
+        <tr style="background-color:rgb(2, 2, 53); color: #fff; ;">
+            <th>Sl No:</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Date</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Amount</th>
+            {{!-- <th>Action</th> --}}
+            <th>More</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each order}}
+        <tr>
+            <td>1</td>
+            <td>{{this.delivaryDtails.name}}</td>
+            <td>{{this.delivaryDtails.address}}</td>
+            <td>{{this.date}}</td>
+            <td>{{this.paymentMethod}}</td>
+            <td>{{this.status}}</td>
+            <td>{{this.total}}</td>
+            {{!-- <td class="btn btn-danger" >Cancel</td> --}}
+            {{!-- <td class="btn btn-primary" ><a href="/orderMoreDetails"></a>Datails</td> --}}
+             <td> 
+            <a href="/viewOrderDetails?id={{this._id}}" class="btn btn-primary"><i class="fa-solid fa-info"></i></i></a>
+            </td>
+            
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+</div>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script> 
+
+<script>
+    $(document).ready( function () {
+    $('#table_id').DataTable();
+} );
+</script>
+
+{{>user-footer}}

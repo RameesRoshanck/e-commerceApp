@@ -4,7 +4,7 @@ const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
         getProducts,addToCart, logout, changeProductQuantity, deleteCartItem,
         placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
         updateUserAddress,deleteUserAddress, getAddPlaceOrderAddress, postAddPlaceOrderAddress,
-        postPlaceOrder,orderSuccess} = require('../controllers/userController');
+        postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -59,6 +59,12 @@ router.post('/AddPlaceOrderAddress',auth,postAddPlaceOrderAddress)
 // order success page
 router.get('/orderSuccess',auth,orderSuccess)
 
+//oders list
+router.get('/odersList',auth,orderDetails)
+
+//order more details
+router.get('/viewOrderDetails',auth,orderMoreDetails)
+
 
 
 
@@ -74,6 +80,6 @@ router.get('/editUserAddress',auth,editUserAddress)
 router.post('/editUserAddress/:id',auth,updateUserAddress)
 
 //user delete profile address
-router.get('/deleteUserAddress/:id',auth,deleteUserAddress)
+router.get('/deleteUserAddress',auth,deleteUserAddress)
 
 module.exports = router;

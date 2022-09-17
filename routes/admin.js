@@ -1,7 +1,7 @@
 var express = require('express');
 const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduct, postaddProduct, getUsers,
      blockUser, unblockUser, getCatagory, postCatagory, deleteCatagory, listAllProduct, 
-     deleteProduct, getEditProduct, updateProduct} = require('../controllers/adminController');
+     deleteProduct, getEditProduct, updateProduct, adminOrderList} = require('../controllers/adminController');
 const { adminAuth } = require('../middleware/middleware');
 var router = express.Router();
 const multer=require("../helpers/multer")
@@ -60,5 +60,12 @@ router.get("/deleteProduct/:id",deleteProduct)
 
 router.get('/editProduct/:id',adminAuth,getEditProduct)
 router.post('/editProduct/:id',multer.array('image',6),updateProduct)
+
+/* -------------------------------------------------------------------------- */
+/*                                  orderlist                                 */
+/* -------------------------------------------------------------------------- */
+
+//get oreder list
+router.get('/adminOrderList',adminAuth,adminOrderList)
 
 module.exports = router;

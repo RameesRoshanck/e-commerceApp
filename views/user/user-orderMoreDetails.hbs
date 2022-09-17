@@ -1,0 +1,26 @@
+ {{>user-header}}
+
+               
+              <div class="container my-5">
+                <div class="row ">
+                  {{#each order}}
+                  <div class="col-12 col-md-4 mt-2">
+                    <div class="card h-100">
+                      <img src="/product-images/{{this.product.image.[0]}}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{this.product.name}}"</h5>
+                            <p class="card-text">{{this.product.description}}</p>
+                            <p class="card-text">₹{{this.product.price}}</p>
+                            <p class="card-text">Quandtity:  {{this.quantity}}</p>
+                        </div>
+                    </div>
+                  </div>
+                  {{/each}}
+                </div>
+              </div>
+
+
+ {{>user-footer}}
+
+
+ 
