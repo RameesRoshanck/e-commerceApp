@@ -168,9 +168,22 @@ const updateProduct=(req,res)=>{
 
 //get order list
 const adminOrderList=(req,res)=>{
-    res.render('admin/admin-orderLiser',{admin:true})
+    adminHelpers.adminViewOrder().then((orderlist)=>{
+        res.render('admin/admin-orderLiser',{admin:true,orderlist})
+    })
 }
 
+//get more details product list
+const adminOrderDetails=async(req,res)=>{
+    let id=req.params.id
+    let orderAddress=await adminHelpers.adminViewSingleAddress(id)
+    let singleorder=await adminHelpers.adminViewSigleOrder(id)
+    let singleTotal=await adminHelpers.adminSingleTotal(id)
+    for(var i=0;i<singleorder.length;i++){
+        singleorder[i].singleTotal=singleTotal[i].total
+    }
+    res.render('admin/admin-orderViewDetails',{admin:true,orderAddress,singleorder})
+}
 
 
 
@@ -193,5 +206,6 @@ module.exports={
     deleteProduct,
     getEditProduct,
     updateProduct,
-    adminOrderList
+    adminOrderList,
+    adminOrderDetails
 }

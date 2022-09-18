@@ -1,3 +1,4 @@
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
  <div id="preloader">
         <div class="sk-three-bounce">
             <div class="sk-child sk-bounce1"></div>
@@ -31,45 +32,37 @@
                                     <table id="example4" class="display min-w850">
                                         <thead>
                                             <tr>
-                                                <th>No</th>
-                                                <th>Image</th>
-                                                <th>Product Name</th>
-                                                <th>Product ID</th>
-                                                <th>price</th>
+                                                <th>Sl No:</th>
+                                                <th>Name</th>
+                                                <th>Address</th>
                                                 <th>Date</th>
-                                                <th>Catagory</th>
-												<th>stock</th>
-                                                <th>Offer</th>
-                                                <th>Discription</th>
-                                                <th>Update</th>
-                                                <th>Delete</th>
+                                                <th>Payment</th>
+                                                <th>Status</th>
+                                                <th>Amount</th>
+                                          {{!-- <th>Action</th> --}}
+                                                <th>More</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{!-- {{#each }} --}}
-                                            <tr>
+                                            {{#each orderlist}}
+                                                <tr>
                                                 <td>{{@index}}</td>
-                                                <td><img style="width:110px;height:130px"
-                                                            src="/product-images/{{this.image.[0]}}" alt="pic"></td>
-                                                <td>{{this.name}}</td>
-                                                <td>{{this.prd_Id}}</td>
-                                                <td>{{this.price}}</td>
+                                                <td>{{this.delivaryDtails.name}}</td>
+                                                <td>{{this.delivaryDtails.address}}</td>
                                                 <td>{{this.date}}</td>
-                                                <td>{{this.catagory}}</td>
-                                                <td>{{this.stock}}</td>
-                                                <td>{{this.offer}}</td>
-                                                <td>{{this.description}}</td>
-                                                <td> 
-                                                    <a href="/admin/editProduct/{{this._id}}" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa fa-pencil"></i></a>
+                                                <td>{{this.paymentMethod}}</td>
+                                                <td>{{this.status}}</td>
+                                                <td>{{this.total}}</td>
+                                          {{!-- <td class="btn btn-danger" >Cancel</td> --}}
+                                         {{!-- <td class="btn btn-primary" ><a href="/orderMoreDetails"></a>Datails</td> --}}
+                                                 <td> 
+                                                <a href="/admin/adminOrderDetail/{{this._id}}" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa-solid fa-file-pen"></i></a>
+                                                <td><a  href="" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a></td>
                                                 </td>
-                                                <td>
-                                    
-                                                   <a href="/admin/deleteProduct/{{this._id}}" onclick="return confirm('Are you sure you want to delete {{this.catagory}}')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
-
-                                                </td>
-                                            </tr>
-                                            {{!-- {{/each}} --}}
-                                      </tbody>
+            {{!-- /viewOrderDetails?id={{this._id}} --}}
+                                              </tr>
+                                              {{/each}}
+                                       </tbody>
                                     </table>
                                 </div>
                             </div>

@@ -257,11 +257,10 @@ const orderDetails=async(req,res)=>{
 
 //order more details
 const orderMoreDetails=async(req,res)=>{
-    console.log(req.query.id);
+    // console.log(req.query.id);
     let order=await userHelpers.getOrderDetails(req.query.id)
     res.render('user/user-orderMoreDetails',{order,user:req.session.user})
 }
-
 
 
 

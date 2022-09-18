@@ -114,5 +114,99 @@ module.exports={
             resolve(response)
         })
    })
+ },
+ adminViewOrder:()=>{
+    return new Promise(async(resolve,reject)=>{
+        let orderDetails=await db.get().collection(connection.ORDER_COLLECTION).find().toArray()
+        // console.log(orderDetails);
+        resolve(orderDetails)
+    })
+ },
+ adminViewSingleAddress:(singleId)=>{
+    return new Promise(async(resolve,reject)=>{
+        let singleAddress=await db.get().collection(connection.ORDER_COLLECTION)
+        .findOne({_id:ObjectId(singleId)})
+        // console.log(singleAddress);
+        resolve(singleAddress)
+    })
+ },
+ adminViewSigleOrder:(orderId)=>{
+    console.log(orderId+"hai");
+    return new Promise(async(resolve,reject)=>{
+        let singleOrderDetails=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+            {
+                $match:{_id:ObjectId(orderId)}
+            },
+            {
+                $unwind:'$product'
+            },
+            {
+                $project:{
+                    item:'$product.item',
+                    quantity:'$product.quantity',
+                    price:'$price'
+                    
+                }
+            },
+            {
+                $lookup:{
+                    from:connection.PRODUCT_COLLECTION,
+                    localField:'item',
+                    foreignField:'_id',
+                    as:'product'
+                }
+            },
+            {
+                $project:{
+                    item:1,
+                    quantity:1,
+                    product:{$arrayElemAt:['$product',0]}
+                }
+            },
+            
+        ]).toArray()
+        // console.log(singleOrderDetails);
+        resolve(singleOrderDetails)
+    })
+ },
+ adminSingleTotal:(orderId)=>{
+    console.log(orderId+"hai");
+    return new Promise(async(resolve,reject)=>{
+        let singleOrderTotal=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+            {
+                $match:{_id:ObjectId(orderId)}
+            },
+            {
+                $unwind:'$product'
+            },
+            {
+                $project:{
+                    item:'$product.item',
+                    quantity:'$product.quantity',
+                    price:'$price'
+                    
+                }
+            },
+            {
+                $lookup:{
+                    from:connection.PRODUCT_COLLECTION,
+                    localField:'item',
+                    foreignField:'_id',
+                    as:'product'
+                }
+            },
+            {
+                $project:{
+                    _id:0,
+                    item:1,
+                    quantity:1,
+                    total:{ $multiply:['$quantity',{$arrayElemAt:["$product.price",0]}]}
+                }
+            }
+        ]).toArray()
+        // console.log(singleOrderTotal);
+        resolve(singleOrderTotal)
+    })
  }
+
 }
