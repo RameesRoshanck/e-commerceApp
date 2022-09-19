@@ -173,17 +173,62 @@ const adminOrderList=(req,res)=>{
     })
 }
 
+
+
 //get more details product list
 const adminOrderDetails=async(req,res)=>{
-    let id=req.params.id
+    let id=req.query.id
+    // console.log(id,"hai hao");
     let orderAddress=await adminHelpers.adminViewSingleAddress(id)
     let singleorder=await adminHelpers.adminViewSigleOrder(id)
     let singleTotal=await adminHelpers.adminSingleTotal(id)
     for(var i=0;i<singleorder.length;i++){
         singleorder[i].singleTotal=singleTotal[i].total
     }
+    // console.log(orderAddress,"hello");
+    // console.log(orderAddress._id,"hai");
     res.render('admin/admin-orderViewDetails',{admin:true,orderAddress,singleorder})
 }
+
+
+
+
+const shippedOrder=(req,res)=>{
+    let id = req.query.id;
+ adminHelpers.shippedOrder(id).then(()=>{
+
+    res.redirect('/admin/adminOrderList')  
+    })
+    
+
+}
+
+
+
+
+const deliverdOrder=(req,res)=>{
+    let id = req.query.id;
+//   console.log(req.params.id);
+  adminHelpers.deliverdOrder(id).then(()=>{
+    res.redirect('/admin/adminOrderList') 
+  })
+
+
+}
+
+
+
+const cancelOrder=(req,res)=>{
+    let id=req.query.id
+    adminHelpers.cancelOrder(id).then(()=>{
+        res.redirect('/admin/adminOrderList') 
+    })
+}
+
+
+
+
+
 
 
 
@@ -207,5 +252,8 @@ module.exports={
     getEditProduct,
     updateProduct,
     adminOrderList,
-    adminOrderDetails
+    adminOrderDetails,
+    shippedOrder,
+    deliverdOrder,
+    cancelOrder
 }

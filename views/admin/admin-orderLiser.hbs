@@ -41,6 +41,7 @@
                                                 <th>Amount</th>
                                           {{!-- <th>Action</th> --}}
                                                 <th>More</th>
+                                                <th>Delete</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -56,7 +57,7 @@
                                           {{!-- <td class="btn btn-danger" >Cancel</td> --}}
                                          {{!-- <td class="btn btn-primary" ><a href="/orderMoreDetails"></a>Datails</td> --}}
                                                  <td> 
-                                                <a href="/admin/adminOrderDetail/{{this._id}}" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa-solid fa-file-pen"></i></a>
+                                                <a href="/admin/adminOrderDetail?id={{this._id}}" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="fa-solid fa-file-pen"></i></a>
                                                 <td><a  href="" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a></td>
                                                 </td>
             {{!-- /viewOrderDetails?id={{this._id}} --}}

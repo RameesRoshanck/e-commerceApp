@@ -1,7 +1,8 @@
 var express = require('express');
-const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduct, postaddProduct, getUsers,
-     blockUser, unblockUser, getCatagory, postCatagory, deleteCatagory, listAllProduct, 
-     deleteProduct, getEditProduct, updateProduct, adminOrderList, adminOrderDetails} = require('../controllers/adminController');
+const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduct, postaddProduct,
+        getUsers,blockUser, unblockUser, getCatagory, postCatagory, deleteCatagory, listAllProduct, 
+        deleteProduct, getEditProduct, updateProduct, adminOrderList, adminOrderDetails,shippedOrder,
+        deliverdOrder, cancelOrder} = require('../controllers/adminController');
 const { adminAuth } = require('../middleware/middleware');
 var router = express.Router();
 const multer=require("../helpers/multer")
@@ -69,6 +70,22 @@ router.post('/editProduct/:id',multer.array('image',6),updateProduct)
 router.get('/adminOrderList',adminAuth,adminOrderList)
 
 //get order details
-router.get('/adminOrderDetail/:id',adminAuth,adminOrderDetails)
+router.get('/adminOrderDetail',adminAuth,adminOrderDetails)
+
+/* ------------------------- change to order status ------------------------- */
+
+//get order shipped route
+router.get('/shippedOrder',adminAuth,shippedOrder)
+
+//get order delivery router
+router.get('/deliverOrder',adminAuth,deliverdOrder)
+
+//get order cancled router
+router.get('/cancledOrder',adminAuth,cancelOrder)
+
+
+
+
+
 
 module.exports = router;

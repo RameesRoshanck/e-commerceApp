@@ -131,7 +131,7 @@ module.exports={
     })
  },
  adminViewSigleOrder:(orderId)=>{
-    console.log(orderId+"hai");
+    // console.log(orderId+"hai");
     return new Promise(async(resolve,reject)=>{
         let singleOrderDetails=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
             {
@@ -170,7 +170,7 @@ module.exports={
     })
  },
  adminSingleTotal:(orderId)=>{
-    console.log(orderId+"hai");
+    // console.log(orderId+"hai");
     return new Promise(async(resolve,reject)=>{
         let singleOrderTotal=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
             {
@@ -207,6 +207,52 @@ module.exports={
         // console.log(singleOrderTotal);
         resolve(singleOrderTotal)
     })
- }
+ },
+ //update order details in shipped
+   shippedOrder:(shipId)=>{
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(connection.ORDER_COLLECTION)
+        .updateOne({_id:ObjectId(shipId)},
+        {
+            $set:{
+                status:'Shipped'
+            }
+        }).then((data)=>{
+            console.log(data);
+            resolve(data)
+        })
+    })
+  },
+//  update order status in deliver
+deliverdOrder:(delId)=>{
+        return new Promise(async(resolve,reject)=>{
+            await db.get().collection(connection.ORDER_COLLECTION)
+            .updateOne({_id:ObjectId(delId)},
+            {
+                $set:{
+                    status:'Deliverd'
+                }
+            }).then((data)=>{
+                console.log(data);
+                resolve(data)
+            })
+        })
+    },
 
+    // update order status in cancled
+    cancelOrder:(cancelId)=>{
+        return new Promise(async(resolve,reject)=>{
+            await db.get().collection(connection.ORDER_COLLECTION)
+            .updateOne({_id:ObjectId(cancelId)},
+            {
+                $set:{
+                    status:'Cancled'
+                }
+            }).then((data)=>{
+                console.log(data);
+                resolve(data)
+            })
+        })
+    },
+    
 }

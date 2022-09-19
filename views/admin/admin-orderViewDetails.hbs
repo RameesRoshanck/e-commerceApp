@@ -44,8 +44,22 @@
 									<div class="card-body">
 										<div class="d-flex justify-content-between align-items-center">
 											<div>
-                                                <p><b>Bill Amout</b></p>
-												<p class="fs-14 mb-1">Total Amout : <span>{{../singleTotal.[0].total}}</span>   </p>
+                                                <p><b>Update Order Status</b></p>
+												{{!-- <p class="fs-14 mb-1">Total Amout : <span>{{../singleTotal.[0].total}}</span>   </p> --}}
+                                                {{!-- <label for="cars">Choose  the Status:</label>
+
+                                                   <select name="cars" id="status">
+                                                     <option><a href="/admin/shippedOrder/{{orderAddress._id}}"></a>Shipped</option>
+                                                     <option><a href=""></a> Delivered</option>
+                                                     <option><a href=""></a> Canceled</option>
+                                                    
+                                                   </select>  
+                                                     --}}
+                                                     <label for="cars">Current Status:</label> <span>{{orderAddress.status}}</span>
+                                                     <br>
+                                                     <a href="/admin/shippedOrder?id={{orderAddress._id}}" style="background-color:green !important ;" class="btn btn-primary">Shipped</a>
+                                                     <a href="/admin/deliverOrder?id={{orderAddress._id}}" style="background-color:darkblue !important ;" class="btn btn-primary">Delivered</a>
+                                                      <a href="/admin/cancledOrder?id={{orderAddress._id}}" class="btn btn-primary">Cancled</a>
 											</div>
 										</div>
 									</div>
