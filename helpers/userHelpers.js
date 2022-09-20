@@ -8,12 +8,23 @@ const client=require('twilio')(otp.accountId,otp.authToken)
 const Razorpay = require('razorpay');
 const e = require('express')
 const { resolve } = require('path')
+var paypal = require('paypal-rest-sdk');
 
 //instence key in razorepay
 var instance = new Razorpay({
     key_id: 'rzp_test_jwBOFeIIltMxLW',
     key_secret: 'ZrCRgxXVvyEVFG9zxAIMRoX6',
   }); 
+
+
+//  paypal configure
+paypal.configure({
+    'mode': 'sandbox', //sandbox or live
+    'client_id': 'AfJRFLOH88S2_XdlNqnMN4KtWuLjap4HbhKuDR-rFmXpPlyWcmbKzemHRLMRk3SbOJMgkSqFHkbuqZSJ',
+    'client_secret': 'EK9jTN0tG_0zsfWZp25VRBc_apFe01DJXFN3wJ_4bhuN4QchhuV9Av1ruEVioWn8rQ2-cHCM-g7AGTzU'
+  });
+
+
 
 
 
@@ -490,12 +501,15 @@ module.exports={
                     status:status
                 }
                 db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
-                    db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
+                 
+                        // db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
+ 
                     // console.log(result.insertedId,"hai");
                     resolve(result.insertedId)
                 })
-                
             }
+
+                
 
           
         })
@@ -518,7 +532,7 @@ module.exports={
         })
     },
     getOrderDetails:(orderId)=>{
-        console.log(orderId+"hai");
+        // console.log(orderId+"hai");
         return new Promise(async(resolve,reject)=>{
             let orderItem=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
                 {
@@ -549,7 +563,7 @@ module.exports={
                     }
                 }
             ]).toArray()
-            console.log(orderItem);
+            // console.log(orderItem);
             resolve(orderItem)
         })
     },
@@ -576,7 +590,6 @@ module.exports={
     
   verifyPayment:(details)=>{
      return new Promise((resolve,reject)=>{
-        console.log(details['payment'],"payment");
         const crypto = require('crypto');
         let hmac = crypto.createHmac('sha256', 'ZrCRgxXVvyEVFG9zxAIMRoX6');
         hmac.update(details.payment.razorpay_order_id + '|' + details.payment.razorpay_payment_id);
@@ -601,6 +614,51 @@ module.exports={
             resolve()
         })
      })
+  },
+  //
+  generatePaypal:(orderId,totalPrice)=>{
+    return new Promise((resolve,reject)=>{
+            const create_payment_json = {
+              "intent": "sale",
+              "payer": {
+                  "payment_method": "paypal"
+              },
+              "redirect_urls": {
+                  "return_url": "http://localhost:3000/orderSuccess",
+                  "cancel_url": "http://localhost:3000/cancel"
+              },
+              "transactions": [{
+                  "item_list": {
+                      "items": [{
+                          "name": "Red Sox Hat",
+                          "sku": "001",
+                          "price": totalPrice,
+                          "currency": "USD",
+                          "quantity": 1
+                      }]
+                  },
+                  "amount": {
+                      "currency": "USD",
+                      "total": totalPrice
+                  },
+                  "description": "Hat for the best team ever"
+              }]
+          };
+          
+          paypal.payment.create(create_payment_json, function (error, payment) {
+            if (error) {
+                console.log('hai')
+                throw error;
+            } else {
+                console.log(payment,'hai hello');
+              resolve(payment)
+                }
+          });
+          
+
+
+
+    })
   }
      
 }

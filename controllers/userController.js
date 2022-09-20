@@ -220,7 +220,7 @@ const postPlaceOrder=async(req,res)=>{
     let product=await userHelpers.getCartProductList(req.body.userId)
     let totalPrice=await userHelpers.getTotalAmout(req.body.userId)
      userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then((orderId)=>{
-        console.log(req.body.Payment);
+        // console.log(req.body.Payment);
         if(req.body['Payment']==='cod'){
             res.json({codSuccess:true})
         }else if(req.body['Payment']==='razorpay'){
@@ -228,17 +228,22 @@ const postPlaceOrder=async(req,res)=>{
               response.razorpay=true
                 res.json(response)
           })
-        }else{
-            console.log("error");
+        }else if(req.body['Payment']==='paypal'){
+            userHelpers.generatePaypal(orderId,totalPrice).then((response)=>{
+                response.paypal=true
+                console.log(response.paypal,'sdfsadfsdfsdf');
+                res.json(response)
+            })
         }
 
         })
     } 
 
 const varifyPayment=(req,res)=>{
-     console.log(req.body);
+    //  console.log(req.body,"hai hello");
      userHelpers.verifyPayment(req.body).then(()=>{
         userHelpers.ChangePaymentStatus(req.body.order.receipt).then(()=>{
+
             console.log('payment is successfull');
             res.json({status:true})
         })
@@ -280,21 +285,33 @@ const postAddPlaceOrderAddress=(req,res)=>{
 
  
 //order sucdess page
-const orderSuccess=(req,res)=>{
-    res.render('user/user-orderSuccess',{user:req.session.user})
+const orderSuccess=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
+    res.render('user/user-orderSuccess',{user:req.session.user,cartCount})
 }
 
 //orders list page
 const orderDetails=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
     let order=await userHelpers.getUserOders(req.session.user._id)   
-    res.render('user/user-ordersList',{user:req.session.user,order})
+    res.render('user/user-ordersList',{user:req.session.user,order,cartCount})
 }
 
 //order more details
 const orderMoreDetails=async(req,res)=>{
+    let cartCount=null;
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+    }
     // console.log(req.query.id);
     let order=await userHelpers.getOrderDetails(req.query.id)
-    res.render('user/user-orderMoreDetails',{order,user:req.session.user})
+    res.render('user/user-orderMoreDetails',{order,user:req.session.user,cartCount})
 }
 
 
