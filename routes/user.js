@@ -4,7 +4,7 @@ const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
         getProducts,addToCart, logout, changeProductQuantity, deleteCartItem,
         placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
         updateUserAddress,deleteUserAddress, getAddPlaceOrderAddress, postAddPlaceOrderAddress,
-        postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails} = require('../controllers/userController');
+        postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails, varifyPayment} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -51,6 +51,12 @@ router.post('/deleteCartItems',auth,deleteCartItem)
 // checkout page get & post router
 router.get('/placeOrder',auth,placeOrder)
 router.post('/placeOrder',auth,postPlaceOrder)
+
+
+// razorpay varify-payment router
+router.post('/varify-payment',auth,varifyPayment)
+
+
 
 //checkout add user address
 router.get('/AddPlaceOrderAddress',auth,getAddPlaceOrderAddress)

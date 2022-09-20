@@ -204,7 +204,10 @@ const placeOrder=async(req,res)=>{
     }
     let userDetails=await userHelpers.getuserDetails(req.session.user._id)
     let products= await userHelpers.getCartProduct(req.session.user._id)
-    let total=await userHelpers.getTotalAmout(req.session.user._id)
+    let total=0
+    if(products.length>0){
+     total=await userHelpers.getTotalAmout(req.session.user._id)
+    }
     let productTotal=await userHelpers.getProductTotal(req.session.user._id)
     for(var i=0;i<products.length;i++){
         products[i].productTotal=productTotal[i].total
@@ -216,14 +219,46 @@ const placeOrder=async(req,res)=>{
 const postPlaceOrder=async(req,res)=>{
     let product=await userHelpers.getCartProductList(req.body.userId)
     let totalPrice=await userHelpers.getTotalAmout(req.body.userId)
-     userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then(()=>{
-         res.json({status:true})
+     userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then((orderId)=>{
+        console.log(req.body.Payment);
+        if(req.body['Payment']==='cod'){
+            res.json({codSuccess:true})
+        }else if(req.body['Payment']==='razorpay'){
+          userHelpers.generateRazorepy(orderId,totalPrice).then((response)=>{
+              response.razorpay=true
+                res.json(response)
+          })
+        }else{
+            console.log("error");
+        }
+
         })
     } 
 
+const varifyPayment=(req,res)=>{
+     console.log(req.body);
+     userHelpers.verifyPayment(req.body).then(()=>{
+        userHelpers.ChangePaymentStatus(req.body.order.receipt).then(()=>{
+            console.log('payment is successfull');
+            res.json({status:true})
+        })
+     }).catch((err)=>{
+        console.log(err);
+        res.json({status:false})
+     })
+}
 
 
-//add place order address page get
+
+
+
+
+
+
+
+
+
+//add address place order  page get
 const getAddPlaceOrderAddress=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -363,6 +398,7 @@ module.exports= {
     deleteCartItem,
     placeOrder,
     postPlaceOrder,
+    varifyPayment,
     getAddPlaceOrderAddress,
     postAddPlaceOrderAddress,
     orderSuccess,

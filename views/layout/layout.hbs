@@ -50,6 +50,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!--ajax-->
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
       {{/if}}
 </head>
 
@@ -142,20 +143,72 @@
     <!-- Main JS File -->
     <script src="userSide/assets/js/main.js"></script>
     <script src="userSide/assets/js/demos/demo-4.js"></script>
+   <!--  script link in razorpay -->
+   
     <script>
 	$('#checkout-form').submit((e)=>{
 		e.preventDefault()
 		$.ajax({
-			url:'/placeOrder',
+			url:'/placeOrder', 
 			method:'post',
-			data:$('#checkout-form').serialize(),
+			data: $('#checkout-form').serialize(),
 			success:(response)=>{
-				if(response.status){
+				if(response.codSuccess){
                     location.href='/orderSuccess'
+                }else if(response.razorpay){
+                  razorpayPayment(response)
                 }
 			}
 		})
 	})
+
+    function razorpayPayment(order){
+        var options = {
+    "key": "rzp_test_jwBOFeIIltMxLW", // Enter the Key ID generated from the Dashboard
+    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Lapmart",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+
+        verifyPayment(response,order)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9999999999"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+   };
+   var rzp1 = new window.Razorpay(options);
+   rzp1.open();
+    }
+
+    function verifyPayment(payment,order){
+        console.log(payment,"hai",order,"hai")
+        $.ajax({
+            url:'/varify-payment',
+            data:{
+                payment,
+                order
+            },
+            method:'post',
+            success:(response)=>{
+                if(response.status){
+                   location.href='/orderSuccess' 
+                }else{
+                    alert("payment failed")
+                }
+            }
+        })
+    }
    </script>
  
 

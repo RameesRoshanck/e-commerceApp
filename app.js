@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const hbs = require("express-handlebars");
 const db=require("./config/connection")
 const session=require('express-session')
+const Razorpay = require('razorpay');
 
 //set in router path
 var userRouter = require("./routes/user");

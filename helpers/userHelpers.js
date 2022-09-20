@@ -5,6 +5,17 @@ const otp=require('../config/otpLogin')
 const { ObjectId } = require('mongodb')
 const { response } = require('express')
 const client=require('twilio')(otp.accountId,otp.authToken)
+const Razorpay = require('razorpay');
+const e = require('express')
+const { resolve } = require('path')
+
+//instence key in razorepay
+var instance = new Razorpay({
+    key_id: 'rzp_test_jwBOFeIIltMxLW',
+    key_secret: 'ZrCRgxXVvyEVFG9zxAIMRoX6',
+  }); 
+
+
 
 module.exports={
     doSignup:(userData)=>{
@@ -480,7 +491,8 @@ module.exports={
                 }
                 db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
                     db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
-                    resolve()
+                    // console.log(result.insertedId,"hai");
+                    resolve(result.insertedId)
                 })
                 
             }
@@ -540,5 +552,56 @@ module.exports={
             console.log(orderItem);
             resolve(orderItem)
         })
-    }
+    },
+    // generate razopay 
+    generateRazorepy:(orderId,totalPrice)=>{
+        return new Promise((resolve,reject)=>{
+            var options = {
+                amount: totalPrice * 100,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt:"" +orderId
+              };
+              instance.orders.create(options, function(err, order) {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("new order :",order);
+                    resolve(order)
+                }
+            });
+        })
+    },
+
+//verifaying to razorpay payment
+    
+  verifyPayment:(details)=>{
+     return new Promise((resolve,reject)=>{
+        console.log(details['payment'],"payment");
+        const crypto = require('crypto');
+        let hmac = crypto.createHmac('sha256', 'ZrCRgxXVvyEVFG9zxAIMRoX6');
+        hmac.update(details.payment.razorpay_order_id + '|' + details.payment.razorpay_payment_id);
+        hmac=hmac.digest('hex')
+        // console.log(hmac,'SDJFKSLADJFKSADFKJSADFH');
+        if(hmac==details.payment.razorpay_signature){
+            resolve()
+        }else{
+            reject('didnt matching hmac == razorpay signature')
+        }
+    })
+  },
+  // change payment status
+  ChangePaymentStatus:(orderId)=>{
+     return new Promise((resolve,reject)=>{
+        db.get().collection(connection.ORDER_COLLECTION).updateOne({_id:ObjectId(orderId)},
+        {
+            $set:{
+                status:'placed'
+            }
+        }).then((result)=>{
+            resolve()
+        })
+     })
+  }
+     
 }
+
