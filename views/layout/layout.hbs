@@ -160,6 +160,7 @@
                 }else if(response.paypal){
                      for(let i = 0;i < response.links.length;i++){
                     if(response.links[i].rel === 'approval_url'){
+                        alert("hai")
                      location.href=(response.links[i].href);
         }
       }

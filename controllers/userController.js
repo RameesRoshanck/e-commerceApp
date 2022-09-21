@@ -219,30 +219,75 @@ const placeOrder=async(req,res)=>{
 const postPlaceOrder=async(req,res)=>{
     let product=await userHelpers.getCartProductList(req.body.userId)
     let totalPrice=await userHelpers.getTotalAmout(req.body.userId)
-     userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then((orderId)=>{
-        // console.log(req.body.Payment);
-        if(req.body['Payment']==='cod'){
+    // console.log(req.body.Payment);
+    if(req.body['Payment']==='cod'){
+            userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then((orderId)=>{
             res.json({codSuccess:true})
-        }else if(req.body['Payment']==='razorpay'){
+
+        })
+    }
+    else if(req.body['Payment']==='razorpay'){
+        userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
           userHelpers.generateRazorepy(orderId,totalPrice).then((response)=>{
               response.razorpay=true
                 res.json(response)
           })
-        }else if(req.body['Payment']==='paypal'){
+        })
+    }
+    else if(req.body['Payment']==='paypal'){
+        userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
             userHelpers.generatePaypal(orderId,totalPrice).then((response)=>{
                 response.paypal=true
                 console.log(response.paypal,'sdfsadfsdfsdf');
                 res.json(response)
             })
-        }
-
         })
+        }
     } 
+
+
+
+    // const postPlaceOrder=async(req,res)=>{
+    //     let product=await userHelpers.getCartProductList(req.body.userId)
+    //     let totalPrice=await userHelpers.getTotalAmout(req.body.userId)
+    //      userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then((orderId)=>{
+    //         // console.log(req.body.Payment);
+    //         if(req.body['Payment']==='cod'){
+    //             res.json({codSuccess:true})
+    //         }else if(req.body['Payment']==='razorpay'){
+    //           userHelpers.generateRazorepy(orderId,totalPrice).then((response)=>{
+    //               response.razorpay=true
+    //                 res.json(response)
+    //           })
+    //         }else if(req.body['Payment']==='paypal'){
+    //             userHelpers.generatePaypal(orderId,totalPrice).then((response)=>{
+    //                 response.paypal=true
+    //                 console.log(response.paypal,'sdfsadfsdfsdf');
+    //                 res.json(response)
+    //             })
+    //         }
+    
+    //         })
+    //     } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const varifyPayment=(req,res)=>{
     //  console.log(req.body,"hai hello");
      userHelpers.verifyPayment(req.body).then(()=>{
-        userHelpers.ChangePaymentStatus(req.body.order.receipt).then(()=>{
+        userHelpers.ChangePaymentStatus(req.body.order.receipt,req.session.user._id).then(()=>{
 
             console.log('payment is successfull');
             res.json({status:true})
@@ -282,6 +327,22 @@ const postAddPlaceOrderAddress=(req,res)=>{
 
 
 
+//pay pal order success
+const paypalSuccess=(req,res)=>{
+    // console.log(req.params.id,"order id");
+    let orderId=req.params.id;
+    userHelpers.ChangePaymentStatus(orderId,req.session.user._id).then(()=>{
+
+        console.log('payment is successfull');
+        res.redirect('/orderSuccess')
+    })
+}
+
+
+
+
+
+
 
  
 //order sucdess page
@@ -290,7 +351,9 @@ const orderSuccess=async(req,res)=>{
     if(req.session.loggedIn){
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
+    
     res.render('user/user-orderSuccess',{user:req.session.user,cartCount})
+
 }
 
 //orders list page
@@ -418,6 +481,7 @@ module.exports= {
     varifyPayment,
     getAddPlaceOrderAddress,
     postAddPlaceOrderAddress,
+    paypalSuccess,
     orderSuccess,
     orderDetails,
     orderMoreDetails,

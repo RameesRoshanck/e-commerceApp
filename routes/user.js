@@ -4,7 +4,7 @@ const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
         getProducts,addToCart, logout, changeProductQuantity, deleteCartItem,
         placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
         updateUserAddress,deleteUserAddress, getAddPlaceOrderAddress, postAddPlaceOrderAddress,
-        postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails, varifyPayment} = require('../controllers/userController');
+        postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails, varifyPayment, paypalSuccess} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -61,6 +61,10 @@ router.post('/varify-payment',auth,varifyPayment)
 //checkout add user address
 router.get('/AddPlaceOrderAddress',auth,getAddPlaceOrderAddress)
 router.post('/AddPlaceOrderAddress',auth,postAddPlaceOrderAddress)
+
+
+//order succes in paypal
+router.get('/paypalsuccess/:id',auth,paypalSuccess)
 
 // order success page
 router.get('/orderSuccess',auth,orderSuccess)

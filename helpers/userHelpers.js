@@ -474,7 +474,11 @@ module.exports={
             })
         })
     },
-    //place order
+
+    /* -------------------------------------------------------------------------- */
+    /*        checkout page  and insert or create order collection and Cod        */
+    /* -------------------------------------------------------------------------- */
+
     placeOrder:(order,proAdrress,products,Total)=>{
         console.log(proAdrress);
         // Total=parseInt(Total)
@@ -502,7 +506,7 @@ module.exports={
                 }
                 db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
                  
-                        // db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
+                        db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
  
                     // console.log(result.insertedId,"hai");
                     resolve(result.insertedId)
@@ -514,6 +518,52 @@ module.exports={
           
         })
     },
+
+   /* -------------------------------------------------------------------------- */
+   /*                create the order collection in online payment               */
+   /* -------------------------------------------------------------------------- */
+
+   onlinePayment:(order,proAdrress,products,Total)=>{
+    console.log(proAdrress);
+    // Total=parseInt(Total)
+    return new Promise(async(resolve,reject)=>{
+        //  console.log(order);
+
+         let getAddress=await db.get().collection(connection.ADDRESS_COLLECTION).findOne({_id:ObjectId(proAdrress)})
+        console.log(getAddress);
+        
+        if(getAddress){
+            let dt=new Date
+            let status=order['Payment']==='cod'?'placed':'pending'
+            let orderObj={
+                delivaryDtails:{
+                     name:getAddress.name,
+                     address:getAddress.address,
+                     landmark:getAddress.landmark
+                },
+                userId:ObjectId(order.userId),
+                paymentMethod:order['Payment'],
+                product:products,
+                date:(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear()),
+                total:Total,
+                status:status
+            }
+            db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
+               // console.log(result.insertedId,"hai");
+                resolve(result.insertedId)
+            })
+        }
+
+            
+
+      
+    })
+},
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                           get cart products only                           */
+    /* -------------------------------------------------------------------------- */
     getCartProductList:(userId)=>{
       return new Promise(async(resolve,reject)=>{
         let cart=await db.get().collection(connection.CART_COLLECTION)
@@ -522,6 +572,12 @@ module.exports={
         // console.log(cart.products);
       })
     },
+
+    /* -------------------------------------------------------------------------- */
+    /*                        get order in order collection                       */
+    /* -------------------------------------------------------------------------- */
+
+
     getUserOders:(userId)=>{
         // console.log(userId);
         return new Promise(async(resolve,reject)=>{
@@ -531,6 +587,11 @@ module.exports={
             // console.log(order);
         })
     },
+
+    /* -------------------------------------------------------------------------- */
+    /*    gnarate user order details and to get in products                       */
+    /* -------------------------------------------------------------------------- */
+
     getOrderDetails:(orderId)=>{
         // console.log(orderId+"hai");
         return new Promise(async(resolve,reject)=>{
@@ -567,7 +628,11 @@ module.exports={
             resolve(orderItem)
         })
     },
-    // generate razopay 
+
+ /* -------------------------------------------------------------------------- */
+ /*                              generate razopay                              */
+ /* -------------------------------------------------------------------------- */
+
     generateRazorepy:(orderId,totalPrice)=>{
         return new Promise((resolve,reject)=>{
             var options = {
@@ -586,7 +651,9 @@ module.exports={
         })
     },
 
-//verifaying to razorpay payment
+/* -------------------------------------------------------------------------- */
+/*                       verifaying to razorpay payment                       */
+/* -------------------------------------------------------------------------- */
     
   verifyPayment:(details)=>{
      return new Promise((resolve,reject)=>{
@@ -602,8 +669,12 @@ module.exports={
         }
     })
   },
-  // change payment status
-  ChangePaymentStatus:(orderId)=>{
+
+  /* -------------------------------------------------------------------------- */
+  /*                    change payment status online payment status             */
+  /* -------------------------------------------------------------------------- */
+  
+  ChangePaymentStatus:(orderId,userId)=>{
      return new Promise((resolve,reject)=>{
         db.get().collection(connection.ORDER_COLLECTION).updateOne({_id:ObjectId(orderId)},
         {
@@ -611,11 +682,16 @@ module.exports={
                 status:'placed'
             }
         }).then((result)=>{
+            db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(userId)})
             resolve()
         })
      })
   },
-  //
+
+  /* -------------------------------------------------------------------------- */
+  /*                              genarate pay pal                              */
+  /* -------------------------------------------------------------------------- */
+
   generatePaypal:(orderId,totalPrice)=>{
     return new Promise((resolve,reject)=>{
             const create_payment_json = {
@@ -624,7 +700,7 @@ module.exports={
                   "payment_method": "paypal"
               },
               "redirect_urls": {
-                  "return_url": "http://localhost:3000/orderSuccess",
+                  "return_url": `http://localhost:3000/paypalsuccess/${orderId}`,
                   "cancel_url": "http://localhost:3000/cancel"
               },
               "transactions": [{
@@ -654,10 +730,6 @@ module.exports={
               resolve(payment)
                 }
           });
-          
-
-
-
     })
   }
      
