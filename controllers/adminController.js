@@ -175,7 +175,11 @@ const adminOrderList=(req,res)=>{
 
 
 
-//get more details product list
+/* -------------------------------------------------------------------------- */
+/*                        get more details product list                       */
+/* -------------------------------------------------------------------------- */
+
+
 const adminOrderDetails=async(req,res)=>{
     let id=req.query.id
     // console.log(id,"hai hao");
@@ -191,7 +195,9 @@ const adminOrderDetails=async(req,res)=>{
 }
 
 
-
+/* -------------------------------------------------------------------------- */
+/*                      to change order status to shipped                     */
+/* -------------------------------------------------------------------------- */
 
 const shippedOrder=(req,res)=>{
     let id = req.query.id;
@@ -204,18 +210,24 @@ const shippedOrder=(req,res)=>{
 }
 
 
-
+/* -------------------------------------------------------------------------- */
+/*                     to change order status to delivered                    */
+/* -------------------------------------------------------------------------- */
 
 const deliverdOrder=(req,res)=>{
     let id = req.query.id;
 //   console.log(req.params.id);
   adminHelpers.deliverdOrder(id).then(()=>{
-    res.redirect('/admin/adminOrderList') 
+    res.redirect('admin/adminOrderList') 
   })
 
 
 }
 
+
+/* -------------------------------------------------------------------------- */
+/*                      to change order status to cancle                      */
+/* -------------------------------------------------------------------------- */
 
 
 const cancelOrder=(req,res)=>{
@@ -226,7 +238,28 @@ const cancelOrder=(req,res)=>{
 }
 
 
+/* -------------------------------------------------------------------------- */
+/*                              get sales report                              */
+/* -------------------------------------------------------------------------- */
 
+const salesReport=(req,res)=>{
+    res.render('admin/admin-salesReport',{admin:true})
+}
+
+
+// view day sales report
+const daySalesReport=async(req,res)=>{
+    // console.log(req.body.day);
+    let dt=req.body.day;
+    let daySaleslist=await adminHelpers.daySalesReport(dt)
+    let sum=0;
+    for(let i=0;i<daySaleslist.length;i++){
+        sum=sum+daySaleslist[i].quantity
+    }
+    console.log(sum,"how are you");
+    console.log(daySaleslist);
+    res.render('admin/admin-daySalesReport',{admin:true,daySaleslist})
+}
 
 
 
@@ -255,5 +288,7 @@ module.exports={
     adminOrderDetails,
     shippedOrder,
     deliverdOrder,
-    cancelOrder
+    cancelOrder,
+    salesReport,
+    daySalesReport
 }

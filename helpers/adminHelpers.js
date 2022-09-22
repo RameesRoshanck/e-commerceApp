@@ -254,5 +254,78 @@ deliverdOrder:(delId)=>{
             })
         })
     },
+
+    /* -------------------------------------------------------------------------- */
+    /*                                Sales report                                */
+    /* -------------------------------------------------------------------------- */
+
+
+    // genarate to day by day sales report
+    daySalesReport:(dt)=>{
+        console.log(dt,"hia");
+        return new Promise(async(resolve,reject)=>{
+            let dayCollection=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+                {
+                    $match:{
+                        status:{$nin:['Cancled']}
+                    }
+                },
+                {
+                    $unwind:'$product'
+                },
+                {
+                    $project:{
+                        total:1,
+                        date:1,
+                        status:1,
+                        paymentMethod:1,
+                        _id:1,
+                        item:'$product.item',
+                        quantity:"$product.quantity"
+                    }
+                },
+                {
+                    $lookup:{
+                        from:connection.PRODUCT_COLLECTION,
+                        localField:'item',
+                        foreignField:'_id',
+                        as:'product'
+                    }
+                },
+                {
+                    $project:{
+                        date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                        total:1,
+                        status:1,
+                        item:1,
+                        quantity:1,
+                        _id:1,
+                        paymentMethod:1,
+                        product:{$arrayElemAt:['$product',0]}
+                        
+                    }
+                },
+                {
+                  $match:{
+                    date:dt
+                  }
+                },
+                {
+                    $group:{
+                        _id:"$item",
+                        quantity:{$sum:'$quantity'},
+                        totalAmount:{$sum:{$multiply:['$quantity','$product.price']}},
+                        name: { "$first": "$product.name" },
+                        date: { "$first": "$date" },
+                        price: { "$first": "$product.price" }
+                    }
+                }
+            ]).toArray()
+            // console.log(dayCollection);
+            resolve(dayCollection)
+        })
+    }
+
+
     
 }

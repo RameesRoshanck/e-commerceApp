@@ -489,7 +489,7 @@ module.exports={
             console.log(getAddress);
             
             if(getAddress){
-                let dt=new Date
+               
                 let status=order['Payment']==='cod'?'placed':'pending'
                 let orderObj={
                     delivaryDtails:{
@@ -500,7 +500,7 @@ module.exports={
                     userId:ObjectId(order.userId),
                     paymentMethod:order['Payment'],
                     product:products,
-                    date:(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear()),
+                    date:new Date(),
                     total:Total,
                     status:status
                 }
@@ -533,7 +533,6 @@ module.exports={
         console.log(getAddress);
         
         if(getAddress){
-            let dt=new Date
             let status=order['Payment']==='cod'?'placed':'pending'
             let orderObj={
                 delivaryDtails:{
@@ -544,7 +543,7 @@ module.exports={
                 userId:ObjectId(order.userId),
                 paymentMethod:order['Payment'],
                 product:products,
-                date:(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear()),
+                date:new Date(),
                 total:Total,
                 status:status
             }

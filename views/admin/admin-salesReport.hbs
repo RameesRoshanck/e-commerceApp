@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Acara - Ticketing Bootstrap Admin Dashboard</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/adminSide/assets/images/favicon.png">
+    <!-- Custom Stylesheet -->
+	<link href="/adminSide/assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="/adminSide/assets/css/style.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+          {{>admin-header}}
+	    {{>admin-sideNavbar}}
+        <div class="content-body">
+            <div class="container-fluid">
+                <div class="row">
+					<div class="col-xl-6 col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title"> Day by Day sales Report</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                    <form class="form-inline" action="/admin/daysalesreport" method="post">
+                                        <div class="form-group mx-sm-3 mb-2">
+                                            <input type="date" name="day" class="form-control" placeholder="Date">
+                                        </div>
+                                         <button class="btn btn-primary mb-2">View the sales Report</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>	
+                    <div class="col-xl-6 col-lg-12">
+                        <div class="card" style="    text-align: center;">
+                            <div class="card-header">
+                                <h4 class="card-title">Monthly sales Report</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                    <form class="form-inline">
+                                        <div class="form-group mx-sm-3 mb-2"></div>
+                                       <th scope="col">Select Month:  &nbsp;</th>
+                                                    <th scope="col">
+                                                        <select name="month" id="cars">
+                                                            <option value="01">January</option>
+                                                            <option value="02">Feb</option>
+                                                            <option value="03">Mar</option>
+                                                            <option value="04">Apr</option>
+                                                            <option value="05">May</option>
+                                                            <option value="06">Jun</option>
+                                                            <option value="07">Jul</option>
+                                                            <option value="08">Aug</option>
+                                                            <option value="09">Sep</option>
+                                                            <option value="10">Oct</option>
+                                                            <option value="11">Nov</option>
+                                                            <option value="12">Dec</option>
+                                                        </select>
+                                                         &nbsp;
+                                                         <select name="year" id="cars">
+                                                            <option value="2022">2022</option>
+                                                            <option value="2021">2021</option>
+                                                            <option value="2020">2020</option>
+                                                            <option value="2019">2019</option>
+                                                            <option value="2018">2018</option>
+                                                            <option value="2017">2017</option>
+                                                            <option value="2016">2016</option>
+                                                            <option value="2015">2015</option>
+                                                            <option value="2014">2014</option>
+                                                            <option value="201">2013</option>
+                                                            <option value="2012">2012</option>
+                                                            <option value="2011">2011</option>
+                                                        </select>
+                                                    </th>
+                                                    </div>
+                                                    <br>
+                                         &nbsp;<button class="btn btn-primary mb-2">&nbsp; &nbsp;  View the sales Report</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>	
+                    <div class="col-xl-6 col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">yearly sales Report</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                    <form class="form-inline">
+                                        <div class="form-group mx-sm-3 mb-2">
+                                            <input type="date" class="form-control" placeholder="Date">
+                                        </div>
+                                        <button class="btn btn-primary mb-2">View the sales Report</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>	
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Required vendors -->
+    <script src="/adminSide/assets//vendor/global/global.min.js"></script>
+	<script src="/adminSide/assets//vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/adminSide/assets//js/custom.min.js"></script>
+	<script src="/adminSide/assets//js/deznav-init.js"></script>
