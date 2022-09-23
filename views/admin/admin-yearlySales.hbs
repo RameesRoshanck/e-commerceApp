@@ -46,6 +46,14 @@
                                                 <td>{{this.total}}</td>
                                             </tr>
                                             {{/each}}
+                                              <tr>
+                                                    {{#each countOrder }}
+                                                <td><b>Total order :{{this.date}}</b></td>
+                                                {{/each}}
+                                                <td></td>
+                                                <td><b>Total Orders:{{this.order}}</b></td>
+                                                <td><b>total Price:{{this.TotalPrice}}</b></td>
+                                            </tr>
                                       </tbody>
                                     </table>
                                 </div>

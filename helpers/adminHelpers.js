@@ -260,7 +260,8 @@ deliverdOrder:(delId)=>{
     /* -------------------------------------------------------------------------- */
 
 
-    // genarate to day by day sales report
+    /* ----------------- // genarate to day by day sales report ----------------- */
+    
     daySalesReport:(dt)=>{
         console.log(dt,"hia");
         return new Promise(async(resolve,reject)=>{
@@ -326,7 +327,8 @@ deliverdOrder:(delId)=>{
         })
     },
 
-    //count order
+    /* ------------------------------ //count order ----------------------------- */
+
     countOrder:(dt)=>{
         return new Promise(async(resolve,reject)=>{
             let countOrder=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
@@ -354,10 +356,13 @@ deliverdOrder:(delId)=>{
         })
     },
 
+  /* -------------------------------------------------------------------------- */
+  /*                                monthlySalesReport                          */
+  /* -------------------------------------------------------------------------- */
 
 
+    /* ------------------- //gemerated by monthly sales Report ------------------ */
 
-    //gemerated by monthly sales Report
     monthlySalesReport:(dt)=>{
         console.log(dt);
         return new Promise(async(resolve,reject)=>{
@@ -395,7 +400,45 @@ deliverdOrder:(delId)=>{
         })
     },
 
-// generate yearly report
+    
+    
+    /* ------------------ //cout total order count in maonthly ------------------ */
+
+    countOrdermonthly:(dt)=>{
+        return new Promise(async(resolve,reject)=>{
+            let countOrder=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+                {
+                    $match:{
+                        status:{$nin:['Cancled']}
+                    }
+                },
+                {
+                    $project:{
+                        _id:1,
+                        date: { $dateToString: { format: "%Y-%m", date: "$date" } },
+                    }
+                },
+                {
+                    $match:{
+                        date:dt
+                    }
+                },
+                {
+                    $count:'date'
+                }
+            ]).toArray()
+            resolve(countOrder)
+        })
+    },
+
+
+ /* -------------------------------------------------------------------------- */
+ /*                           sales report in yearlly                          */
+ /* -------------------------------------------------------------------------- */
+
+
+
+/* ------------------------ // generate yearly report ----------------------- */
 
 yearlySales:(dt)=>{
     return new Promise(async(resolve,reject)=>{
@@ -431,6 +474,45 @@ yearlySales:(dt)=>{
         // console.log(yearOrder,'haisdjhfjaskdhfjaskdfhsak');
         resolve(yearOrder)
     })
+},
+
+
+/* ------------------------ // total count in yearlly ----------------------- */
+
+countOrderYearlly:(dt)=>{
+    return new Promise(async(resolve,reject)=>{
+        let count=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+            {
+                $match:{
+                    status:{$nin:['Cancled']}
+                }
+            },
+            {
+                $project:{
+                    _id:1,
+                    date: { $dateToString: { format: "%Y", date: "$date" } },
+                }
+            },
+            {
+                $match:{
+                    date:dt
+                }
+            },
+            {
+                $count:'date'
+            }
+        ]).toArray()
+        // console.log(count,"do you kanow how much i suffing here")
+        resolve(count)
+    })
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                        end the sales report section                        */
+    /* -------------------------------------------------------------------------- */
+
+
+
 }
 
     

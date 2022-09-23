@@ -242,12 +242,19 @@ const cancelOrder=(req,res)=>{
 /*                              get sales report                              */
 /* -------------------------------------------------------------------------- */
 
+
+
+/* --------------------- //get or view sales report page -------------------- */
+
 const salesReport=(req,res)=>{
     res.render('admin/admin-salesReport',{admin:true})
 }
 
 
-// view day sales report
+
+
+/* ------------------------ // view day sales report ------------------------ */
+
 const daySalesReport=async(req,res)=>{
     // console.log(req.body.day);
     let dt=req.body.day;
@@ -268,31 +275,58 @@ const daySalesReport=async(req,res)=>{
 
 
 
-// view monthly sales report
+
+
+/* ---------------------- // view monthly sales report ---------------------- */
+
 const monthlySalesReport=async(req,res)=>{
     let dt=req.body.month;
     let monthSale=await adminHelpers.monthlySalesReport(dt)
     let quantity=0;
-    for(let i=0;i<monthSale;i++){
-         quantity=quantity+monthSale[i].quantity
+    for(let i=0;i<monthSale.length;i++){
+         quantity=quantity+monthSale[i].count
     }
+ 
     let orderCount=0;
-    for(let i=0;i<monthSale;i++){
-         orderCount=quantity+orderCount[i].totalAmount
+    for(let i=0;i<monthSale.length;i++){
+         orderCount=orderCount+monthSale[i].total
     }
-//   console.log(monthSale);
-let countOrder=await adminHelpers.countOrder(dt)
+
+    let countOrder=await adminHelpers.countOrdermonthly(dt) 
+    // console.log(countOrder);
+
     res.render('admin/admin-monthlySales',{admin:true,monthSale,countOrder,quantity,orderCount})
 }
 
+
+ /* -------------------------- yearlly sales report -------------------------- */
+
 const yearllySaleReporter=async(req,res)=>{
-    // console.log(req.body);
     let dt=req.body.year;
    let yearlySale=await adminHelpers.yearlySales(dt)
-   res.render('admin/admin-yearlySales',{admin:true,yearlySale})
+
+   let order=0;
+   for(var i=0;i<yearlySale.length;i++){
+    order=order+yearlySale[i].count
+   }
+
+   let TotalPrice=0;
+   for(var i=0;i<yearlySale.length;i++){
+    TotalPrice=TotalPrice+yearlySale[i].total
+   }
+
+//    console.log(yearlySale);
+//    console.log(TotalPrice,'hai hello');
+//    console.log(order,'do you know how much i suffer');
+
+let countOrder=await adminHelpers.countOrderYearlly(dt) 
+   res.render('admin/admin-yearlySales',{admin:true,yearlySale,order,TotalPrice,countOrder})
 }
 
 
+/* -------------------------------------------------------------------------- */
+/*                            end the sales Report                            */
+/* -------------------------------------------------------------------------- */
 
 module.exports={
     adminHomeRoute,
