@@ -256,14 +256,41 @@ const daySalesReport=async(req,res)=>{
     for(let i=0;i<daySaleslist.length;i++){
         sum=sum+daySaleslist[i].quantity
     }
-    console.log(sum,"how are you");
-    console.log(daySaleslist);
-    res.render('admin/admin-daySalesReport',{admin:true,daySaleslist})
+   let totalPrice=0
+   for(let i=0;i<daySaleslist.length;i++){
+    totalPrice=totalPrice+daySaleslist[i].totalAmount   
+   }
+   console.log(daySaleslist);
+    let countOrder=await adminHelpers.countOrder(dt)
+    // console.log(countOrder);
+    res.render('admin/admin-daySalesReport',{admin:true,daySaleslist,countOrder,sum,totalPrice})
 }
 
 
 
+// view monthly sales report
+const monthlySalesReport=async(req,res)=>{
+    let dt=req.body.month;
+    let monthSale=await adminHelpers.monthlySalesReport(dt)
+    let quantity=0;
+    for(let i=0;i<monthSale;i++){
+         quantity=quantity+monthSale[i].quantity
+    }
+    let orderCount=0;
+    for(let i=0;i<monthSale;i++){
+         orderCount=quantity+orderCount[i].totalAmount
+    }
+//   console.log(monthSale);
+let countOrder=await adminHelpers.countOrder(dt)
+    res.render('admin/admin-monthlySales',{admin:true,monthSale,countOrder,quantity,orderCount})
+}
 
+const yearllySaleReporter=async(req,res)=>{
+    // console.log(req.body);
+    let dt=req.body.year;
+   let yearlySale=await adminHelpers.yearlySales(dt)
+   res.render('admin/admin-yearlySales',{admin:true,yearlySale})
+}
 
 
 
@@ -290,5 +317,7 @@ module.exports={
     deliverdOrder,
     cancelOrder,
     salesReport,
-    daySalesReport
+    daySalesReport,
+    monthlySalesReport,
+    yearllySaleReporter
 }

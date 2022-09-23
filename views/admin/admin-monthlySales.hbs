@@ -32,25 +32,18 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Product Name</th>
                                                 <th>Date</th>
-                                                <th>price</th>
-                                                <th>quantity</th>
-                                                <th>Total price</th>
-												<th>stock</th>
+                                                <th>order</th>
+                                                <th>Amount</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{#each daySaleslist }}
+                                            {{#each monthSale}}
                                             <tr>
                                                 <td>{{@index}}</td>
-                                                <td>{{this.name}}</td>
-                                                <td>{{this.date}}</td>
-                                                <td>{{this.price}}</td>
-                                                <td>{{this.quantity}}</td>
-                                                <td>{{this.totalAmount}}</td>
-                                                <td>{{this.stock}}</td>
-                                               
+                                                <td>{{this._id}}</td>
+                                                <td>{{this.count}}</td>
+                                                <td>{{this.total}}</td>
                                             </tr>
                                             {{/each}}
                                              
@@ -59,13 +52,9 @@
                                                 <td><b>Total order :{{this.date}}</b></td>
                                                 {{/each}}
                                                 <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td><b>Total Quantity:{{this.quantity}}</b></td>
-                                                <td><b>total Price:{{this.totalPrice}}</b></td>
+                                                <td><b>Total Quantity:{{this.sum}}</b></td>
+                                                <td><b>total Price:{{this.orderCount}}</b></td>
                                             </tr>
-
                                       </tbody>
                                     </table>
                                 </div>

@@ -2,7 +2,7 @@ var express = require('express');
 const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduct, postaddProduct,
         getUsers,blockUser, unblockUser, getCatagory, postCatagory, deleteCatagory, listAllProduct, 
         deleteProduct, getEditProduct, updateProduct, adminOrderList, adminOrderDetails,shippedOrder,
-        deliverdOrder, cancelOrder, salesReport, daySalesReport} = require('../controllers/adminController');
+        deliverdOrder, cancelOrder, salesReport, daySalesReport, monthlySalesReport, yearllySaleReporter} = require('../controllers/adminController');
 const { adminAuth } = require('../middleware/middleware');
 var router = express.Router();
 const multer=require("../helpers/multer")
@@ -91,5 +91,11 @@ router.get('/salesReports',adminAuth,salesReport)
 
 // sale report day in list
 router.post('/daysalesreport',adminAuth,daySalesReport)
+
+// sale report in monthly list
+router.post('/monthlySales',adminAuth,monthlySalesReport)
+
+// sale report in yearlly
+router.post('/yearlySale',adminAuth,yearllySaleReporter)
 
 module.exports = router;

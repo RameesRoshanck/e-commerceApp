@@ -324,8 +324,114 @@ deliverdOrder:(delId)=>{
             // console.log(dayCollection);
             resolve(dayCollection)
         })
-    }
+    },
 
+    //count order
+    countOrder:(dt)=>{
+        return new Promise(async(resolve,reject)=>{
+            let countOrder=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+                {
+                    $match:{
+                        status:{$nin:['Cancled']}
+                    }
+                },
+                {
+                    $project:{
+                        _id:1,
+                        date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                    }
+                },
+                {
+                    $match:{
+                        date:dt
+                    }
+                },
+                {
+                    $count:'date'
+                }
+            ]).toArray()
+            resolve(countOrder)
+        })
+    },
+
+
+
+
+    //gemerated by monthly sales Report
+    monthlySalesReport:(dt)=>{
+        console.log(dt);
+        return new Promise(async(resolve,reject)=>{
+            let monthSales=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+                {
+                    $match:{
+                        status:{$nin:['Cancled']}
+                    }
+                },
+                {
+                    $project:{
+                        _id:1,
+                        date: { $dateToString: { format: "%Y-%m", date: "$date" } },
+                        newdate: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                        total:1
+                       
+                    }
+                },
+                {
+                    $match:{
+                        date:dt
+                    }
+                },
+                {
+                  $group:{
+                    _id:"$newdate",
+                    count:{$sum:1},
+                    total:{$sum:'$total'}
+                  }
+                }
+                
+            ]).toArray()
+            // console.log(monthSales);
+            resolve(monthSales)
+        })
+    },
+
+// generate yearly report
+
+yearlySales:(dt)=>{
+    return new Promise(async(resolve,reject)=>{
+        let yearOrder=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+            {
+                $match:{
+                    status:{$nin:['Cancled']}
+                }
+            },
+            {
+                $project:{
+                    _id:1,
+                    date: { $dateToString: { format: "%Y", date: "$date" } },
+                    newdate: { $dateToString: { format: "%Y-%m", date: "$date" } },
+                    total:1
+                }
+            },
+            {
+                $match:{
+                    date:dt
+                }
+            },
+            {
+                $group:{
+                    _id:"$newdate",
+                    count:{$sum:1},
+                    total:{$sum:'$total'}
+                }
+            },
+            // { $sort: { _id: 1 } }
+           
+        ]).toArray()
+        // console.log(yearOrder,'haisdjhfjaskdhfjaskdfhsak');
+        resolve(yearOrder)
+    })
+}
 
     
 }
