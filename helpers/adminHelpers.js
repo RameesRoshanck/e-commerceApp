@@ -26,19 +26,54 @@ module.exports={
             })
         })
     },
-    addCatagory:(catagoryData)=>{
-        return new Promise((resolve,reject)=>{
-            db.get().collection(connection.CATAGORY_COLLECTION).insertOne(catagoryData).then((data)=>{
-                resolve(data)
-            })
+
+     /* -------------------------------------------------------------------------- */
+     /*                             to start with brand                            */
+     /* -------------------------------------------------------------------------- */
+
+    addCatagory:(BrandData,callback)=>{
+            db.get().collection(connection.CATAGORY_COLLECTION).insertOne(BrandData).then((data)=>{
+                callback(data.insertedId)
         })
     },
+
+    /* -------------------------------- get all Brands ------------------------------- */
+
     getCatagory:()=>{
-        return new Promise((resolve,reject)=>{
-          let catagory=db.get().collection(connection.CATAGORY_COLLECTION).find().toArray()
-          resolve(catagory)
+        return new Promise(async(resolve,reject)=>{
+          let Brand=await db.get().collection(connection.CATAGORY_COLLECTION).find().toArray()
+          resolve(Brand )
         })
     },
+   
+    /* ------------------------ get single Brand details ------------------------ */
+
+    editCatagory:(BrandId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let Brand=await db.get().collection(connection.CATAGORY_COLLECTION).findOne({_id:ObjectId(BrandId)})
+            console.log(Brand);
+            resolve(Brand)
+        })
+    },
+
+    /* ------------------------------ update Brand ------------------------------ */
+   
+    updateBrand:(BrandId,BrandDetails)=>{
+        return new Promise((resolve,reject)=>{
+             db.get().collection(connection.CATAGORY_COLLECTION)
+             .updateOne({_id:ObjectId(BrandId)},{
+                $set:{
+                    catagory:BrandDetails.catagory
+                }
+             }).then((data)=>{
+                console.log(data,"well done by boy");
+                resolve(data)
+             })
+        })
+    },
+
+
+
     deleteCatagory:(catagoryId)=>{
          return new Promise((resolve,reject)=>{
             db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:ObjectId(catagoryId)}).then(()=>{
@@ -46,6 +81,11 @@ module.exports={
             })
          })
     },
+
+    /* -------------------------------------------------------------------------- */
+    /*                          to start Product section                          */
+    /* -------------------------------------------------------------------------- */
+
     addProduct:(Product)=>{
         
         let response={}
@@ -58,8 +98,7 @@ module.exports={
                 resolve(response)
              }
              else{
-                let dt=new Date
-                Product.date=(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear())
+                Product.date=new Date;
                 Product.price=parseInt(Product.price)
                 db.get().collection(connection.PRODUCT_COLLECTION).insertOne(Product).then((result)=>{
                     resolve(result)
@@ -261,7 +300,7 @@ deliverdOrder:(delId)=>{
 
 
     /* ----------------- // genarate to day by day sales report ----------------- */
-    
+
     daySalesReport:(dt)=>{
         console.log(dt,"hia");
         return new Promise(async(resolve,reject)=>{
@@ -505,14 +544,36 @@ countOrderYearlly:(dt)=>{
         // console.log(count,"do you kanow how much i suffing here")
         resolve(count)
     })
-
+},
 
     /* -------------------------------------------------------------------------- */
     /*                        end the sales report section                        */
     /* -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- */
+/*                               start to graph                               */
+/* -------------------------------------------------------------------------- */
 
-
+paymentGraph:()=>{
+    return new Promise(async(resolve,reject)=>{
+        let paymentGrph=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+          {
+            $project:{
+                date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                total:1,
+                paymentMethod:1
+            }
+          },
+          {
+            $group:{
+                _id:'$paymentMethod',
+                TotalAmount:{$sum:'$total'}
+            }
+          }
+        ]).toArray()
+        // console.log(paymentGrph,"hello");
+        resolve(paymentGrph)
+    })
 }
 
     

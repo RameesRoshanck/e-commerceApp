@@ -7,10 +7,12 @@ const hbs = require("express-handlebars");
 const db=require("./config/connection")
 const session=require('express-session')
 const Razorpay = require('razorpay');
+// const fileUpload=require('express-fileUpload')
 
 //set in router path
 var userRouter = require("./routes/user");
 var adminRouter = require("./routes/admin");
+const fileUpload = require('express-fileupload');
 
 const app = express();
 
@@ -22,6 +24,7 @@ const PORT=process.env.PORT
 app.use(express.urlencoded({ extended:true }));
 app.use(express.static(path.join(__dirname,'public')));
 app.use(cookieParser());
+app.use(fileUpload())
 //view engine set up
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");

@@ -19,25 +19,29 @@
 				
                 <div class="page-titles">
 					<ol class="breadcrumb">
-						<li class="breadcrumb-item active"><a href="javascript:void(0)">Catagory</a></li>
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Brand</a></li>
 					</ol>
                 </div>
               <div class="col-xl-6 col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Catagory</h4>
+                                <h4 class="card-title">Add Brand</h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">
-                                     <form  onsubmit="return myFunc()" action="/admin/addCatagory" method="post" >
+                                     <form  onsubmit="return myFunc()" action="/admin/addCatagory" method="post" enctype="multipart/form-data" >
                                         <div class="form-row">
                                             <div class="form-group">
-                                                <label>Catagory Name</label>
-                                                <input type="text" class="form-control" placeholder="entet the catagory name" id="catagoryId" name="catagory" onkeyup="ctgrValidate()"  >
+                                                <label>Brand Name</label>
+                                                <input type="text" class="form-control" placeholder="entet the Brand name" id="catagoryId" name="catagory" onkeyup="ctgrValidate()"  >
                                                 <span class="text-primary"  id="catagoryErr"style="color:red !important ;"  ></span>
                                             </div>
+                                             <div class="form-group">
+                                                 <label>Choose Image File</label>
+                                                 <input type="file" name="image" class="form-control" >
+                                            </div>
                                         </div>
-                                        <button type="submit" class="btn btn-primary">ADD Catagory</button>
+                                        <button type="submit" class="btn btn-primary">ADD Brand</button>
                                     </form>
                                 </div>
                             </div>
@@ -48,7 +52,7 @@
 					<div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Catagorys Table</h4>
+                                <h4 class="card-title">Brand Table</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -56,23 +60,20 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Catagory</th>
+                                                <th>Images</th>
+                                                <th>Brands</th>
+                                                <th>Edit</th>
 												<th>action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{#each catagory}}
+                                            {{#each Brand}}
                                             <tr>
                                                 <td>{{@index}}</td>
+                                                <td><img style="width:50px;,height:50px ;" src="/brand-images/{{this._id}}.png" alt=""> </td>
                                                 <td>{{this.catagory}}</td>
-                                                {{!-- <td>
-                                              
-                                                   <a href="/admin/deleteCatagory/{{this._id}}" id="delete" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
-                                                   
-                                                    </td> --}}
-                                                    {{!-- <td><a  href="{{this._id}}" class="btn btn-danger shadow btn-xs sharp" data-toggle="modal" data-target="#myModal"><i class="fa fa-trash"></i></a></td> --}}
+                                                   <td><a  href="/admin/editcatagory/{{this._id}}"class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-pencil"></a></td> 
                                                     <td><a  href="/admin/deleteCatagory/{{this._id}}"  onclick="return confirm('Are you sure you want to delete {{this.catagory}}?')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a></td>
-                                                    
                                             </tr>
                                           {{/each}}
                                       </tbody>

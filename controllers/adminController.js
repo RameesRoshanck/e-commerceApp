@@ -11,9 +11,11 @@ const passwordId="1234567"              // admin ligin password
  /* -------------------------------------------------------------------------- */
 
 // add in home page
-const adminHomeRoute=(req,res)=>{
+const adminHomeRoute=async(req,res)=>{
     if(req.session.adminIN){
-        res.render('admin/admin-home',{admin:true})
+     let paymentGrph=await adminHelpers.paymentGraph()
+    //  console.log(paymentGrph,'iam hungry');
+        res.render('admin/admin-home',{admin:true,paymentGrph})
     }else{
         res.redirect('/admin/adminLogin')
     }
@@ -76,22 +78,57 @@ const unblockUser=(req,res)=>{
 }
 
 /* -------------------------------------------------------------------------- */
-/*                             start with catagory                            */
+/*                             start with Brand                              */
 /* -------------------------------------------------------------------------- */
 
 const getCatagory=(req,res)=>{
-    adminHelpers.getCatagory().then((catagory)=>{
-        res.render('admin/admin-catagory',{admin:true,catagory})
+    adminHelpers.getCatagory().then((Brand)=>{
+        console.log(Brand);
+        res.render('admin/admin-catagory',{admin:true,Brand})
     })
 }
 
-
+/* ------------------------------- add brands ------------------------------- */
 const postCatagory=(req,res)=>{
-  adminHelpers.addCatagory(req.body).then(()=>{
-    res.redirect('/admin/getCatagory')
+  adminHelpers.addCatagory(req.body,(Id)=>{
+    // console.log(Id);
+    let Image=req.files.image;
+    Image.mv('./public/brand-images/'+Id+'.png',(err)=>{
+        if(!err){
+            res.redirect('/admin/getCatagory')
+        }else{
+            console.log(err);
+        }
+    })
   })
 }
 
+/* ---------------------------- get single brand ---------------------------- */
+
+const getEditCatagory=(req,res)=>{
+    let Id=req.params.id
+    console.log(req.params.id);
+    adminHelpers.editCatagory(Id).then((Brand)=>{
+        res.render('admin/admin-editCatagory',{admin:true,Brand})
+    })
+}
+
+/* ------------------------------ updates Brand ----------------------------- */
+
+const postUpdateCatagory=(req,res)=>{
+    // console.log(req.body);
+    let Id=req.params.id
+    adminHelpers.updateBrand(Id,req.body)
+    res.redirect('/admin/getCatagory')
+    if(req.files.image){
+        let Image=req.files.image;
+        Image.mv('./public/brand-images/'+Id+'.png')
+   
+    }
+}
+
+
+/* ------------------------------ delete Brnds ------------------------------ */
 const deleteCatagory=(req,res)=>{
     let id=req.params.id
     console.log(id);
@@ -328,6 +365,18 @@ let countOrder=await adminHelpers.countOrderYearlly(dt)
 /*                            end the sales Report                            */
 /* -------------------------------------------------------------------------- */
 
+
+/* -------------------------------------------------------------------------- */
+/*                           start Banner management                          */
+/* -------------------------------------------------------------------------- */
+
+
+
+
+
+
+
+
 module.exports={
     adminHomeRoute,
     admimGetlogin,
@@ -338,6 +387,8 @@ module.exports={
     unblockUser,
     getCatagory,
     postCatagory,
+    getEditCatagory,
+    postUpdateCatagory,
     deleteCatagory,
     getaddProduct,
     postaddProduct,
