@@ -24,7 +24,8 @@ const PORT=process.env.PORT
 app.use(express.urlencoded({ extended:true }));
 app.use(express.static(path.join(__dirname,'public')));
 app.use(cookieParser());
-app.use(fileUpload())
+// app.use(bodyParser())
+// app.use(fileUpload())
 //view engine set up
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");

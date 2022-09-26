@@ -2,6 +2,7 @@ const adminHelpers = require("../helpers/adminHelpers");
 const userHelpers = require("../helpers/userHelpers");
 const multer=require('../helpers/multer')
 
+
 const emailId="ckmhdramees@gmail.com"; //admin login emailId
 const passwordId="1234567"              // admin ligin password
 
@@ -77,6 +78,12 @@ const unblockUser=(req,res)=>{
   })
 }
 
+
+
+
+
+
+
 /* -------------------------------------------------------------------------- */
 /*                             start with Brand                              */
 /* -------------------------------------------------------------------------- */
@@ -90,16 +97,12 @@ const getCatagory=(req,res)=>{
 
 /* ------------------------------- add brands ------------------------------- */
 const postCatagory=(req,res)=>{
-  adminHelpers.addCatagory(req.body,(Id)=>{
-    // console.log(Id);
-    let Image=req.files.image;
-    Image.mv('./public/brand-images/'+Id+'.png',(err)=>{
-        if(!err){
-            res.redirect('/admin/getCatagory')
-        }else{
-            console.log(err);
-        }
+    const filename=req.files.map(function(file){
+        return file.filename
     })
+    req.body.image=filename
+  adminHelpers.addCatagory(req.body).then((data)=>{
+   res.redirect('/admin/getCatagory')
   })
 }
 
@@ -116,26 +119,48 @@ const getEditCatagory=(req,res)=>{
 /* ------------------------------ updates Brand ----------------------------- */
 
 const postUpdateCatagory=(req,res)=>{
-    // console.log(req.body);
-    let Id=req.params.id
-    adminHelpers.updateBrand(Id,req.body)
-    res.redirect('/admin/getCatagory')
-    if(req.files.image){
-        let Image=req.files.image;
-        Image.mv('./public/brand-images/'+Id+'.png')
-   
-    }
+      
+    const filename = req.files.map(function (file) {
+        return file.filename
+    })
+    req.body.image=filename
+     let Id=req.params.id
+    adminHelpers.updateBrand(Id,req.body).then((data)=>{
+        res.redirect('/admin/getCatagory')
+    })
 }
 
+  
 
-/* ------------------------------ delete Brnds ------------------------------ */
+
+/* ------------------------------ delete Brands ------------------------------ */
 const deleteCatagory=(req,res)=>{
     let id=req.params.id
     console.log(id);
-   adminHelpers.deleteCatagory(id).then(()=>{
+   adminHelpers.deleteCatagory(id).then((result)=>{
     res.redirect('/admin/getCatagory')
    })
 }
+
+
+// exports.delet_product = (req, res) => {
+//     product.findById(req.params.id).then((result) => {
+//       for (let index = 0; index < result.image.length; index++) {
+//         const element = result.image[index];
+//         fs.unlink("public" + "/Products/" + element, (err) => {
+//           if (err) {
+//             console.log(err);
+//           } else {
+//             //console.log ("deleted image of ")
+//           }
+//         });
+//       }
+//     });
+
+
+
+
+
 
 
 
@@ -370,6 +395,52 @@ let countOrder=await adminHelpers.countOrderYearlly(dt)
 /*                           start Banner management                          */
 /* -------------------------------------------------------------------------- */
 
+const getBanner=(req,res)=>{
+    adminHelpers.listBanner().then((Banner)=>{
+        res.render('admin/admin-getBanner',{admin:true,Banner})
+    })
+}
+
+
+const addBanner=(req,res)=>{
+     const filename=req.files.map(function(file){
+        return file.filename
+    })
+    req.body.image=filename
+    adminHelpers.addBanner(req.body).then(()=>{
+        res.redirect('/admin//adminBanner')
+    })
+}
+
+const getSingleBanner=(req,res)=>{
+    let Id=req.params.id
+    adminHelpers.editBanner(Id).then((Banner)=>{
+        res.render('admin/admin-editBanner',{admin:true,Banner})
+    })
+}
+
+
+const updateBanner=(req,res)=>{
+    const filename=req.files.map(function(file){
+        return file.filename
+    })
+    req.body.image=filename
+     let bannerId=req.params.id;
+
+     adminHelpers.updateBanner(bannerId,req.body).then((data)=>{
+         res.redirect('/admin/adminBanner')
+        })
+    }
+
+     
+const deleteBanner=(req,res)=>{
+    let Id=req.params.id
+    console.log(req.params.id,'yavde');
+    adminHelpers.deleteBanner(Id).then((data)=>{
+        res.redirect('/admin/adminBanner')
+    })
+}
+
 
 
 
@@ -404,5 +475,10 @@ module.exports={
     salesReport,
     daySalesReport,
     monthlySalesReport,
-    yearllySaleReporter
+    yearllySaleReporter,
+    getBanner,
+    addBanner,
+    getSingleBanner,
+    updateBanner,
+    deleteBanner
 }

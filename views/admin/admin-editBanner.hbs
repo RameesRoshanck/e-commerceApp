@@ -1,0 +1,66 @@
+ <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+
+        {{>admin-header}}
+	    {{>admin-sideNavbar}}
+
+
+
+        <div class="content-body">
+            <div class="container-fluid">
+				<!-- Add Order -->
+				
+                <div class="page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Banner Management</a></li>
+					</ol>
+                </div>
+              <div class="col-xl-6 col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Edit Banner</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                     <form action="/admin/editBanner/{{Banner._id}}" method="post" enctype="multipart/form-data" >
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Banner Name</label>
+                                                <input type="text" class="form-control" value="{{Banner.name}}" name="name" >
+                                            </div>
+                                           <div class="form-group">
+                                                 <label>Choose Banner Image File</label>
+                                                   <br>
+                                                   <img style="width:50px; height: 50px;" src="/product-images/{{Banner.image.[0]}}" alt="" id="imgview">
+                                                   <img style="width:50px; height: 50px;" src="/product-images/{{Banner.image.[1]}}" alt="" id="imgview1">
+                                                   <br>
+                                                   <br>
+                                                 <input multiple type="file" id="product_images[]" accept="image/*r" onchange="viewimg(event)" name="image" class="form-control" >
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                <!-- row -->
+            </div>
+        </div>
+    </div>
+     
+     <script>
+        function viewimg(event){
+            document.getElementById('imgview').src=URL.createObjectURL(event.target.files[0])
+            document.getElementById('imgview1').src=url.createObjectURL(event.target.files[1])
+        }
+     </script>
+
+

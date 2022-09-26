@@ -19,29 +19,28 @@
 				
                 <div class="page-titles">
 					<ol class="breadcrumb">
-						<li class="breadcrumb-item active"><a href="javascript:void(0)">Brand</a></li>
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Banner Management</a></li>
 					</ol>
                 </div>
               <div class="col-xl-6 col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Brand</h4>
+                                <h4 class="card-title">Add Banner</h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">
-                                     <form  onsubmit="return myFunc()" action="/admin/addCatagory" method="post" enctype="multipart/form-data" >
+                                     <form action="/admin/addBanner" method="post" enctype="multipart/form-data" >
                                         <div class="form-row">
                                             <div class="form-group">
-                                                <label>Brand Name</label>
-                                                <input type="text" class="form-control" placeholder="entet the Brand name" id="catagoryId" name="catagory" onkeyup="ctgrValidate()"  >
-                                                <span class="text-primary"  id="catagoryErr"style="color:red !important ;"  ></span>
+                                                <label>Banner Name</label>
+                                                <input type="text" class="form-control" placeholder="entet the Brand name" name="name" >
                                             </div>
-                                             <div class="form-group">
-                                                 <label>Choose Image File</label>
+                                           <div class="form-group">
+                                                 <label>Choose Banner Image File</label>
                                                  <input multiple type="file" id="product_images[]" accept="image/*r" name="image" class="form-control" >
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-primary">ADD Brand</button>
+                                        <button type="submit" class="btn btn-primary">ADD Banner</button>
                                     </form>
                                 </div>
                             </div>
@@ -61,19 +60,21 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>Images</th>
+                                                <th></th>
                                                 <th>Brands</th>
                                                 <th>Edit</th>
 												<th>action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{#each Brand}}
+                                            {{#each Banner}}
                                             <tr>
                                                 <td>{{@index}}</td>
                                                 <td><img style="width:50px;,height:50px ;" src="/product-images/{{this.image.[0]}}" alt=""> </td>
-                                                <td>{{this.catagory}}</td>
-                                                   <td><a  href="/admin/editcatagory/{{this._id}}"class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-pencil"></a></td> 
-                                                    <td><a  href="/admin/deleteCatagory/{{this._id}}"  onclick="return confirm('Are you sure you want to delete {{this.catagory}}?')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a></td>
+                                                <td><img style="width:50px;,height:50px ;" src="/product-images/{{this.image.[1]}}" alt=""> </td>
+                                                <td>{{this.name}}</td>
+                                                <td><a  href="/admin/editBanner/{{this._id}}"class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-pencil"></a></td> 
+                                                <td><a  href="/admin/deleteBanner/{{this._id}}" onclick="return confirm('Are you sure you want to delete {{this.name}}?')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a></td>
                                             </tr>
                                           {{/each}}
                                       </tbody>

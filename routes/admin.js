@@ -3,8 +3,7 @@ const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduc
         getUsers,blockUser, unblockUser, getCatagory, postCatagory, deleteCatagory, listAllProduct, 
         deleteProduct, getEditProduct, updateProduct, adminOrderList, adminOrderDetails,shippedOrder,
         deliverdOrder, cancelOrder, salesReport, daySalesReport, monthlySalesReport, yearllySaleReporter,
-         getEditCatagory,
-         postUpdateCatagory} = require('../controllers/adminController');
+        getEditCatagory,postUpdateCatagory,getBanner, addBanner, getSingleBanner, updateBanner, deleteBanner} = require('../controllers/adminController');
 const { adminAuth } = require('../middleware/middleware');
 var router = express.Router();
 const multer=require("../helpers/multer")
@@ -44,18 +43,11 @@ router.get('/unblock-user/:id',unblockUser)
 router.get('/getCatagory',adminAuth,getCatagory)
 
 // add catagory router
-router.post('/addCatagory',postCatagory)
+router.post('/addCatagory',multer.array('image',1),postCatagory)
 
 //edit catagory
 router.get('/editcatagory/:id',getEditCatagory)
-router.post('/editcatagory/:id',postUpdateCatagory)
-
-
-
-
-
-
-
+router.post('/editcatagory/:id',multer.array('image',1),postUpdateCatagory)
 
 // delete catagory router
 router.get('/deleteCatagory/:id',deleteCatagory)
@@ -110,5 +102,25 @@ router.post('/monthlySales',adminAuth,monthlySalesReport)
 
 // sale report in yearlly
 router.post('/yearlySale',adminAuth,yearllySaleReporter)
+
+
+/* -------------------------------------------------------------------------- */
+/*                              Banner management                             */
+/* -------------------------------------------------------------------------- */
+
+
+/* --------------------------- get all banner list -------------------------- */
+router.get('/adminBanner',adminAuth,getBanner)
+
+//add banner image
+router.post('/addBanner',multer.array('image',2),addBanner)
+
+//get single banner
+router.get('/editBanner/:id',adminAuth,getSingleBanner)
+router.post('/editBanner/:id',multer.array('image',2),updateBanner)
+
+//delete banner
+router.get('/deleteBanner/:id',deleteBanner)
+
 
 module.exports = router;

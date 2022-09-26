@@ -37,12 +37,12 @@
                                             <span class="text-primary"  id="catagoryErr"style="color:red !important ;"  ></span>
                                         </div>
                                          <div class="form-group">
-                                             <label>Choose Image File</label>
-                                             <br>
-                                             <img style="width:50px; height: 50px;" src="/brand-images/{{Brand._id}}.png" alt="" id="imgview">
-                                             <br>
-                                             <br>
-                                             <input type="file" name="image" class="form-control" onchange="viewImage(event)" >
+                                                    <label>Choose Image File</label>
+                                                     <br>
+                                                    <img style="width:50px; height: 50px;" src="/product-images/{{Brand.image.[0]}}" alt="" id="imgview">
+                                                    <br>
+                                                    <br>
+                                                 <input multiple type="file" id="product_images[]" accept="image/*r" name="image" class="form-control" >
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">ADD Update</button>

@@ -1,6 +1,7 @@
 const db=require('../config/connection')
 const connection=require('../config/collection')
 var ObjectId = require('mongodb').ObjectId;
+const fs=require('fs')
 
 module.exports={
     getAllUsers:()=>{
@@ -31,11 +32,14 @@ module.exports={
      /*                             to start with brand                            */
      /* -------------------------------------------------------------------------- */
 
-    addCatagory:(BrandData,callback)=>{
+    addCatagory:(BrandData)=>{
+        return new Promise((resolve,reject)=>{
             db.get().collection(connection.CATAGORY_COLLECTION).insertOne(BrandData).then((data)=>{
-                callback(data.insertedId)
+                resolve(data)
+            })
         })
     },
+
 
     /* -------------------------------- get all Brands ------------------------------- */
 
@@ -59,14 +63,19 @@ module.exports={
     /* ------------------------------ update Brand ------------------------------ */
    
     updateBrand:(BrandId,BrandDetails)=>{
-        return new Promise((resolve,reject)=>{
-             db.get().collection(connection.CATAGORY_COLLECTION)
-             .updateOne({_id:ObjectId(BrandId)},{
+        return new Promise(async(resolve,reject)=>{
+            let img = await db.get().collection(connection.CATAGORY_COLLECTION).findOne({ _id: ObjectId(BrandId) })
+            if (BrandDetails.image.length == 0) {
+                BrandDetails.image = img.image
+            }
+            let data=await db.get().collection(connection.CATAGORY_COLLECTION)
+             .updateOne({_id:ObjectId(BrandId)},
+             {
                 $set:{
-                    catagory:BrandDetails.catagory
+                    catagory:BrandDetails.catagory,
+                    image:BrandDetails.image
                 }
              }).then((data)=>{
-                console.log(data,"well done by boy");
                 resolve(data)
              })
         })
@@ -76,8 +85,8 @@ module.exports={
 
     deleteCatagory:(catagoryId)=>{
          return new Promise((resolve,reject)=>{
-            db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:ObjectId(catagoryId)}).then(()=>{
-                resolve()
+            db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:ObjectId(catagoryId)}).then((data)=>{
+                resolve(data)
             })
          })
     },
@@ -119,8 +128,21 @@ module.exports={
     },
     deleteProduct:(proId)=>{
         return new Promise((resolve,reject)=>{
-            db.get().collection(connection.PRODUCT_COLLECTION)
-            .deleteOne({_id:ObjectId(proId)}).then((data)=>{
+            db.get().collection(connection.PRODUCT_COLLECTION).findOne({_id:ObjectId(proId)}).then((result)=>{
+                for (let index = 0; index < result.image.length; index++) {
+                    const element = result.image[index];
+                   fs.unlink("public" + "/product-images/" + element,(err)=>{
+                    if(err){
+                        console.log(err);
+                        }else{
+                            console.log('delete success');
+                        }
+                    })
+                }
+            })
+
+            db.get().collection(connection.PRODUCT_COLLECTION).deleteOne({_id:ObjectId(proId)}).then((data)=>{
+       
                 resolve(data)
             })
         })
@@ -154,6 +176,84 @@ module.exports={
         })
    })
  },
+
+
+ /* -------------------------------------------------------------------------- */
+ /*                          to generate banner images                         */
+ /* -------------------------------------------------------------------------- */
+
+ //add banner images
+  addBanner:(Banner)=>{
+      return new Promise((resolve,reject)=>{
+        db.get().collection(connection.BANNER_COLLECTION).insertOne(Banner).then((data)=>{
+            resolve(data)
+        })
+      })
+   },
+   // view banners
+   listBanner:()=>{
+    return new Promise(async(resolve, reject) => {
+        let Banner=await db.get().collection(connection.BANNER_COLLECTION).find().toArray()
+        // console.log(Banner,'hai view Banner');
+        resolve(Banner)
+    })
+   },
+
+   // view a single banner details
+
+   editBanner:(BannerId)=>{
+    return new Promise(async(resolve,reject)=>{
+        let Banner=await db.get().collection(connection.BANNER_COLLECTION).findOne({_id:ObjectId(BannerId)})
+        resolve(Banner)
+    })
+   },
+
+   // updatae banner
+
+   updateBanner:(bannerId,Details)=>{
+    return new Promise(async(resolve,reject)=>{
+         
+        let img = await db.get().collection(connection.BANNER_COLLECTION).findOne({ _id: ObjectId(bannerId) })
+        if (Details.image.length == 0) {
+            Details.image = img.image
+        }
+       let Banner=await db.get().collection(connection.BANNER_COLLECTION)
+       .updateOne({_id:ObjectId(bannerId)},
+       {
+        $set:{
+            name:Details.name,
+            image:Details.image
+        }
+       }).then((response)=>{
+        resolve(response)
+       })
+    })
+   },
+     
+
+    // delete Banner
+ 
+    deleteBanner:(BannerId)=>{
+        console.log(BannerId,"kiti macha");
+        return new Promise(async(resolve,reject)=>{
+            let banner=await db.get().collection(connection.BANNER_COLLECTION)
+            .deleteOne({_id:ObjectId(BannerId)})
+            console.log(banner,'hai every one');
+            resolve(banner)
+        })
+    },
+
+
+
+
+
+
+
+
+/* -------------------------------------------------------------------------- */
+/*                               get orders list                              */
+/* -------------------------------------------------------------------------- */
+
  adminViewOrder:()=>{
     return new Promise(async(resolve,reject)=>{
         let orderDetails=await db.get().collection(connection.ORDER_COLLECTION).find().toArray()
