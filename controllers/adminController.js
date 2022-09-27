@@ -15,8 +15,11 @@ const passwordId="1234567"              // admin ligin password
 const adminHomeRoute=async(req,res)=>{
     if(req.session.adminIN){
      let paymentGrph=await adminHelpers.paymentGraph()
+     let sales=await adminHelpers.salesGrph()
+     let monthly=await adminHelpers.monthlygrph()
+     let yearly=await adminHelpers.yearlygrph()
     //  console.log(paymentGrph,'iam hungry');
-        res.render('admin/admin-home',{admin:true,paymentGrph})
+        res.render('admin/admin-home',{admin:true,paymentGrph,sales,monthly,yearly})
     }else{
         res.redirect('/admin/adminLogin')
     }

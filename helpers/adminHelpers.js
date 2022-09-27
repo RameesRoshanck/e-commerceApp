@@ -1,7 +1,8 @@
 const db=require('../config/connection')
 const connection=require('../config/collection')
 var ObjectId = require('mongodb').ObjectId;
-const fs=require('fs')
+const fs=require('fs');
+const { resolve } = require('path');
 
 module.exports={
     getAllUsers:()=>{
@@ -650,9 +651,16 @@ countOrderYearlly:(dt)=>{
     /*                        end the sales report section                        */
     /* -------------------------------------------------------------------------- */
 
+
+
+
 /* -------------------------------------------------------------------------- */
 /*                               start to graph                               */
 /* -------------------------------------------------------------------------- */
+
+
+/* ------------------------------ payment graph ----------------------------- */
+
 
 paymentGraph:()=>{
     return new Promise(async(resolve,reject)=>{
@@ -674,7 +682,84 @@ paymentGraph:()=>{
         // console.log(paymentGrph,"hello");
         resolve(paymentGrph)
     })
-}
+},
+
+
+/* ------------------------------- sales graph ------------------------------ */
+
+salesGrph:()=>{
+    return new Promise(async(resolve,reject)=>{
+        let sales=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+            {
+               $project:{
+                date:1,
+                total:1
+               } 
+            },
+            {
+                $group:{
+                    _id:{$dateToString: { format: "%Y-%m-%d", date: "$date" }},
+                    TotalAmount:{$sum:'$total'},
+                    count:{$sum:1}
+                }
+            }
+        ]).toArray()
+        // console.log(sales,"hai sales report");
+        resolve(sales)
+    })
+},
+
+    /* --------------------------- monthly sales graph -------------------------- */
+
+    monthlygrph:()=>{
+        return new Promise(async(resolve,reject)=>{
+            let monthly=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+                {
+                   $project:{
+                    date:1,
+                    total:1
+                   }
+                },
+                {
+                    $group:{
+                        _id:{$dateToString: { format: "%Y-%m", date: "$date" }},
+                        TotalAmount:{$sum:'$total'},
+                        count:{$sum:1}
+                    }
+                }
+            ]).toArray()
+            // console.log(monthly);
+            resolve(monthly)
+        })
+    },
+
+
+    /* --------------------------- yearly sales graph --------------------------- */
+
+    yearlygrph:()=>{
+        return new Promise(async(resolve,reject)=>{
+            let yearly=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+                {
+                    $project:{
+                        date:1,
+                        total:1
+                    }
+                },
+                {
+                    $group:{
+                        _id:{$dateToString: { format: "%Y", date: "$date" }},
+                        TotalAmount:{$sum:'$total'},
+                        count:{$sum:1}
+                    }
+                }
+            ]).toArray()
+            // console.log(yearly)
+            resolve(yearly)
+        })
+    }
+
+
+
 
     
 }

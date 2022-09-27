@@ -1,4 +1,3 @@
-// const { response } = require("express")
 
 
 
@@ -60,4 +59,27 @@ function deleteCartProduct(cartId,proId){
                 location.reload()
             })
         })
+}
+
+function addtowishlist(proId){
+    // let count = parseInt(document.getElementById('wishlistCount').innerHTML)
+     $.ajax({
+        url:'/add-to-wishlist/'+proId,
+        method:'get',
+        success:(response)=>{
+            if(response.status){
+                // alert(response.status)
+                let count=$('#wishlistCount').html()
+                count=parseInt(count)+1
+                $('#wishlistCount').html(count)
+                // location.reload()
+                // count=parseInt(count)+1
+                // document.getElementById('wishlistCount').innerHTML=count
+            }else{
+                // alert(response);
+                location.reload()
+            }
+        }
+      
+     })
 }

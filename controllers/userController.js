@@ -1,4 +1,4 @@
-const { response } = require("express")
+// const { response } = require("express")
 const express = require("express")
 const userHelpers = require("../helpers/userHelpers")
 
@@ -6,13 +6,15 @@ const userHelpers = require("../helpers/userHelpers")
 const userHomeRoute=async(req,res)=>{
     let user=req.session.user
     let cartCount=null;
+    let wishlistCount=null;
     if(req.session.loggedIn){
 
         cartCount= await userHelpers.getCartCount(req.session.user._id)
+        wishlistCount= await userHelpers.getWishlistCount(req.session.user._id)
     }
     userHelpers.viewProducts().then((product)=>{
         // console.log(user)
-        res.render('user/user-home',{product,user,cartCount})
+        res.render('user/user-home',{product,user,cartCount,wishlistCount})
     })
 }
 
@@ -131,9 +133,10 @@ const getProducts=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
         cartCount= await userHelpers.getCartCount(req.session.user._id)
+        wishlistCount= await userHelpers.getWishlistCount(req.session.user._id)
     }
     userHelpers.viewProducts().then((product)=>{
-     res.render('user/user-products',{product,user:req.session.user,cartCount})
+     res.render('user/user-products',{product,user:req.session.user,cartCount,wishlistCount})
     })
 }
 
@@ -340,12 +343,8 @@ const paypalSuccess=(req,res)=>{
 
 
 
-
-
-
-
  
-//order sucdess page
+//order success page
 const orderSuccess=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -376,22 +375,6 @@ const orderMoreDetails=async(req,res)=>{
     let order=await userHelpers.getOrderDetails(req.query.id)
     res.render('user/user-orderMoreDetails',{order,user:req.session.user,cartCount})
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -459,6 +442,36 @@ const deleteUserAddress=(req,res)=>{
     })
 }
 
+
+
+
+
+
+
+/* -------------------------------------------------------------------------- */
+/*                                  wishlist                                  */
+/* -------------------------------------------------------------------------- */
+
+
+const getwishlist=async(req,res)=>{
+    let wishList=await userHelpers.getWishlist(req.session.user._id)
+    res.render('user/user-wishlist',{wishList})
+}
+
+
+const addWishlist=(req,res)=>{
+    // console.log(req.query.id,'hai how');
+    let Id=req.params.id
+    userHelpers.addToWishlist(Id,req.session.user._id).then((response)=>{
+        // res.redirect('/products')
+        res.json(response)
+    })
+}
+
+
+
+
+
 module.exports= {
     userHomeRoute,
     getSignUp,
@@ -490,5 +503,7 @@ module.exports= {
     postUserAddAddress,
     editUserAddress,
     updateUserAddress,
-    deleteUserAddress
+    deleteUserAddress,
+    getwishlist,
+    addWishlist
 }
