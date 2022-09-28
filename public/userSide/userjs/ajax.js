@@ -54,10 +54,10 @@ function deleteCartProduct(cartId,proId){
                 cart:cartId
             },
             method:'post',
-            success:(response=>{
+            success:(response)=>{
                 alert("this item is deleted")
                 location.reload()
-            })
+            }
         })
 }
 
@@ -82,4 +82,21 @@ function addtowishlist(proId){
         }
       
      })
+}
+
+/* ----------------------------- delete wishlist ---------------------------- */
+
+function deleteWishlist(WishId,proId){
+    $.ajax({
+        url:'/deleteWishlist',
+        data:{
+            product:proId,
+            wishlist:WishId
+        },
+        method:'post',
+        success:(response=>{
+            alert("this item is deleted")
+            location.reload()
+        })
+    })
 }

@@ -5,7 +5,7 @@ const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
         placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
         updateUserAddress,deleteUserAddress, getAddPlaceOrderAddress, postAddPlaceOrderAddress,
         postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails, varifyPayment, paypalSuccess,
-        getwishlist,addWishlist} = require('../controllers/userController');
+        getwishlist,addWishlist, deleteWishlist} = require('../controllers/userController');
 var router = express.Router();
 const { auth } = require('../middleware/middleware');
 
@@ -103,7 +103,8 @@ router.get('/wishlist',auth,getwishlist)
 //add a product to wishlist
 router.get('/add-to-wishlist/:id',addWishlist)
 
-
+//delete wish list
+router.post('/deleteWishlist',deleteWishlist)
 
 
 module.exports = router;

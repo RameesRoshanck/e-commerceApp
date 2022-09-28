@@ -16,9 +16,11 @@ const adminHomeRoute=async(req,res)=>{
     if(req.session.adminIN){
      let paymentGrph=await adminHelpers.paymentGraph()
      let sales=await adminHelpers.salesGrph()
+    //  console.log(sales,'sales');
      let monthly=await adminHelpers.monthlygrph()
+    //  console.log(monthly,'monthly');
      let yearly=await adminHelpers.yearlygrph()
-    //  console.log(paymentGrph,'iam hungry');
+    //  console.log(yearly,'yearly');
         res.render('admin/admin-home',{admin:true,paymentGrph,sales,monthly,yearly})
     }else{
         res.redirect('/admin/adminLogin')

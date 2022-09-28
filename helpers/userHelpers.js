@@ -806,11 +806,17 @@ module.exports={
                         foreignField:'_id',
                         as:'product'
                     }
+                },
+                {
+                    $project: {
+                        product: { $arrayElemAt: ['$product', 0] }
+
+                    }
                 }
 
             ]).toArray()
             // console.log(wishlist[0].product,'hello man');
-            resolve(wishlist[0].product);
+            resolve(wishlist);
           })
     },
 
@@ -828,6 +834,22 @@ module.exports={
             // console.log(count,'wishlist count');
             resolve(count)
         })
+    },
+
+    //delete wishlist
+
+    DeleteWishlist:(Details)=>{
+        console.log(Details,'hello');
+        return new Promise((resolve, reject) => {
+            db.get().collection(connection.WISHLIST_COLLECTION).updateOne({ _id: ObjectId(Details.wishlist) },
+                {
+                    $pull: { products:{item:ObjectId(Details.product)}}
+                    
+                }).then((response) => {
+                    // console.log(response)
+                    resolve(response)
+                })
+        })   
     }
 
      

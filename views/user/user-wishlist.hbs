@@ -36,17 +36,17 @@
 									<div class="product">
 										<figure class="product-media">
 											<a href="#">
-												<img src="/product-images/{{this.image.[0]}}" alt="Product image">
+												<img src="/product-images/{{this.product.image.[0]}}" alt="Product image">
 											</a>
 										</figure>
 
 										<h3 class="product-title">
-											<a>{{this.name}}</a>
+											<a>{{this.product.name}}</a>
 										</h3><!-- End .product-title -->
 									</div><!-- End .product -->
 								</td>
-								<td class="price-col">₹{{this.price}}</td>
-								<td class="stock-col"><a href="" class="btn btn-danger mr-5" >Remove</a></td>
+								<td class="price-col">₹{{this.product.price}}</td>
+								<td class="stock-col"><a onclick="deleteWishlist('{{this._id}}','{{this.product._id}}')" class="btn btn-danger mr-5" >Remove</a></td>
 								<td class="action-col">
 									<button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>
 								</td>
@@ -66,5 +66,5 @@
 
  {{>user-footer}}
     
-
+<script src="/userSide/userjs/ajax.js"></script>
      

@@ -158,6 +158,7 @@ const cartView=async(req,res)=>{
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
     let products= await userHelpers.getCartProduct(req.session.user._id)
+    // console.log(products);
     let total=0
     if(products.length>0){
          total=await userHelpers.getTotalAmout(req.session.user._id) 
@@ -455,6 +456,7 @@ const deleteUserAddress=(req,res)=>{
 
 const getwishlist=async(req,res)=>{
     let wishList=await userHelpers.getWishlist(req.session.user._id)
+    // console.log(wishList);
     res.render('user/user-wishlist',{wishList})
 }
 
@@ -469,6 +471,12 @@ const addWishlist=(req,res)=>{
 }
 
 
+const deleteWishlist=(req,res)=>{
+    // console.log(req.body);
+   userHelpers.DeleteWishlist(req.body).then((response)=>{
+    res.json(response)
+   })
+}
 
 
 
@@ -505,5 +513,6 @@ module.exports= {
     updateUserAddress,
     deleteUserAddress,
     getwishlist,
-    addWishlist
+    addWishlist,
+    deleteWishlist
 }

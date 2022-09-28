@@ -702,7 +702,8 @@ salesGrph:()=>{
                     TotalAmount:{$sum:'$total'},
                     count:{$sum:1}
                 }
-            }
+            },
+            { $sort : { _id: 1 } }
         ]).toArray()
         // console.log(sales,"hai sales report");
         resolve(sales)
