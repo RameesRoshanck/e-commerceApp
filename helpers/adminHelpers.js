@@ -4,6 +4,9 @@ var ObjectId = require('mongodb').ObjectId;
 const fs=require('fs');
 const { resolve } = require('path');
 
+
+
+
 module.exports={
     getAllUsers:()=>{
        return new Promise(async(resolve,reject)=>{
@@ -11,6 +14,10 @@ module.exports={
         resolve(users)
        }) 
     },
+
+
+
+
     blockUser:(proId)=>{
         return new Promise(async(resolve,reject)=>{
             await db.get().collection(connection.USER_COLLECTION).updateOne({_id:ObjectId(proId)},{$set:{state:false}}).then((data)=>{
@@ -19,6 +26,10 @@ module.exports={
             })
         })
     },
+
+
+
+
     unblockUser:(proId)=>{
         return new Promise(async(resolve,reject)=>{
             await db.get().collection(connection.USER_COLLECTION).updateOne({_id:ObjectId(proId)},
@@ -29,9 +40,13 @@ module.exports={
         })
     },
 
+
+    
      /* -------------------------------------------------------------------------- */
      /*                             to start with brand                            */
      /* -------------------------------------------------------------------------- */
+
+
 
     addCatagory:(BrandData)=>{
         return new Promise((resolve,reject)=>{
@@ -44,14 +59,17 @@ module.exports={
 
     /* -------------------------------- get all Brands ------------------------------- */
 
+
     getCatagory:()=>{
         return new Promise(async(resolve,reject)=>{
           let Brand=await db.get().collection(connection.CATAGORY_COLLECTION).find().toArray()
           resolve(Brand )
         })
     },
+
    
     /* ------------------------ get single Brand details ------------------------ */
+
 
     editCatagory:(BrandId)=>{
         return new Promise(async(resolve,reject)=>{
@@ -60,9 +78,13 @@ module.exports={
             resolve(Brand)
         })
     },
+    
 
     /* ------------------------------ update Brand ------------------------------ */
    
+
+
+
     updateBrand:(BrandId,BrandDetails)=>{
         return new Promise(async(resolve,reject)=>{
             let img = await db.get().collection(connection.CATAGORY_COLLECTION).findOne({ _id: ObjectId(BrandId) })
@@ -96,30 +118,52 @@ module.exports={
     /*                          to start Product section                          */
     /* -------------------------------------------------------------------------- */
 
+
+
+    
     addProduct:(Product)=>{
         
         let response={}
         return new Promise(async(resolve,reject)=>{
-            
              let prdct=await db.get().collection(connection.PRODUCT_COLLECTION).findOne({prd_Id:Product.prd_Id})
-             console.log(prdct);
+            //  console.log(prdct);
              if(prdct){
                 response.status=true
                 resolve(response)
              }
              else{
+                Product.catagory=ObjectId(Product.catagory)
                 Product.date=new Date;
-                Product.price=parseInt(Product.price)
+                // Product.price=parseInt(Product.price)
+                // Product.offer=parseInt(Product.offer)
+                
+                if(Product.offer){
+                    newprice = Math.round((Product.price) * ((100 - Product.offer) / 100))
+
+                    Product.originelPrice=Product.price
+                    Product.price= "" +newprice
+                
                 db.get().collection(connection.PRODUCT_COLLECTION).insertOne(Product).then((result)=>{
                     resolve(result)
                    
                 }) 
                 resolve({status:false}) 
-             }
+             }else{
+                db.get().collection(connection.PRODUCT_COLLECTION).insertOne(Product).then((result)=>{
+                    resolve(result)
+                   
+                }) 
+                resolve({status:false}) 
 
+             }
+            }
           
         })
     },
+
+
+
+
     listProduct:()=>{
         return new Promise((resolve,reject)=>{
             let Product=db.get().collection(connection.PRODUCT_COLLECTION)
@@ -127,6 +171,10 @@ module.exports={
             resolve(Product)
         })
     },
+
+
+
+
     deleteProduct:(proId)=>{
         return new Promise((resolve,reject)=>{
             db.get().collection(connection.PRODUCT_COLLECTION).findOne({_id:ObjectId(proId)}).then((result)=>{
@@ -148,6 +196,10 @@ module.exports={
             })
         })
     },
+
+
+
+
     getProductDetails:(proId)=>{
         return new Promise(async(resolve,reject)=>{
             let product=await db.get().collection(connection.PRODUCT_COLLECTION)
@@ -155,10 +207,16 @@ module.exports={
             resolve(product)
         })
     },
+
+
+
+
     updateProduct:(proId,proDetails)=>{
        
         return new Promise(async(resolve,reject)=>{
-            proDetails.price=parseInt(proDetails.price)
+            // proDetails.price=parseInt(proDetails.price)
+            proDetails.catagory=ObjectId(proDetails.catagory)
+            // proDetails.offer=parseInt(proDetails.offer)
             await db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId((proId))},
             {
                 $set:{
@@ -183,7 +241,11 @@ module.exports={
  /*                          to generate banner images                         */
  /* -------------------------------------------------------------------------- */
 
- //add banner images
+
+
+ /* --------------------------- //add banner images -------------------------- */
+
+
   addBanner:(Banner)=>{
       return new Promise((resolve,reject)=>{
         db.get().collection(connection.BANNER_COLLECTION).insertOne(Banner).then((data)=>{
@@ -191,7 +253,11 @@ module.exports={
         })
       })
    },
-   // view banners
+
+
+   /* ----------------------------- // view banners ---------------------------- */
+
+
    listBanner:()=>{
     return new Promise(async(resolve, reject) => {
         let Banner=await db.get().collection(connection.BANNER_COLLECTION).find().toArray()
@@ -200,7 +266,9 @@ module.exports={
     })
    },
 
-   // view a single banner details
+
+   /* --------------------- // view a single banner details -------------------- */
+
 
    editBanner:(BannerId)=>{
     return new Promise(async(resolve,reject)=>{
@@ -208,8 +276,10 @@ module.exports={
         resolve(Banner)
     })
    },
+   
 
-   // updatae banner
+   /* ---------------------------- // updatae banner --------------------------- */
+
 
    updateBanner:(bannerId,Details)=>{
     return new Promise(async(resolve,reject)=>{
@@ -232,7 +302,7 @@ module.exports={
    },
      
 
-    // delete Banner
+    /* ---------------------------- // delete Banner ---------------------------- */
  
     deleteBanner:(BannerId)=>{
         console.log(BannerId,"kiti macha");
@@ -257,11 +327,28 @@ module.exports={
 
  adminViewOrder:()=>{
     return new Promise(async(resolve,reject)=>{
-        let orderDetails=await db.get().collection(connection.ORDER_COLLECTION).find().toArray()
-        // console.log(orderDetails);
+        let orderDetails=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+            {
+                $project:{
+                    _id:1,
+                    delivaryDtails:1,
+                    userId:1,
+                    paymentMethod:1,
+                    total:1,
+                    status:1,
+                    date:{ $dateToString: { format: "%Y-%m-%d", date: "$date" } }
+
+                }
+                
+            }
+        ]).toArray()
+        // console.log(orderDetails,"order details");
         resolve(orderDetails)
     })
  },
+
+
+
  adminViewSingleAddress:(singleId)=>{
     return new Promise(async(resolve,reject)=>{
         let singleAddress=await db.get().collection(connection.ORDER_COLLECTION)
@@ -270,6 +357,9 @@ module.exports={
         resolve(singleAddress)
     })
  },
+
+
+
  adminViewSigleOrder:(orderId)=>{
     // console.log(orderId+"hai");
     return new Promise(async(resolve,reject)=>{
@@ -309,6 +399,10 @@ module.exports={
         resolve(singleOrderDetails)
     })
  },
+
+
+
+
  adminSingleTotal:(orderId)=>{
     // console.log(orderId+"hai");
     return new Promise(async(resolve,reject)=>{
@@ -337,10 +431,17 @@ module.exports={
             },
             {
                 $project:{
+                    item:1,
+                    quantity:1,
+                    product:{$arrayElemAt:['$product',0]}
+                }
+            },
+            {
+                $project:{
                     _id:0,
                     item:1,
                     quantity:1,
-                    total:{ $multiply:['$quantity',{$arrayElemAt:["$product.price",0]}]}
+                    total:{ $multiply:[{$toInt:"$quantity"},{$toInt:"$product.price"}]}
                 }
             }
         ]).toArray()
@@ -348,7 +449,11 @@ module.exports={
         resolve(singleOrderTotal)
     })
  },
- //update order details in shipped
+
+
+ /* -------------------- //update order details in shipped ------------------- */
+
+
    shippedOrder:(shipId)=>{
     return new Promise(async(resolve,reject)=>{
         await db.get().collection(connection.ORDER_COLLECTION)
@@ -363,7 +468,10 @@ module.exports={
         })
     })
   },
-//  update order status in deliver
+
+/* ------------------- //  update order status in deliver ------------------- */
+
+
 deliverdOrder:(delId)=>{
         return new Promise(async(resolve,reject)=>{
             await db.get().collection(connection.ORDER_COLLECTION)
@@ -379,7 +487,10 @@ deliverdOrder:(delId)=>{
         })
     },
 
-    // update order status in cancled
+
+    /* -------------------- // update order status in cancled ------------------- */
+
+
     cancelOrder:(cancelId)=>{
         return new Promise(async(resolve,reject)=>{
             await db.get().collection(connection.ORDER_COLLECTION)
@@ -401,6 +512,7 @@ deliverdOrder:(delId)=>{
 
 
     /* ----------------- // genarate to day by day sales report ----------------- */
+
 
     daySalesReport:(dt)=>{
         console.log(dt,"hia");
@@ -503,6 +615,7 @@ deliverdOrder:(delId)=>{
 
     /* ------------------- //gemerated by monthly sales Report ------------------ */
 
+
     monthlySalesReport:(dt)=>{
         console.log(dt);
         return new Promise(async(resolve,reject)=>{
@@ -544,6 +657,7 @@ deliverdOrder:(delId)=>{
     
     /* ------------------ //cout total order count in maonthly ------------------ */
 
+
     countOrdermonthly:(dt)=>{
         return new Promise(async(resolve,reject)=>{
             let countOrder=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
@@ -579,6 +693,7 @@ deliverdOrder:(delId)=>{
 
 
 /* ------------------------ // generate yearly report ----------------------- */
+
 
 yearlySales:(dt)=>{
     return new Promise(async(resolve,reject)=>{
@@ -618,6 +733,7 @@ yearlySales:(dt)=>{
 
 
 /* ------------------------ // total count in yearlly ----------------------- */
+
 
 countOrderYearlly:(dt)=>{
     return new Promise(async(resolve,reject)=>{
@@ -687,6 +803,7 @@ paymentGraph:()=>{
 
 /* ------------------------------- sales graph ------------------------------ */
 
+
 salesGrph:()=>{
     return new Promise(async(resolve,reject)=>{
         let sales=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
@@ -703,14 +820,18 @@ salesGrph:()=>{
                     count:{$sum:1}
                 }
             },
-            { $sort : { _id: 1 } }
+            {
+                 $sort : { _id: 1 }
+            }
+
         ]).toArray()
-        // console.log(sales,"hai sales report");
         resolve(sales)
+        // console.log(sales,"hai sales report");
     })
 },
 
     /* --------------------------- monthly sales graph -------------------------- */
+
 
     monthlygrph:()=>{
         return new Promise(async(resolve,reject)=>{
@@ -737,6 +858,7 @@ salesGrph:()=>{
 
     /* --------------------------- yearly sales graph --------------------------- */
 
+
     yearlygrph:()=>{
         return new Promise(async(resolve,reject)=>{
             let yearly=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
@@ -757,9 +879,53 @@ salesGrph:()=>{
             // console.log(yearly)
             resolve(yearly)
         })
+    },
+
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                                 brand offer                                */
+    /* -------------------------------------------------------------------------- */
+
+
+    addBrandOffer:(brandId)=>{
+        // console.log(brandId,"details");
+        return new Promise(async(resolve,reject)=>{
+          let brand=await db.get().collection(connection.PRODUCT_COLLECTION).aggregate([
+            {
+                $match:{
+                    catagory:ObjectId(brandId)
+                }
+            }
+          ]).toArray()
+             resolve(brand) 
+
+            })
+    },
+
+   
+    updateBrandOffer:(proId,offprice,offer)=>{
+    return new Promise(async(resolve,reject)=>{
+        let brdOffer= await db.get().collection(connection.PRODUCT_COLLECTION).findOne({_id:ObjectId(proId)})
+         let price=0
+
+        if(brdOffer.originelPrice){
+          price=brdOffer.originelPrice
+        }else{
+            price=brdOffer.price
+        }
+        let updateProduct= await db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(proId)},
+        {
+          $set:{
+            originelPrice:price,
+            price:""+ offprice,
+            offer:""+offer
+        }
+        })
+        // console.log(updateProduct,'GJHGJHFHGFHGFHGFH');
+        resolve(updateProduct)
+    })
     }
-
-
 
 
     

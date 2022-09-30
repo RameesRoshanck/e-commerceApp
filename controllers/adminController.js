@@ -440,13 +440,64 @@ const updateBanner=(req,res)=>{
      
 const deleteBanner=(req,res)=>{
     let Id=req.params.id
-    console.log(req.params.id,'yavde');
+    // console.log(req.params.id,'yavde');
     adminHelpers.deleteBanner(Id).then((data)=>{
         res.redirect('/admin/adminBanner')
     })
 }
 
 
+
+/* -------------------------------------------------------------------------- */
+/*                            start Brandwise offer                           */
+/* -------------------------------------------------------------------------- */
+
+
+const brandOffer=async(req,res)=>{
+  let brand= await adminHelpers.getCatagory()
+//   console.log(brand);
+    res.render('admin/admin-brandOffer',{admin:true,brand})
+}
+
+
+//post brand offer
+const postBrandOffer=async(req,res)=>{
+    
+    let offer=req.body.offer;
+
+    if(req.body.brand !=""){
+
+        let newprice =0;
+
+        let brand=await adminHelpers.addBrandOffer(req.body.brand)
+        console.log(brand,'oieuiweort');
+
+         for(let i=0;i<brand.length;i++){
+            
+             if(brand[i].originelPrice){
+                 
+                newprice  = Math.round((brand[i].originelPrice) * ((100 - offer) / 100))
+               
+             }else{
+                newprice  = Math.round((brand[i].originalPrice) * ((100 - offer) / 100))
+             }
+           let BrndOffer=await adminHelpers.updateBrandOffer(brand[i]._id,newprice,offer)
+        }
+    }
+
+    res.redirect('/admin/brandOffer')
+}
+
+
+
+/* -------------------------------------------------------------------------- */
+/*                              coupon Mangement                              */
+/* -------------------------------------------------------------------------- */
+
+
+const getCoupon=(req,res)=>{
+
+}
 
 
 
@@ -485,5 +536,8 @@ module.exports={
     addBanner,
     getSingleBanner,
     updateBanner,
-    deleteBanner
+    deleteBanner,
+    brandOffer,
+    postBrandOffer,
+    getCoupon
 }

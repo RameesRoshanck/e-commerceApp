@@ -3,10 +3,12 @@ const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduc
         getUsers,blockUser, unblockUser, getCatagory, postCatagory, deleteCatagory, listAllProduct, 
         deleteProduct, getEditProduct, updateProduct, adminOrderList, adminOrderDetails,shippedOrder,
         deliverdOrder, cancelOrder, salesReport, daySalesReport, monthlySalesReport, yearllySaleReporter,
-        getEditCatagory,postUpdateCatagory,getBanner, addBanner, getSingleBanner, updateBanner, deleteBanner} = require('../controllers/adminController');
-const { adminAuth } = require('../middleware/middleware');
+        getEditCatagory,postUpdateCatagory,getBanner, addBanner, getSingleBanner, updateBanner, deleteBanner,
+        brandOffer, postBrandOffer, getCoupon } = require('../controllers/adminController');
+const { adminAuth, auth } = require('../middleware/middleware');
 var router = express.Router();
-const multer=require("../helpers/multer")
+const multer=require("../helpers/multer");
+
 
 
 /* -------------------------------------------------------------------------- */
@@ -121,6 +123,30 @@ router.post('/editBanner/:id',multer.array('image',2),updateBanner)
 
 //delete banner
 router.get('/deleteBanner/:id',deleteBanner)
+
+
+/* -------------------------------------------------------------------------- */
+/*                                   offers                                   */
+/* -------------------------------------------------------------------------- */
+
+
+
+/* -------------------------------- brandwise ------------------------------- */
+
+//get request
+router.get('/brandOffer',adminAuth,brandOffer)
+
+//post request
+router.post('/brandOffer',adminAuth,postBrandOffer)
+
+
+
+
+/* ----------------------------- //  coupon wise ---------------------------- */
+
+// get request
+router.get('/getCoupon',adminAuth,getCoupon)
+
 
 
 module.exports = router;

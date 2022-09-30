@@ -1,0 +1,61 @@
+ <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+
+        {{>admin-header}}
+	    {{>admin-sideNavbar}}
+
+
+
+        <div class="content-body">
+            <div class="container-fluid">
+				<!-- Add Order -->
+				
+                <div class="page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Brand Offer</a></li>
+					</ol>
+                </div>
+              <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Brand Offer</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                     <form  action="/admin/brandOffer" method="post">
+                                        <div class="form-row">
+                                            <div class="col-md-10">
+                                             <div class="form-group">
+											      <label> <b> Choose Brand</b></label>
+                                                  <select class="form-control form-control-lg default-select" name="brand">
+											    	 {{#each brand}}
+                                                   <option value="{{this._id}}">{{this.catagory}}</option>
+                                                    {{/each}}
+                                                   </select>
+                                            </div>
+                                            </div>
+                                            <div class="col-md-10">
+                                             <div class="form-group">
+                                                 <label> <b> Offer</b></label>
+                                                 <input  type="text"  class="form-control" name="offer" >
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">ADD Brand</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                <!-- row -->
+                
+            </div>
+        </div>
+    </div>

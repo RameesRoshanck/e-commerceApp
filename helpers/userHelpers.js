@@ -29,6 +29,15 @@ paypal.configure({
 
 
 module.exports={
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                                 1 dosignup                                 */
+    /* -------------------------------------------------------------------------- */
+
+
+
+
     doSignup:(userData)=>{
         console.log(userData);
         return new Promise(async(resolve,reject)=>{
@@ -51,6 +60,11 @@ module.exports={
             }
         })
     },
+
+
+/* --------------------------------- dologin -------------------------------- */
+
+
     doLogin:(userData)=>{
         return new Promise(async(resolve,reject)=>{
             let response={}
@@ -82,6 +96,10 @@ module.exports={
             }
         })
     },
+
+
+/* ---------------------------------- dootp --------------------------------- */
+
     doOtp:(userData)=>{
         let response={};
         return new Promise(async(resolve,reject)=>{
@@ -104,6 +122,11 @@ module.exports={
             }
         })
     },
+
+
+    /* ------------------------------- confirm otp ------------------------------ */
+
+
     doOtpConfirm:(confimrOtp,userData)=>{
         return new Promise((resolve,reject)=>{
             client.verify.services(otp.serviceId).verificationChecks.create({
@@ -118,18 +141,95 @@ module.exports={
               })
         })
     },
+
+
+/* ------------------------------ view products ----------------------------- */
+
+
     viewProducts:()=>{
-        return new Promise((resolve,reject)=>{
-           let product= db.get().collection(connection.PRODUCT_COLLECTION).find().toArray()
+        return new Promise(async(resolve,reject)=>{
+           let product=await db.get().collection(connection.PRODUCT_COLLECTION).aggregate([
+             {
+                $project:{
+                    _id:1,
+                    name:1,
+                    prd_Id:1,
+                    price:1,
+                    catagory:1,
+                    stock:1,
+                    offer:1,
+                    description:1,
+                    image:1,
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                    originelPrice:1,
+
+                }
+             }
+           ]).toArray()
+        //    console.log(product,"djhaskdjfhaskdf");
             resolve(product)
         })
     },
+
+
+/* --------------------------- view sigle product --------------------------- */
+
+
     viewSigleProduct:(proId)=>{
         return new Promise(async(resolve,reject)=>{
           let product=await db.get().collection(connection.PRODUCT_COLLECTION).findOne({_id:ObjectId(proId)})
           resolve(product) 
         })
     },
+
+
+
+    /* -------------------------- //view brandwise view ------------------------- */
+
+    brandView:(brandId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let brand=await db.get().collection(connection.PRODUCT_COLLECTION).find({catagory:ObjectId(brandId)}).toArray()
+        //    console.log(brand,'isthere femigation today');
+        resolve(brand)
+        })
+    },
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                                view brand                                */
+    /* -------------------------------------------------------------------------- */
+
+    
+    viewbrand:()=>{
+          return new Promise(async(resolve,reject)=>{
+            let brand=await db.get().collection(connection.CATAGORY_COLLECTION).find().toArray()
+            // console.log(brand);
+            resolve(brand)
+          })
+    },
+
+
+
+
+
+
+    /* ----------------------------- vew Banner imag ---------------------------- */
+
+
+    viewBanner:()=>{
+        return new Promise(async(resolve,reject)=>{
+            let banner=await db.get().collection(connection.BANNER_COLLECTION).find().toArray()
+            // console.log(banner);
+            resolve(banner[0])
+        })
+    },
+
+
+
+
+    /* ------------------------------- add to cart ------------------------------ */
+
+
     addToCart:(proId,userId)=>{
         let proObj={
             item:ObjectId(proId),
@@ -170,6 +270,12 @@ module.exports={
             }
         })
     },
+
+
+
+    /* ----------------------------- get add product ---------------------------- */
+
+
     getCartProduct:(userId)=>{
         return new Promise(async(resolve,reject)=>{
             let cartItems=await db.get().collection(connection.CART_COLLECTION).aggregate([
@@ -222,6 +328,11 @@ module.exports={
             resolve(cartItems)
         })
     },
+
+
+    /* ----------------------------- get cart count ----------------------------- */
+
+
     getCartCount:(userId)=>{
         let count=0;
         return new Promise(async(resolve,reject)=>{
@@ -232,6 +343,11 @@ module.exports={
             resolve(count)
         })
     },
+
+
+/* ----------------------- change cart items quantity ----------------------- */
+
+
     changeProductQuantity:(details)=>{
         details.count = parseInt(details.count)
         details.quantity=parseFloat(details.quantity)
@@ -258,6 +374,11 @@ module.exports={
         } 
         })
     },
+
+
+/* ---------------------------- delete cart items --------------------------- */
+
+
     DeleteCartItem:(details)=>{
        return new Promise((resolve,reject)=>{
            db.get().collection(connection.CART_COLLECTION)
@@ -270,7 +391,11 @@ module.exports={
            })
        })
     },
-    //......................
+     
+
+    /* -------------------------- total amount of cart -------------------------- */
+
+
     getTotalAmout:(userId)=>{
         return new Promise(async(resolve,reject)=>{
             let total=await db.get().collection(connection.CART_COLLECTION).aggregate([
@@ -302,17 +427,31 @@ module.exports={
                         product:{$arrayElemAt:['$product',0]}
                     }
                 },
-                 { $group:{_id:null,
-                      total:{$sum:{ $multiply:['$quantity','$product.price']}}
-                  }
+                { $group:{_id:null,
+                    total:{$sum:{  $multiply: [
+                    //   "$product.price", "$quantity"
+                      {  $toInt: "$quantity"},
+                      {  $toInt: "$product.price" }
+                  ]}}
                 }
+              }
               
             ]).toArray()
+            // console.log('&&&&&&&&&&&&&&&&&&&&&&&&&',total);
             // console.log(total[0].total);
-            resolve(total[0].total)
+            if(total[0].length !==0){
+                resolve(total[0].total)
+            }else{
+                resolve()  
+            }
+
         })
     },
-    //sub cartproducttotal
+
+
+    /* -------------------------- sub cartproducttotal -------------------------- */
+
+
     getProductTotal:(userId)=>{
         return new Promise(async(resolve,reject)=>{
             let subproductTotal=await db.get().collection(connection.CART_COLLECTION).aggregate([
@@ -344,20 +483,29 @@ module.exports={
                         product:{$arrayElemAt:['$product',0]}
                     }
                 },
-                 { $project:{total:{ $multiply:['$quantity','$product.price']}
+                { $project:{
+                    total:{ $multiply:[
+                                    {  $toInt: "$quantity"},
+                                    {  $toInt: "$product.price"}
+                    ]}
                   }
-                }
+                } 
               
-            ]).toArray()
-            if(subproductTotal.length!=0){
+    ]).toArray()
+            if(subproductTotal.length!==0){
                 resolve(subproductTotal)
             }else{
                 resolve()
             }
         })
     },
-    //ajax wrk to change product price in cart page
+
+
+    /* ------------- //ajax wrk to change product price in cart page ------------ */
+
+
     getSubTotal:(details)=>{
+
         return new Promise(async(resolve,reject)=>{
           let subTotal=await db.get().collection(connection.CART_COLLECTION).aggregate([
             {
@@ -370,7 +518,6 @@ module.exports={
                 $project:{
                     item:'$products.item',
                     quantity:'$products.quantity'
-                    // price:'$products.price'
                 }
             },
             {
@@ -392,20 +539,26 @@ module.exports={
                 }
             },
              { $project:{
-                total:{ $multiply:['$quantity','$product.price']}
+                total:{ $multiply:[
+                                {  $toInt: "$quantity"},
+                                {  $toInt: "$product.price"}
+                ]}
               }
             }  
             ]).toArray()
-            
-            if(subTotal.length!=0){
-                console.log(subTotal[0].total);
+            if(subTotal.length!==0){
                resolve(subTotal[0].total)
             }else{
                 resolve()
             }
-        })
+         })
     },
-    // insert user address or add user address 
+
+
+    /* --------------- // insert user address or add user address --------------- */
+
+
+
     addUserAddress:(userId,details)=>{
         return new Promise((resolve,reject)=>{
             let dt=new Date
@@ -425,7 +578,11 @@ module.exports={
             })
         })
     },
-    //get all useradress
+
+
+    /* -------------------------- // get all useradress ------------------------- */
+
+
     getuserDetails:(userId)=>{
         return new Promise((resolve,reject)=>{
             let address=db.get().collection(connection.ADDRESS_COLLECTION)
@@ -433,7 +590,12 @@ module.exports={
             resolve(address)
         })
     },
-    //get edit user profile address
+
+
+
+    /* --------------------- //get edit user profile address -------------------- */
+
+
     editUserAddress:(Id,userId)=>{
         return new Promise((resolve,reject)=>{
             db.get().collection(connection.ADDRESS_COLLECTION)
@@ -442,6 +604,9 @@ module.exports={
             })
         })
     },
+
+
+
     updateUserAddress:(Id,userId,details)=>{
         return new Promise((resolve,reject)=>{
             db.get().collection(connection.ADDRESS_COLLECTION)
@@ -462,7 +627,11 @@ module.exports={
             })
         })
     },
-    //user delete profile address
+
+
+    /* ---------------------- //user delete profile address --------------------- */
+
+
     deleteProfileAddress:(Id,addressId)=>{
         console.log(Id);
         console.log(addressId);
@@ -551,11 +720,7 @@ module.exports={
                 resolve(result.insertedId)
             })
         }
-
-            
-
-      
-    })
+})
 },
 
 
@@ -579,10 +744,28 @@ module.exports={
     getUserOders:(userId)=>{
         // console.log(userId);
         return new Promise(async(resolve,reject)=>{
-            let order=await db.get().collection(connection.ORDER_COLLECTION)
-            .find({userId:ObjectId(userId)}).toArray()
+            let order=await db.get().collection(connection.ORDER_COLLECTION).aggregate([
+                {
+                    $match:{
+                        userId:ObjectId(userId)
+                    }
+                },
+                {
+                    $project:{
+                        _id:1,
+                        delivaryDtails:1,
+                        userId:1,
+                        paymentMethod:1,
+                        total:1,
+                        status:1,
+                        date:{ $dateToString: { format: "%Y-%m-%d", date: "$date" } }
+
+                    }
+                    
+                }
+            ]).toArray()
             resolve(order)
-            // console.log(order);
+            //  console.log(order,'hai order');
         })
     },
 
@@ -627,9 +810,11 @@ module.exports={
         })
     },
 
+
  /* -------------------------------------------------------------------------- */
  /*                              generate razopay                              */
  /* -------------------------------------------------------------------------- */
+
 
     generateRazorepy:(orderId,totalPrice)=>{
         return new Promise((resolve,reject)=>{
@@ -649,10 +834,12 @@ module.exports={
         })
     },
 
+
 /* -------------------------------------------------------------------------- */
 /*                       verifaying to razorpay payment                       */
 /* -------------------------------------------------------------------------- */
-    
+ 
+
   verifyPayment:(details)=>{
      return new Promise((resolve,reject)=>{
         const crypto = require('crypto');
@@ -668,10 +855,12 @@ module.exports={
     })
   },
 
+
   /* -------------------------------------------------------------------------- */
   /*                    change payment status online payment status             */
   /* -------------------------------------------------------------------------- */
   
+
   ChangePaymentStatus:(orderId,userId)=>{
      return new Promise((resolve,reject)=>{
         db.get().collection(connection.ORDER_COLLECTION).updateOne({_id:ObjectId(orderId)},
@@ -686,9 +875,11 @@ module.exports={
      })
   },
 
+
   /* -------------------------------------------------------------------------- */
   /*                              genarate pay pal                              */
   /* -------------------------------------------------------------------------- */
+
 
   generatePaypal:(orderId,totalPrice)=>{
     return new Promise((resolve,reject)=>{
@@ -732,9 +923,11 @@ module.exports={
     },
 
 
+
     /* -------------------------------------------------------------------------- */
     /*                               add to wishlist                              */
     /* -------------------------------------------------------------------------- */
+
 
     
     addToWishlist:(proId,userId)=>{
@@ -780,7 +973,8 @@ module.exports={
     },
 
 
-    //get wishlist Product
+    /* ------------------------- //get wishlist Product ------------------------- */
+
 
     getWishlist:(userId)=>{
           return new Promise(async(resolve,reject)=>{
@@ -821,7 +1015,7 @@ module.exports={
     },
 
 
-    // whishlist count
+    /* --------------------------- // whishlist count --------------------------- */
 
     getWishlistCount:(userId)=>{
         return new Promise(async(resolve,reject)=>{
@@ -836,7 +1030,9 @@ module.exports={
         })
     },
 
-    //delete wishlist
+
+    /* ---------------------------- //delete wishlist --------------------------- */
+
 
     DeleteWishlist:(Details)=>{
         console.log(Details,'hello');
@@ -854,4 +1050,6 @@ module.exports={
 
      
 }
+
+/* -------------------------- //to get brand views -------------------------- */
 

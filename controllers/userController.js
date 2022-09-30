@@ -12,10 +12,13 @@ const userHomeRoute=async(req,res)=>{
         cartCount= await userHelpers.getCartCount(req.session.user._id)
         wishlistCount= await userHelpers.getWishlistCount(req.session.user._id)
     }
-    userHelpers.viewProducts().then((product)=>{
+        let product=await userHelpers.viewProducts()
+        // console.log(product);
+        let brand=await userHelpers.viewbrand()
+        let banner=await userHelpers.viewBanner()
         // console.log(user)
-        res.render('user/user-home',{product,user,cartCount,wishlistCount})
-    })
+        res.render('user/user-home',{product,brand,banner,user,cartCount,wishlistCount})
+    
 }
 
     
@@ -31,7 +34,7 @@ const getSignUp=(req,res)=>{
 
 //user post signup
 const postSignUp=(req,res)=>{
-     //    console.log(req.body);
+        console.log(req.body);
      userHelpers.doSignup(req.body).then((response)=>{
       if(response.emailExist){
         req.session.emailExist=true;
@@ -131,6 +134,7 @@ const postConfirmOtp=(req,res)=>{
 //get product
 const getProducts=async(req,res)=>{
     let cartCount=null;
+    let wishlistCount=null
     if(req.session.loggedIn){
         cartCount= await userHelpers.getCartCount(req.session.user._id)
         wishlistCount= await userHelpers.getWishlistCount(req.session.user._id)
@@ -143,35 +147,68 @@ const getProducts=async(req,res)=>{
 
 
 //user product view
-const productView=(req,res)=>{
+const productView=async(req,res)=>{
+    let cartCount=null;
+    let wishlistCount=null
+    if(req.session.loggedIn){
+        cartCount= await userHelpers.getCartCount(req.session.user._id)
+        wishlistCount= await userHelpers.getWishlistCount(req.session.user._id)
+    }
     let id=req.params.id
     userHelpers.viewSigleProduct(id).then((product)=>{
-        res.render('user/user-productView',{product,user:req.session.user})
+        res.render('user/user-productView',{product,user:req.session.user,cartCount,wishlistCount})
     })
 }
 
 
-// user cart view
+//user catagorywise product view
+const catagoryView=async(req,res)=>{
+        //  console.log(req.query.id,'query');
+        let cartCount=null;
+        let wishlistCount=null
+        if(req.session.loggedIn){
+            cartCount= await userHelpers.getCartCount(req.session.user._id)
+            wishlistCount= await userHelpers.getWishlistCount(req.session.user._id)
+        }
+        let Id=req.query.id;
+        await userHelpers.brandView(Id).then(async(brandss)=>{
+            let brand=await userHelpers.viewbrand()
+            // console.log(brandss,"only brand wise");
+            res.render('user/user-categorybase',{brandss,brand,user:req.session.user,cartCount,wishlistCount})
+        })
+    }
+
+
+
+
+/* ---------------------------- // user cart view --------------------------- */
+
+
 const cartView=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
     let products= await userHelpers.getCartProduct(req.session.user._id)
-    // console.log(products);
-    let total=0
+    //  console.log(products);
+    
+    let total=null;
     if(products.length>0){
-         total=await userHelpers.getTotalAmout(req.session.user._id) 
+        total=await userHelpers.getTotalAmout(req.session.user._id) 
     }
     let productTotal=await userHelpers.getProductTotal(req.session.user._id)
     for(var i=0;i<products.length;i++){
         products[i].productTotal=productTotal[i].total
     }
+    //  console.log(total,"total");
+     console.log(products,"prototal");
     res.render('user/user-cart',{products,total,cartCount,user:req.session.user})
 }
 
 
-// add to cart
+
+
+/* ----------------------------- // add to cart ----------------------------- */
 const addToCart=(req,res)=>{
     // console.log("api call");
     userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
@@ -478,6 +515,20 @@ const deleteWishlist=(req,res)=>{
    })
 }
 
+/* -------------------------- end wishlist controls ------------------------- */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports= {
@@ -492,6 +543,7 @@ module.exports= {
     getConfirmOtp,
     postConfirmOtp,
     getProducts,
+    catagoryView,
     productView,
     cartView,
     addToCart,
@@ -514,5 +566,6 @@ module.exports= {
     deleteUserAddress,
     getwishlist,
     addWishlist,
-    deleteWishlist
+    deleteWishlist,
+   
 }
