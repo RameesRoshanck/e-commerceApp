@@ -175,17 +175,20 @@ const deleteCatagory=(req,res)=>{
 
 const getaddProduct=(req,res)=>{
     adminHelpers.getCatagory().then((catagory)=>{
+        // console.log(catagory,'jsdhfksajdhfksadjhfaskdjhf');
         res.render('admin/admin-addProduct',{admin:true,catagory})
     })
 }
 
 
 const postaddProduct=(req,res)=>{
+    console.log(req.body);
     console.log(req.files);
     const filename=req.files.map(function(file){
         return file.filename
     })
     req.body.image=filename
+    
    adminHelpers.addProduct(req.body).then((response)=>{
     if(response.status){
         res.redirect('/admin/addProduct')
@@ -197,6 +200,7 @@ const postaddProduct=(req,res)=>{
 
 const listAllProduct=(req,res)=>{
     adminHelpers.listProduct().then((products)=>{
+        console.log(products,'product list');
         res.render('admin/admin-allProduct',{admin:true,products})
     })
 }
@@ -212,9 +216,12 @@ const deleteProduct=(req,res)=>{
 const getEditProduct=(req,res)=>{
     let id=req.params.id
     adminHelpers.getProductDetails(id).then((product)=>{
+        adminHelpers.getCatagory().then((Brand)=>{
+        // console.log(product,'===========');
        
-        res.render('admin/admin-editProduct',{admin:true,product})
+        res.render('admin/admin-editProduct',{admin:true,product,Brand})
     })
+})
 }
 
 const updateProduct=(req,res)=>{
@@ -225,7 +232,7 @@ const updateProduct=(req,res)=>{
      let id=req.params.id
      console.log(req.body);
     adminHelpers.updateProduct(id,req.body).then((data)=>{
-        // console.log(data);
+        // console.log(data,"upadate product");s
         res.redirect('/admin/listAllProduct') 
     })
 }

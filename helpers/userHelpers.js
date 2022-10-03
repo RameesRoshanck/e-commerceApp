@@ -679,9 +679,15 @@ module.exports={
                  
                         db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
                         
-                        // products.forEach(element => {
-                        //     db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId()})
-                        // });
+                        products.forEach(element => {
+                            element.quantity=parseInt(element.quantity)
+                            console.log(element.quantity,'+++++++++');
+                            db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(element.item)},
+                            {
+                                $inc:{stock:-(element.quantity)}
+                                
+                            })
+                        });
                         
  
                     // console.log(result.insertedId,"hai");
@@ -724,6 +730,14 @@ module.exports={
                 status:status
             }
             db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
+             
+                products.forEach(element => {
+                    db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(element.item)},
+                    {
+                        $inc:{stock:-(element.quantity)}
+                    })
+                });
+
                // console.log(result.insertedId,"hai");
                 resolve(result.insertedId)
             })

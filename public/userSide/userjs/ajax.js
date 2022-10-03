@@ -104,7 +104,7 @@ function applyCoupon(event){
     event.preventDefault()
     let coupon=document.getElementById('couponName').value
     // console.log(coupon);
-    alert(coupon)
+    alert(coupon,"==+++++++")
     $.ajax({
         url:'/applayCoupon',
         data:{ coupon },
@@ -112,12 +112,12 @@ function applyCoupon(event){
         success:(response)=>{
             if(response.varifying)
             {
-                alert(response.TotalAmount,'====')
+                alert(response.TotalAmount +'++++++++====')
                 document.getElementById('total').innerHTML='₹'+response.TotalAmount
               document.getElementById('discount').innerHTML='₹'+response.subAmount  
               document.getElementById('error').innerHTML=''    
             }else{
-                alert(response.Total)
+                alert(response.Total+"=========")
                 document.getElementById('total').innerHTML='₹'+ response.Total
                 document.getElementById('discount').innerHTML='₹'+ 0
 
@@ -134,7 +134,6 @@ function applyCoupon(event){
                 }
                 else if(response.invalidMaxAmount)
                 {
-                    alert(response.maxAmountMsg)
                     document.getElementById('error').innerHTML=response.maxAmountMsg
                 }
                 else if(response.noCoupon){

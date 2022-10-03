@@ -152,6 +152,7 @@ module.exports={
                 Product.date=new Date;
                 // Product.price=parseInt(Product.price)
                 // Product.offer=parseInt(Product.offer)
+                Product.stock=parseInt(Product.stock)
                 
                 if(Product.offer){
                     newprice = Math.round((Product.price) * ((100 - Product.offer) / 100))
@@ -179,18 +180,42 @@ module.exports={
     },
 
 
-
+/* --------------------------- //list product view -------------------------- */
 
     listProduct:()=>{
-        return new Promise((resolve,reject)=>{
-            let Product=db.get().collection(connection.PRODUCT_COLLECTION)
-            .find().toArray()
+        return new Promise(async(resolve,reject)=>{
+            let Product= await db.get().collection(connection.PRODUCT_COLLECTION).aggregate([
+                {
+                    $lookup:{
+                        from:connection.CATAGORY_COLLECTION,
+                        localField:'catagory',
+                        foreignField:'_id',
+                        as:'catagory'
+                    }
+                },
+                {
+                    $project:{
+                        catagory:{$arrayElemAt:['$catagory',0]},
+                        name:1,
+                        prd_Id:1,
+                        price:1,
+                        stock:1,
+                        offer:1,
+                        description:1,
+                        image:1
+
+                    }
+                }
+            ]).toArray()
+            // .find().toArray()
+            // console.log(Product,'list products in helpers')
             resolve(Product)
         })
     },
 
 
 
+    /* ---------------------------- //delete product ---------------------------- */
 
     deleteProduct:(proId)=>{
         return new Promise((resolve,reject)=>{
@@ -216,17 +241,45 @@ module.exports={
     },
 
 
+    /* ---------------------- //get single product details ---------------------- */
 
 
     getProductDetails:(proId)=>{
         return new Promise(async(resolve,reject)=>{
-            let product=await db.get().collection(connection.PRODUCT_COLLECTION)
-            .findOne({_id:ObjectId(proId)})
-            resolve(product)
+            let product=await db.get().collection(connection.PRODUCT_COLLECTION).aggregate([
+                {
+                   $match:{_id:ObjectId(proId)}
+                },
+                {
+                    $lookup:{
+                        from:connection.CATAGORY_COLLECTION,
+                        localField:'catagory',
+                        foreignField:'_id',
+                        as:"catagory"
+                    }
+                },
+                {
+                    $project:{
+                        catagory:{$arrayElemAt:['$catagory',0]},
+                        name:1,
+                        prd_Id:1,
+                        price:1,
+                        stock:1,
+                        offer:1,
+                        description:1,
+                        image:1
+
+                    }
+                }
+            ]).toArray()
+            // .findOne({_id:ObjectId(proId)})
+            // console.log(product[0].catagory,"++++++++++++++")
+            resolve(product[0])
         })
     },
 
 
+/* ---------------------------- //update product ---------------------------- */
 
 
     updateProduct:(proId,proDetails)=>{

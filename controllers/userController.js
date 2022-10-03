@@ -583,10 +583,10 @@ const applayCoupon=async(req,res)=>{
     const date=new Date()
 
 
-   if(req.body.coupon==''){
+   if(req.body.coupon==null){
        
       res.json({noCoupon:true,total})
-   }else{
+     }else{
 
     let applayCoupon= await userHelpers.applayCoupon(req.body,user,date,total)
     // console.log(applayCoupon,'applay responce');
@@ -603,6 +603,7 @@ const applayCoupon=async(req,res)=>{
 
             res.json(applayCoupon)
     }else{
+        console.log(total);
         applayCoupon.Total=total
         res.json(applayCoupon)
     }
