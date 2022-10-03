@@ -108,6 +108,22 @@ module.exports={
 
     deleteCatagory:(catagoryId)=>{
          return new Promise((resolve,reject)=>{
+              
+            db.get().collection(connection.CATAGORY_COLLECTION).findOne({_id:ObjectId(catagoryId)}).then((data)=>{
+                for(let i=0;i<data.image.length;i++){
+                    const element=data.image[i];
+                    fs.unlink("public" + "/product-images/" + element,(err)=>{
+                        if(err){
+                            console.log(err);
+                            console.log('deletion failed')
+                            }else{
+                                console.log('delete success');
+                            }
+                        })
+
+                }
+            })
+
             db.get().collection(connection.CATAGORY_COLLECTION).deleteOne({_id:ObjectId(catagoryId)}).then((data)=>{
                 resolve(data)
             })
@@ -149,6 +165,7 @@ module.exports={
                 }) 
                 resolve({status:false}) 
              }else{
+                Product.originelPrice=Product.price
                 db.get().collection(connection.PRODUCT_COLLECTION).insertOne(Product).then((result)=>{
                     resolve(result)
                    
@@ -183,6 +200,7 @@ module.exports={
                    fs.unlink("public" + "/product-images/" + element,(err)=>{
                     if(err){
                         console.log(err);
+                        console.log('deletion failed')
                         }else{
                             console.log('delete success');
                         }
@@ -214,6 +232,15 @@ module.exports={
     updateProduct:(proId,proDetails)=>{
        
         return new Promise(async(resolve,reject)=>{
+
+            let img = await db.get().collection(connection.PRODUCT_COLLECTION).findOne({ _id: ObjectId(proId) })
+            if (proDetails.image.length == 0) {
+                proDetails.image = img.image
+            }
+
+
+
+
             // proDetails.price=parseInt(proDetails.price)
             proDetails.catagory=ObjectId(proDetails.catagory)
             // proDetails.offer=parseInt(proDetails.offer)
@@ -925,8 +952,106 @@ salesGrph:()=>{
         // console.log(updateProduct,'GJHGJHFHGFHGFHGFH');
         resolve(updateProduct)
     })
+    },
+
+   
+    /* -------------------------------------------------------------------------- */
+    /*                            to start coupon offer                           */
+    /* -------------------------------------------------------------------------- */
+
+
+
+    //add coupon offer
+
+    addCoupon:(couponDetials)=>{
+        let response={};
+        return new Promise(async(resolve,reject)=>{
+          
+            let coupon=await db.get().collection(connection.COUPON_COLLECTION).findOne({code:couponDetials.code})
+             console.log(coupon);
+            if(coupon){
+                response.status=true
+                response.couponExist=true
+                console.log("coupon is exist");
+                resolve(response)
+            }else{
+
+                db.get().collection(connection.COUPON_COLLECTION).insertOne(couponDetials).then((result)=>{
+                    
+                    response.status=false
+                    console.log('coupon is created');
+                    resolve(result)
+                }).catch((err)=>{
+                    console.error(err)
+                })
+                resolve({status:false})
+            }
+
+        })
+    },
+
+
+        /* ------------------------------ //get coupon ------------------------------ */
+
+
+    getCoupon:()=>{
+        return new Promise(async(resolve,reject)=>{
+          let coupon=await db.get().collection(connection.COUPON_COLLECTION).find().toArray()
+          resolve(coupon)
+        })
+    },
+
+
+    /* ---------------------------- get single coupon --------------------------- */
+
+
+    editCoupon:(couponId)=>{
+       
+        return new Promise(async(resolve,reject)=>{
+            let coupon=await db.get().collection(connection.COUPON_COLLECTION).findOne({_id:ObjectId(couponId)})
+             
+            resolve(coupon)
+        })
+    },
+
+
+    updateCoupon:(couponDetails)=>{
+        // console.log(couponDetails,'+++++');
+
+        return new Promise(async(resolve,reject)=>{
+            let data=await db.get().collection(connection.COUPON_COLLECTION).updateOne({code:couponDetails.code},
+                {
+                    $set:{
+                        name: couponDetails.name,
+                        code: couponDetails.code,
+                        offer: couponDetails.offer,
+                        expiryDate: couponDetails.expiryDate,
+                        minAmount: couponDetails.minAmount,
+                        maxAmount: couponDetails.maxAmount
+                    }
+                })
+                resolve(data)
+        })
+    },
+
+
+    /* ------------------------------ delete coupon ----------------------------- */
+
+
+    deleteCoupon:(couponId)=>{
+
+        return new Promise((resolve,reject)=>{
+            let coupon=db.get().collection(connection.COUPON_COLLECTION).deleteOne({_id:ObjectId(couponId)})
+        
+            resolve(coupon)
+        
+        })
     }
 
 
+
+
+
+    
     
 }

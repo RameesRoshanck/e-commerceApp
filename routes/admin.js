@@ -4,7 +4,7 @@ const { adminHomeRoute, admimGetlogin, adminPostlogin, adminLogOut, getaddProduc
         deleteProduct, getEditProduct, updateProduct, adminOrderList, adminOrderDetails,shippedOrder,
         deliverdOrder, cancelOrder, salesReport, daySalesReport, monthlySalesReport, yearllySaleReporter,
         getEditCatagory,postUpdateCatagory,getBanner, addBanner, getSingleBanner, updateBanner, deleteBanner,
-        brandOffer, postBrandOffer, getCoupon } = require('../controllers/adminController');
+        brandOffer, postBrandOffer, getCoupon, postCoupun, editCoupon, updateCoupon, deleteCoupon } = require('../controllers/adminController');
 const { adminAuth, auth } = require('../middleware/middleware');
 var router = express.Router();
 const multer=require("../helpers/multer");
@@ -146,6 +146,20 @@ router.post('/brandOffer',adminAuth,postBrandOffer)
 
 // get request
 router.get('/getCoupon',adminAuth,getCoupon)
+
+//add coupon offer
+router.post('/postCoupon',adminAuth,postCoupun)
+
+
+//get sigle product router
+router.get('/editCoupon/:id',editCoupon)
+router.post('/editCoupon/:id',updateCoupon)
+
+//delete coupon
+router.get('/deleteCoupon/:id',deleteCoupon)
+
+
+
 
 
 

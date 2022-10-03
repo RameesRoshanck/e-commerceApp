@@ -1,7 +1,6 @@
 
 
 
-
 function addToCart(proId){
     $.ajax({
         url:'/add-to-cart/'+proId,
@@ -98,5 +97,65 @@ function deleteWishlist(WishId,proId){
             alert("this item is deleted")
             location.reload()
         })
+    })
+}
+
+function applyCoupon(event){
+    event.preventDefault()
+    let coupon=document.getElementById('couponName').value
+    // console.log(coupon);
+    alert(coupon)
+    $.ajax({
+        url:'/applayCoupon',
+        data:{ coupon },
+        method:'post',
+        success:(response)=>{
+            if(response.varifying)
+            {
+                alert(response.TotalAmount,'====')
+                document.getElementById('total').innerHTML='₹'+response.TotalAmount
+              document.getElementById('discount').innerHTML='₹'+response.subAmount  
+              document.getElementById('error').innerHTML=''    
+            }else{
+                alert(response.Total)
+                document.getElementById('total').innerHTML='₹'+ response.Total
+                document.getElementById('discount').innerHTML='₹'+ 0
+
+                if(response.invalidCoupon){
+                    document.getElementById('error').innerHTML=response.invalidMessage 
+                }
+                else if(response.dateInvalid)
+                {
+                    document.getElementById('error').innerHTML=response.dateInvalidMessage
+                }
+                else if(response.invaidMinAmount)
+                {
+                    document.getElementById('error').innerHTML=response.minAmoutMsg
+                }
+                else if(response.invalidMaxAmount)
+                {
+                    alert(response.maxAmountMsg)
+                    document.getElementById('error').innerHTML=response.maxAmountMsg
+                }
+                else if(response.noCoupon){
+                    document.getElementById('error').innerHTML='invalid coupon details'
+                }
+            } 
+        }
+    })
+}
+
+function removeCoupon(event){
+    event.preventDefault()
+    alert('remove')
+    $.ajax({
+        url:'/removeCoupon',
+        method:'get',
+        success:(response)=>{
+            alert(response)
+            document.getElementById('total').innerHTML='₹'+ response
+            document.getElementById('discount').innerHTML='₹'+ 0
+            document.getElementById('couponName').value = ''
+        }
     })
 }

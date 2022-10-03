@@ -1,4 +1,5 @@
 // const { response } = require("express")
+const { response } = require("express");
 const express = require("express")
 const userHelpers = require("../helpers/userHelpers")
 
@@ -87,14 +88,18 @@ const logout=(req,res)=>{
 }
 
 
-//user getotp
+/* ------------------------------ //user getotp ----------------------------- */
+
+
 const getOtp=(req,res)=>{
         res.render('user/user-otp',{"blockedOtp": req.session.Blocked}) 
         req.session.Blocked=false
     }
 
 
-//user postotp
+/* ------------------------------ user postotp ------------------------------ */
+
+
 let signUpData;
 const postOtp=(req,res)=>{
     userHelpers.doOtp(req.body).then((response)=>{
@@ -109,14 +114,19 @@ const postOtp=(req,res)=>{
 }
 
 
-//user get confirm otp
+
+/* ------------------------- //user get confirm otp ------------------------- */
+
+
 const getConfirmOtp=(req,res)=>{
     res.render('user/user-confirmOtp',{"otpErr":req.session.otpErr})
     req.session.otpErr=false
 }
 
 
-//user post confirm otp
+/* ------------------------- //user post confirm otp ------------------------ */
+
+
 const postConfirmOtp=(req,res)=>{
   userHelpers.doOtpConfirm(req.body,signUpData).then((response)=>{
     if(response.status){
@@ -131,7 +141,9 @@ const postConfirmOtp=(req,res)=>{
 }
 
 
-//get product
+/* ------------------------------ //get product ----------------------------- */
+
+
 const getProducts=async(req,res)=>{
     let cartCount=null;
     let wishlistCount=null
@@ -146,7 +158,9 @@ const getProducts=async(req,res)=>{
 
 
 
-//user product view
+/* --------------------------- //user product view -------------------------- */
+
+
 const productView=async(req,res)=>{
     let cartCount=null;
     let wishlistCount=null
@@ -161,7 +175,9 @@ const productView=async(req,res)=>{
 }
 
 
-//user catagorywise product view
+/* -------------------- //user catagorywise product view -------------------- */
+
+
 const catagoryView=async(req,res)=>{
         //  console.log(req.query.id,'query');
         let cartCount=null;
@@ -201,7 +217,7 @@ const cartView=async(req,res)=>{
         products[i].productTotal=productTotal[i].total
     }
     //  console.log(total,"total");
-     console.log(products,"prototal");
+    //  console.log(products,"prototal");
     res.render('user/user-cart',{products,total,cartCount,user:req.session.user})
 }
 
@@ -258,33 +274,72 @@ const placeOrder=async(req,res)=>{
 
 //user post placeOrder page
 const postPlaceOrder=async(req,res)=>{
+
+ 
     let product=await userHelpers.getCartProductList(req.body.userId)
     let totalPrice=await userHelpers.getTotalAmout(req.body.userId)
-    // console.log(req.body.Payment);
-    if(req.body['Payment']==='cod'){
+    let Coupon =await userHelpers.CheckoutCoupon(req.body.couponCode)
+
+    if(Coupon){
+       let discountAmount=(totalPrice*parseInt(Coupon.offer)/100)
+        let amount=Math.round(totalPrice-discountAmount)
+        // console.log(amount,'amount');
+
+        if(req.body['Payment']==='cod')
+        {
+            userHelpers.placeOrder(req.body,req.body.address,product,amount).then((orderId)=>{
+            res.json({codSuccess:true})
+            })
+        }
+        else if(req.body['Payment']==='razorpay')
+        {
+            userHelpers.onlinePayment(req.body,req.body.address,product,amount).then((orderId)=>{
+                userHelpers.generateRazorepy(orderId,amount).then((response)=>{
+                    response.razorpay=true
+                    res.json(response)
+                })
+            })
+        }
+        else if(req.body['Payment']==='paypal')
+        {
+            userHelpers.onlinePayment(req.body,req.body.address,product,amount).then((orderId)=>{
+                userHelpers.generatePaypal(orderId,amount).then((response)=>{
+                    response.paypal=true
+                    // console.log(response.paypal,'sdfsadfsdfsdf');
+                    res.json(response)
+                })
+            })
+        }
+
+    }else{
+
+        if(req.body['Payment']==='cod')
+        {
             userHelpers.placeOrder(req.body,req.body.address,product,totalPrice).then((orderId)=>{
             res.json({codSuccess:true})
-
-        })
-    }
-    else if(req.body['Payment']==='razorpay'){
-        userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
-          userHelpers.generateRazorepy(orderId,totalPrice).then((response)=>{
-              response.razorpay=true
-                res.json(response)
-          })
-        })
-    }
-    else if(req.body['Payment']==='paypal'){
-        userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
-            userHelpers.generatePaypal(orderId,totalPrice).then((response)=>{
-                response.paypal=true
-                console.log(response.paypal,'sdfsadfsdfsdf');
-                res.json(response)
             })
-        })
         }
-    } 
+        else if(req.body['Payment']==='razorpay')
+        {
+            userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
+                userHelpers.generateRazorepy(orderId,totalPrice).then((response)=>{
+                    response.razorpay=true
+                    res.json(response)
+                })
+            })
+        }
+        else if(req.body['Payment']==='paypal')
+        {
+            userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
+                userHelpers.generatePaypal(orderId,totalPrice).then((response)=>{
+                    response.paypal=true
+                    // console.log(response.paypal,'sdfsadfsdfsdf');
+                    res.json(response)
+                })
+            })
+        }
+    }
+} 
 
 
 
@@ -464,7 +519,7 @@ const editUserAddress=async(req,res)=>{
 
 //user profile update address
 const updateUserAddress=(req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
    let id=req.params.id
    userHelpers.updateUserAddress(id,req.session.user._id,req.body).then((data)=>{
     res.redirect('/userProfile')
@@ -474,7 +529,7 @@ const updateUserAddress=(req,res)=>{
 //user profile delete address
 const deleteUserAddress=(req,res)=>{
     let id=req.params.id
-    console.log(id);
+    // console.log(id);
     userHelpers.deleteProfileAddress(id,req.session.user._id).then(()=>{
         res.redirect('/userProfile')
     })
@@ -518,11 +573,55 @@ const deleteWishlist=(req,res)=>{
 /* -------------------------- end wishlist controls ------------------------- */
 
 
+/* ------------------------------ applay coupon ----------------------------- */
 
 
+const applayCoupon=async(req,res)=>{
+     let user=req.session.user._id
+
+    let total=await userHelpers.getTotalAmout(user)
+    const date=new Date()
 
 
+   if(req.body.coupon==''){
+       
+      res.json({noCoupon:true,total})
+   }else{
 
+    let applayCoupon= await userHelpers.applayCoupon(req.body,user,date,total)
+    // console.log(applayCoupon,'applay responce');
+    if(applayCoupon.varifying){
+      
+        // console.log(total);
+        
+             let discountAmount=(total*parseInt(applayCoupon.Data.offer)/100)
+             let amount=total-discountAmount
+             applayCoupon.subAmount=Math.round(discountAmount)
+             applayCoupon.TotalAmount=Math.round(amount)
+
+            //  console.log(TotalAmount,'offer');
+
+            res.json(applayCoupon)
+    }else{
+        applayCoupon.Total=total
+        res.json(applayCoupon)
+    }
+   }
+
+}
+
+
+/* ------------------------------ Remove coupon ----------------------------- */
+
+const RemoveCoupon=(req,res)=>{
+    let user=req.session.user._id
+     
+     userHelpers.getTotalAmout(user).then((response)=>{
+         res.json(response)
+        })
+    }
+
+     
 
 
 
@@ -567,5 +666,7 @@ module.exports= {
     getwishlist,
     addWishlist,
     deleteWishlist,
+    applayCoupon,
+    RemoveCoupon
    
 }

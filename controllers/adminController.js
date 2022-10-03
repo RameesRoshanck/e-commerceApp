@@ -223,8 +223,9 @@ const updateProduct=(req,res)=>{
     })
     req.body.image=filename
      let id=req.params.id
+     console.log(req.body);
     adminHelpers.updateProduct(id,req.body).then((data)=>{
-        console.log(data);
+        // console.log(data);
         res.redirect('/admin/listAllProduct') 
     })
 }
@@ -470,7 +471,7 @@ const postBrandOffer=async(req,res)=>{
         let newprice =0;
 
         let brand=await adminHelpers.addBrandOffer(req.body.brand)
-        console.log(brand,'oieuiweort');
+        // console.log(brand,'oieuiweort');
 
          for(let i=0;i<brand.length;i++){
             
@@ -495,10 +496,66 @@ const postBrandOffer=async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 
-const getCoupon=(req,res)=>{
+/* --------------------------- // get coupon page --------------------------- */
+
+
+const getCoupon=async(req,res)=>{
+     
+    let coupon=await adminHelpers.getCoupon()
+    // console.log(coupon);
+    res.render('admin/admin-couponManagement',{admin:true,coupon})
+}
+
+
+
+/* ------------------------------ // add coupon ----------------------------- */
+
+
+const postCoupun=(req,res)=>{
+    // console.log(req.body);
+    adminHelpers.addCoupon(req.body).then((response)=>{
+        if(response.status){
+            res.redirect('/admin/getCoupon')
+            console.log('success');
+        }else{
+            res.redirect('/admin/getCoupon')
+        }
+
+    })
 
 }
 
+
+/* -------------------------- //get single product -------------------------- */
+
+
+const editCoupon=async(req,res)=>{
+
+    let Id=req.params.id;
+    let coupon= await adminHelpers.editCoupon(Id)
+    // console.log(coupon,'++++++++');
+    res.render('admin/admin-editCoupon',{admin:true,coupon})
+}
+
+
+/* ----------------------------- //update coupon ---------------------------- */
+
+
+const updateCoupon=(req,res)=>{
+    //  console.log(req.body);
+    adminHelpers.updateCoupon(req.body).then(()=>{
+        res.redirect('/admin/getCoupon')
+    })
+}
+
+
+const deleteCoupon=(req,res)=>{
+    //    console.log(req.params.id);
+    let Id=req.params.id;
+     adminHelpers.deleteCoupon(Id).then(()=>{
+         res.redirect('/admin/getCoupon')
+        })
+    }
 
 
 
@@ -539,5 +596,9 @@ module.exports={
     deleteBanner,
     brandOffer,
     postBrandOffer,
-    getCoupon
+    getCoupon,
+    postCoupun,
+    editCoupon,
+    updateCoupon,
+    deleteCoupon
 }

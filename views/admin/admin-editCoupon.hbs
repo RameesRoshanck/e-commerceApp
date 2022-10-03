@@ -1,0 +1,92 @@
+ <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+
+        {{>admin-header}}
+	    {{>admin-sideNavbar}}
+
+
+
+        <div class="content-body">
+            <div class="container-fluid">
+				<!-- Add Order -->
+				
+                <div class="page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">coupon Management</a></li>
+					</ol>
+                </div>
+              <div class="col-xl-8 col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Update Coupon</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="basic-form">
+                                     <form action="/admin/editCoupon/{{coupon._id}}" method="POST" >
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label" style="color:black ;">Coupon Name</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" value="{{coupon.name}}" name="name" placeholder="" required="" style=" border-style: solid; border-color:black">
+                                            </div>
+                                        </div>
+                                      
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label" style="color:black ;" >Coupon Code</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" value="{{coupon.code}}" name="code" placeholder="" required="" style=" border-style: solid; border-color:black">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label" style="color:black ;">Minimum Amount</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" value="{{coupon.minAmount}}" name="minAmount" placeholder="" required="" style=" border-style: solid; border-color:black">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label" style="color:black ;">Maximum Amount</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" value="{{coupon.maxAmount}}" name="maxAmount" placeholder="" required="" style=" border-style: solid; border-color:black">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label" style="color:black ;">Offer</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" value="{{coupon.offer}}" name="offer" placeholder="" required="" style=" border-style: solid; border-color:black">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label" style="color:black ;">Expiry Date</label >
+                                            <div class="col-sm-9">
+                                                <input type="date" class="form-control" value="{{coupon.expiryDate}}" name="expiryDate"
+                                                    placeholder="" required="" style=" border-style: solid; border-color:black">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-10">
+                                                <button type="submit" class="btn btn-primary">Add Coupon</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                <!-- row -->
+            </div>
+        </div>
+    </div>
+     
+
+
+
+
+
+
+{{!-- onclick="return confirm('Are you sure you want to delete {{this.catagory}}')"  --}}

@@ -1,4 +1,13 @@
 
+<style>
+	.hai {
+		border-style: solid;
+        border-color: #f2f2f2;
+	}
+	.hello{
+		margin: 20px;
+	}
+</style>
 
         {{>user-header}}
 <div class="page-wrapper">
@@ -21,171 +30,127 @@
             <div class="page-content">
             	<div class="checkout">
 	                <div class="container">
-            			<div class="checkout-discount">
-            				<form action="#">
-        						<input type="text" class="form-control" required id="checkout-discount-input">
-            					<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
-            				</form>
-            			</div><!-- End .checkout-discount -->
-						<br>
-            			<form action="#" id="checkout-form">
-		                	<div class="row">
-		                		<div class="col-lg-9">
-									<div>
-								    <label class="pl-5 pt-1" style="border: 1px solid ; width: 100%;
-									 background-color: rgb(11, 11, 70);"><h3 style="color:white ;">Billing Address</h3></label>
+						<form action="#" id="checkout-form">
+
+
+
+									
+									<div class="row">
+										<div class="col-lg-9 col-md-9 pl-3">
+
+
+											<div class="coupon_code hai left" data-aos="fade-up" data-aos-delay="200">
+												<div class="hello">
+													<h3>Coupon</h3>
+													<div class="coupon_inner">
+													<p>Enter your coupon code if you have one.</p>
+														<input class="mb-2" id="couponName" value="" name="couponCode"
+														placeholder="Coupon code" type="text">
+														&nbsp; &nbsp;<button onclick="applyCoupon(event)" id="applybutton"
+														class="btn btn-primary btn-golden">Apply coupon</button>
+														<p id="error" class="text-danger"></p>
+														{{!-- <button onclick="removeCoupon(event)" id="deletebutton" --}}
+														{{!-- class="btn btn-Danger btn-golden"><i class="fa fa-trash"></i></button> --}}
+														<br>
+													<a onclick="removeCoupon(event)" id="deletebutton"><i class="fa fa-trash" style="color:red ; cursor: pointer;" ></i></a>
+													</div>
+												</div>
+											</div>
+
+										</div>
 									</div>
+
+
 									<br>
+									{{!-- <form action="#" id="checkout-form"> --}}
+										<div class="row">
+											<div class="col-lg-9">
+												<div>
+												<label class="pl-5 pt-1" style="border: 1px solid ; width: 100%;
+												background-color: rgb(11, 11, 70);"><h3 style="color:white ;">Billing Address</h3></label>
+												</div>
+												<br>
 
-									<div class="list-group">
-										{{#each userDetails}}
-                                       <label class="list-group-item">&nbsp;
-                                         <input value="{{this._id}}" class="form-check-input me-1" type="radio" name="address" id="flexRadioDefault1">
-                                           &nbsp; &nbsp;<b> {{this.name}}</b>
-										   <p> &nbsp;    &nbsp; &nbsp;{{this.email}}</p>
-										   <P>&nbsp;    &nbsp; &nbsp;<span>{{this.address}}, {{this.landmark}}, {{this.pincode}}</span></span></P>
-                                           <p>&nbsp;    &nbsp; &nbsp;<span>{{this.town}},  {{this.state}}</span></p>
-										   <p> &nbsp;    &nbsp; &nbsp;{{this.phone}}</p>
-									   </label>
-									   <br>
-									   {{/each}}
-                                    </div>
-									<a href="/AddPlaceOrderAddress" class="btn btn-primary">Add Address &nbsp;<b style="color:blue ;">+</b></a>
-		                		</div><!-- End .col-lg-9 -->
-		                		<aside class="col-lg-3">
-		                			<div class="summary">
-		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
-
-		                				<table class="table table-summary">
-		                					<thead>
-		                						<tr>
-		                							<th>Product</th>
-		                							<th>Total</th>
-		                						</tr>
-		                					</thead>
-
-		                					<tbody>
-												{{#each products}}
-		                						<tr>
-		                							<td  >{{this.product.name}}</td>
-													<input type="text" name="name" value="{{this.product.name}}" hidden>
-		                							<td>{{this.productTotal}}</td>
-													<input type="text" name="proTotal" value="{{this.productTotal}}" hidden>
-		                						</tr>
+												<div class="list-group">
+													{{#each userDetails}}
+												<label class="list-group-item">&nbsp;
+													<input value="{{this._id}}" class="form-check-input me-1" type="radio" name="address" id="flexRadioDefault1">
+													&nbsp; &nbsp;<b> {{this.name}}</b>
+													<p> &nbsp;    &nbsp; &nbsp;{{this.email}}</p>
+													<P>&nbsp;    &nbsp; &nbsp;<span>{{this.address}}, {{this.landmark}}, {{this.pincode}}</span></span></P>
+													<p>&nbsp;    &nbsp; &nbsp;<span>{{this.town}},  {{this.state}}</span></p>
+													<p> &nbsp;    &nbsp; &nbsp;{{this.phone}}</p>
+												</label>
+												<br>
 												{{/each}}
-												
-											
-		                						<tr class="summary-subtotal">
-													<input type="text" name="userId" value="{{user._id}}" hidden>
-		                							<td>Subtotal:</td>
-		                							<td>₹{{total}}</td>
-													<input type="text" name="subTotal" value="{{total}}" hidden>
-		                						</tr><!-- End .summary-subtotal -->
-		                						<tr>
-		                							<td>Shipping:</td>
-		                							<td>Free shipping</td>
-		                						</tr>
-		                						<tr class="summary-total">
-		                							<td>Total:</td>
-		                							<td>₹{{total}}</td>
-													<input type="hidden" name="total" value="{{total}}">
-		                						</tr><!-- End .summary-total -->
-		                					</tbody>
-		                				</table><!-- End .table table-summary -->
+												</div>
+												<a href="/AddPlaceOrderAddress" class="btn btn-primary">Add Address &nbsp;<b style="color:blue ;">+</b></a>
+											</div><!-- End .col-lg-9 -->
+											<aside class="col-lg-3">
+												<div class="summary">
+													<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
 
-		                				{{!-- <div class="accordion-summary" id="accordion-payment">
-										    <div class="card">
-										        <div class="card-header" id="heading-1">
-										            <h2 class="card-title">
-										                <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
-										                    Direct bank transfer
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse --> 
-										    </div><!-- End .card -->
+													<table class="table table-summary">
+														<thead>
+															<tr>
+																<th>Product</th>
+																<th>Total</th>
+															</tr>
+														</thead>
 
-										    <div class="card">
-										        <div class="card-header" id="heading-2">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
-										                    Check payments
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-2" class="collapse" aria-labelledby="heading-2" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. 
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
+														<tbody>
+															{{#each products}}
+															<tr>
+																<td  >{{this.product.name}}</td>
+																<input type="text" name="name" value="{{this.product.name}}" hidden>
+																<td>₹{{this.productTotal}}</td>
+																<input type="text" name="proTotal" value="{{this.productTotal}}" hidden>
+															</tr>
+															{{/each}}
+															
+														
+															<tr class="summary-subtotal">
+																<input type="text" name="userId" value="{{user._id}}" hidden>
+																<td>Cart Subtotal:</td>
+																<td>₹{{total}}</td>
+																<input type="text" name="subTotal" value="{{total}}" hidden>
+															</tr><!-- End .summary-subtotal -->
+															<tr>
+																<td>Shipping:</td>
+																<td>Free shipping</td>
+															</tr>
+															<tr>
+																<td>Discount amount:</td>
+																<td><span id="discount">0</span></td>
+															</tr>
+															<tr class="summary-total">
+																<td>Total:</td>
+																{{!-- <td>₹{{total}}</td> --}}
+																
+																	<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span id="total">{{total}}</span></b></td>
+																<input type="hidden" name="total" value="{{total}}">
+															</tr><!-- End .summary-total -->
+														</tbody>
+													</table><!-- End .table table-summary -->
 
-										    <div class="card">
-										        <div class="card-header" id="heading-3">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
-										                    Cash on delivery
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
-										            <div class="card-body">Quisque volutpat mattis eros. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. 
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
+													
+													<div>
+														<p><b> Please select your : </b></p>
+														<input type="radio" id="cod" name="Payment" value="cod">
+														<label><b>COD</b></label><br>
+														<input type="radio" id="razorpay" name="Payment" value="razorpay">
+														<label><b>RazorPay</b></label><br>
+														<input type="radio" id="paypal" name="Payment" value="paypal">
+														<label><b>PayPal</b></label><br>
+													</div>
+													<br>    
 
-										    <div class="card">
-										        <div class="card-header" id="heading-4">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
-										                    PayPal <small class="float-right paypal-link">What is PayPal?</small>
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
-
-										    <div class="card">
-										        <div class="card-header" id="heading-5">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-5" aria-expanded="false" aria-controls="collapse-5">
-										                    Credit Card (Stripe)
-										                    <img src="/userSide/assets/images/payments-summary.png" alt="payments cards">
-										                </a>
-										            </h2>
-										        </div>
-										        <div id="collapse-5" class="collapse" aria-labelledby="heading-5" data-parent="#accordion-payment">
-										            <div class="card-body"> Donec nec justo eget felis facilisis fermentum.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Lorem ipsum dolor sit ame.
-										            </div>
-										        </div>
-										    </div>
-											<!-- End .card -->
-										</div><!-- End .accordion --> --}}
-                                        <div>
-                                             <p><b> Please select your : </b></p>
-                                             <input type="radio" id="cod" name="Payment" value="cod">
-                                             <label><b>COD</b></label><br>
-                                             <input type="radio" id="razorpay" name="Payment" value="razorpay">
-                                             <label><b>RazorPay</b></label><br>
-											  <input type="radio" id="paypal" name="Payment" value="paypal">
-                                             <label><b>PayPal</b></label><br>
-                                        </div>
-                                        <br>    
-
-		                				<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
-                                            Checkout
-		                				</button>
-		                			</div><!-- End .summary -->
-		                		</aside><!-- End .col-lg-3 -->
-		                	</div><!-- End .row -->
+													<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+														Checkout
+													</button>
+												</div><!-- End .summary -->
+											</aside><!-- End .col-lg-3 -->
+										</div><!-- End .row -->
             			</form>
 	                </div><!-- End .container -->
                 </div><!-- End .checkout -->
@@ -197,5 +162,5 @@
         <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
           {{>user-footer}}
-
+<script src="/userSide/userjs/ajax.js"></script>
            

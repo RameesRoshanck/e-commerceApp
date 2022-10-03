@@ -648,7 +648,10 @@ module.exports={
     /* -------------------------------------------------------------------------- */
 
     placeOrder:(order,proAdrress,products,Total)=>{
-        console.log(proAdrress);
+        console.log(proAdrress,'proaddress');
+        console.log(products,'products');
+        console.log(order,'order');
+
         // Total=parseInt(Total)
         return new Promise(async(resolve,reject)=>{
             //  console.log(order);
@@ -675,6 +678,11 @@ module.exports={
                 db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
                  
                         db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
+                        
+                        // products.forEach(element => {
+                        //     db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId()})
+                        // });
+                        
  
                     // console.log(result.insertedId,"hai");
                     resolve(result.insertedId)
@@ -1046,10 +1054,96 @@ module.exports={
                     resolve(response)
                 })
         })   
-    }
+    },
+
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                                coupon offer                                */
+    /* -------------------------------------------------------------------------- */
+
+
+    applayCoupon:(Details,userId,date,amount)=>{
+
+        // console.log(userId,'userid');
+        return new Promise(async(resolve,reject)=>{
+            let response={}
+
+            let validCoupon=await db.get().collection(connection.COUPON_COLLECTION).findOne({code:Details.coupon})
+                
+            if(validCoupon)
+            {
+                // console.log(validCoupon,'vallidCoupon');
+              const expdate= new Date(validCoupon.expiryDate)
+                //    console.log(expdate,'=====');
+                //    console.log(date,'=======');
+              response.Data=validCoupon
+
+               //   let user= await db.get().collection(connection.COUPON_COLLECTION).findOne({code:Details.coupon , user})
+                //   console.log(user,'hai');
+
+
+                if(expdate >= date)
+                {
+                    // console.log('date valid');
+                    response.dateValid=true
+                    resolve(response)
+
+                    if(amount>=validCoupon.minAmount){
+
+                        response.verifyMinAmount=true
+                        resolve(response)
+
+                            if(amount<=validCoupon.maxAmount)
+                            {
+                        
+                                response.verifyMaxAmount=true
+                                resolve(response)
+                               }else{
+
+                                response.invalidMaxAmount=true
+                                response.maxAmountMsg='your maximum purchase should be'+validCoupon.maxAmount
+                                resolve(response)
+                            }
+                    }else{
+                        response.invaidMinAmount=true
+                        response.minAmoutMsg='your minimum purchase should be'+validCoupon.minAmount
+                        resolve(response)
+                    }
+                }else{
+                response.dateInvalid=true
+                response.dateInvalidMessage="Date is expired"
+                }
+            }else{
+                response.invalidCoupon=true
+                response.invalidMessage="This coupon is ivalid"
+                resolve(response)
+            }
+
+            if(response.dateValid && response.verifyMinAmount && response.verifyMaxAmount){
+                    response.varifying=true
+                    resolve(response)
+            }
+
+            })
+        },
+
+
+        /* ------------------------- coupon in checkout page ------------------------ */
+        
+    
+        CheckoutCoupon:(couponCode)=>{
+            console.log(couponCode,'coupon code');
+            return new Promise(async(resolve,reject)=>{
+
+                let coupon= await db.get().collection(connection.COUPON_COLLECTION).findOne({code:couponCode})
+
+                resolve(coupon)
+            })
+        }
 
      
 }
 
-/* -------------------------- //to get brand views -------------------------- */
+
 

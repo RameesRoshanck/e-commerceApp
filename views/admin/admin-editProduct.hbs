@@ -64,13 +64,14 @@
 										      <div class="form-group">
                                                  <label>Choose Image File</label>
                                                  <br>
-                                                 <img src="/product-images/{{product.image.[0]}}" alt="" style="width: 100px; height: auto;">
-                                                 <img src="/product-images/{{product.image.[1]}}" alt="" style="width: 100px; height: auto;">
-                                                 <img src="/product-images/{{product.image.[2]}}" alt="" style="width: 100px; height: auto;">
-                                                 <img src="/product-images/{{product.image.[3]}}" alt="" style="width: 100px; height: auto;">
-                                                 <img src="/product-images/{{product.image.[4]}}" alt="" style="width: 100px; height: auto;">
-                                                 <img src="/product-images/{{product.image.[5]}}" alt="" style="width: 100px; height: auto;">
-                                                 <input multiple type="file" accept="image/*r" name="image" class="form-control" >
+                                                 <img src="/product-images/{{product.image.[0]}}" alt="" style="width: 100px; height: auto;" id="imgview1">
+                                                 <img src="/product-images/{{product.image.[1]}}" alt="" style="width: 100px; height: auto;" id="imgview2">
+                                                 <img src="/product-images/{{product.image.[2]}}" alt="" style="width: 100px; height: auto;" id="imgview3">
+                                                 <img src="/product-images/{{product.image.[3]}}" alt="" style="width: 100px; height: auto;" id="imgview4">
+                                                 <img src="/product-images/{{product.image.[4]}}" alt="" style="width: 100px; height: auto;" id="imgview5">
+                                                 <img src="/product-images/{{product.image.[5]}}" alt="" style="width: 100px; height: auto;" id="imgview6">
+                                                 <br>
+                                                 <input multiple type="file" id="product_images[]" accept="image/*r" onchange="viewimg(event)" name="image" class="form-control" >
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary m-5 px-5">Add Products</button>
@@ -84,3 +85,14 @@
         </div>
  
     </div>
+
+<script>
+    function viewimg(event){
+        document.getElementById('imgview1').src=URL.createObjectURL(event.target.files[0])
+        document.getElementById('imgview2').src=URL.createObjectURL(event.target.files[0])
+        document.getElementById('imgview3').src=URL.createObjectURL(event.target.files[0])
+        document.getElementById('imgview4').src=URL.createObjectURL(event.target.files[0])
+        document.getElementById('imgview5').src=URL.createObjectURL(event.target.files[0])
+        document.getElementById('imgview6').src=URL.createObjectURL(event.target.files[0])
+    }
+</script>

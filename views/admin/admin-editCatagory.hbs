@@ -42,7 +42,7 @@
                                                     <img style="width:50px; height: 50px;" src="/product-images/{{Brand.image.[0]}}" alt="" id="imgview">
                                                     <br>
                                                     <br>
-                                                 <input multiple type="file" id="product_images[]" accept="image/*r" name="image" class="form-control" >
+                                                 <input multiple type="file" id="product_images[]" accept="image/*r" onchange="viewimg(event)" name="image" class="form-control" >
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">ADD Update</button>
@@ -60,7 +60,7 @@
 
 
 <script>
-    function viewImage(event){
+    function viewimg(event){
         document.getElementById('imgview').src=URL.createObjectURL(event.target.files[0])
     }
 </script>

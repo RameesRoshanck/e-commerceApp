@@ -5,9 +5,9 @@ const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
         placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
         updateUserAddress,deleteUserAddress, getAddPlaceOrderAddress, postAddPlaceOrderAddress,
         postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails, varifyPayment, paypalSuccess,
-        getwishlist,addWishlist, deleteWishlist, catagoryView} = require('../controllers/userController');
+        getwishlist,addWishlist, deleteWishlist, catagoryView, applayCoupon, RemoveCoupon} = require('../controllers/userController');
 var router = express.Router();
-const { auth } = require('../middleware/middleware');
+const { auth, adminAuth } = require('../middleware/middleware');
 
 //router path
 router.get('/',userHomeRoute)
@@ -109,6 +109,13 @@ router.get('/add-to-wishlist/:id',addWishlist)
 router.post('/deleteWishlist',deleteWishlist)
 
 
+
+/* ------------------------------ applay coupon ----------------------------- */
+
+router.post('/applayCoupon',auth,applayCoupon)
+
+//remove coupon
+router.get('/removeCoupon',auth,RemoveCoupon)
 
 
 
