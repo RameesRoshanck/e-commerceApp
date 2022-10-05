@@ -152,11 +152,11 @@ module.exports={
                 Product.date=new Date;
                 // Product.price=parseInt(Product.price)
                 // Product.offer=parseInt(Product.offer)
-                Product.stock=parseInt(Product.stock)
+                // Product.stock=parseInt(Product.stock)
                 
                 if(Product.offer){
                     newprice = Math.round((Product.price) * ((100 - Product.offer) / 100))
-
+                    Product.stock=parseInt(Product.stock)
                     Product.originelPrice=Product.price
                     Product.price= "" +newprice
                 
@@ -167,6 +167,7 @@ module.exports={
                 resolve({status:false}) 
              }else{
                 Product.originelPrice=Product.price
+                Product.stock=parseInt(Product.stock)
                 db.get().collection(connection.PRODUCT_COLLECTION).insertOne(Product).then((result)=>{
                     resolve(result)
                    
@@ -572,16 +573,33 @@ deliverdOrder:(delId)=>{
 
 
     cancelOrder:(cancelId)=>{
+        console.log(cancelId,'canceled');
         return new Promise(async(resolve,reject)=>{
             await db.get().collection(connection.ORDER_COLLECTION)
             .updateOne({_id:ObjectId(cancelId)},
             {
                 $set:{
                     status:'Cancled'
+                    
                 }
-            }).then((data)=>{
-                console.log(data);
-                resolve(data)
+            }).then(async(data)=>{
+                db.get().collection(connection.ORDER_COLLECTION).findOne({_id:ObjectId(cancelId)}).then((order)=>{
+                    
+
+                    order.product.forEach(element => {
+                        db.get().collection(connection.PRODUCT_COLLECTION)
+                        .updateOne({_id:ObjectId(element.item)},
+                        {
+                        $inc:{
+                            stock:element.quantity
+                        }
+                        }).then((result)=>{
+                            // console.log(result,'=================');
+                            resolve(result)
+                        })
+                    });
+                })
+                // resolve(data)
             })
         })
     },
@@ -647,7 +665,7 @@ deliverdOrder:(delId)=>{
                     $group:{
                         _id:"$item",
                         quantity:{$sum:'$quantity'},
-                        totalAmount:{$sum:{$multiply:['$quantity','$product.price']}},
+                        totalAmount:{$sum:{$multiply:[{ $toInt:"$quantity"},{ $toInt:"$product.price"}]}},
                         name: { "$first": "$product.name" },
                         date: { "$first": "$date" },
                         price: { "$first": "$product.price" }

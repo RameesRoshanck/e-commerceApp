@@ -72,8 +72,46 @@
                                                 <td>{{@index}}</td>
                                                 <td><img style="width:50px;,height:50px ;" src="/product-images/{{this.image.[0]}}" alt=""> </td>
                                                 <td>{{this.catagory}}</td>
-                                                   <td><a  href="/admin/editcatagory/{{this._id}}"class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-pencil"></a></td> 
-                                                    <td><a  href="/admin/deleteCatagory/{{this._id}}"  onclick="return confirm('Are you sure you want to delete {{this.catagory}}?')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a></td>
+                                                   <td><a  href="/admin/editcatagory/{{this._id}}" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-pencil"></i></a></td> 
+                                                    {{!-- <td><a  href="/admin/deleteCatagory/{{this._id}}"  onclick="return confirm('Are you sure you want to delete {{this.catagory}}?')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a></td> --}}
+                                                    <td><p class="btn btn-danger shadow btn-xs sharp" data-toggle="modal" data-target="#exampleModal{{this._id}}"><i class="fa fa-trash"></i></p></td>
+                                           
+                                 
+                                                
+
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="exampleModal{{this._id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                        <button type="button" class="btn-close px-1" data-dismiss="modal" aria-label="Close">x</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete {{this.catagory}}
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <a href="/admin/deleteCatagory/{{this._id}}" type="button" class="btn btn-primary">Delete</a>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
+                                           
                                             </tr>
                                           {{/each}}
                                       </tbody>

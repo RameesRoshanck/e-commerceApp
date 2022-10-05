@@ -5,7 +5,7 @@ const { userHomeRoute, getLogin, getSignUp, postSignUp, postLogin, getOtp,
         placeOrder,userProfile, userAddAddress, postUserAddAddress, editUserAddress,
         updateUserAddress,deleteUserAddress, getAddPlaceOrderAddress, postAddPlaceOrderAddress,
         postPlaceOrder,orderSuccess, orderDetails, orderMoreDetails, varifyPayment, paypalSuccess,
-        getwishlist,addWishlist, deleteWishlist, catagoryView, applayCoupon, RemoveCoupon} = require('../controllers/userController');
+        getwishlist,addWishlist, deleteWishlist, catagoryView, applayCoupon, RemoveCoupon, userCancelOrder} = require('../controllers/userController');
 var router = express.Router();
 const { auth, adminAuth } = require('../middleware/middleware');
 
@@ -117,6 +117,8 @@ router.post('/applayCoupon',auth,applayCoupon)
 //remove coupon
 router.get('/removeCoupon',auth,RemoveCoupon)
 
+/* ------------------------------ order cancel ------------------------------ */
 
+router.get('/cancelOrder/:id',userCancelOrder)
 
 module.exports = router;

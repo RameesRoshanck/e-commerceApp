@@ -73,7 +73,7 @@
                         </div><!-- End .compare-dropdown -->
 
 
-
+                        {{#if user}}
 
                         <div class="wishlist">
                             <a href="/wishlist" title="Wishlist">
@@ -84,12 +84,24 @@
                                 <p>Wishlist</p>
                             </a>
                         </div><!-- End .compare-dropdown -->
+                        {{else}}
+
+                         <div class="wishlist">
+                            <a href="#" title="Wishlist">
+                                <div class="icon">
+                                    <i class="icon-heart-o"></i>
+                                </div>
+                                <p>Wishlist</p>
+                            </a>
+                        </div>
+
+                     {{/if}}
 
 
-
-
+                         
 
                         <div class="dropdown cart-dropdown">
+                            {{#if user}}
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <div class="icon">
                                     <i class="icon-shopping-cart"></i>
@@ -154,7 +166,18 @@
                                     <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .dropdown-cart-total -->
                             </div><!-- End .dropdown-menu -->
+                              
+
+                            {{else}}
+                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                                <div class="icon">
+                                    <i class="icon-shopping-cart"></i>        
+                                </div>
+                                <p>Cart</p>
+                            </a>
+                            {{/if}}
                         </div><!-- End .cart-dropdown -->
+  
                     </div><!-- End .header-right -->
                 </div><!-- End .container -->
             </div><!-- End .header-middle -->

@@ -37,6 +37,7 @@ const getSignUp=(req,res)=>{
 const postSignUp=(req,res)=>{
         console.log(req.body);
      userHelpers.doSignup(req.body).then((response)=>{
+        // console.log(response,"kjfsdkfjsdkfjsadfkj");
       if(response.emailExist){
         req.session.emailExist=true;
         req.session.email=req.body.email
@@ -45,14 +46,21 @@ const postSignUp=(req,res)=>{
         req.session.mobileExist=true
         req.session.mobile=req.body.mobile
         res.redirect('/userSignUp')
-      }else{
-          res.redirect('/')
+      }else if({acknowledged: true}){
+        req.session.userId=response.insertedId
+        // console.log(req.session.userId,'21354654654654');
+        userHelpers.doWallet(req.session.userId).then(()=>{
+            res.redirect('/')
+
+        })
         }
     })
 }
 
 
-//user get login
+/* ---------------------------- //user get login ---------------------------- */
+
+
 const getLogin=(req,res)=>{
     if(req.session.loggedIn){
         res.redirect('/')
@@ -64,7 +72,9 @@ const getLogin=(req,res)=>{
 }
 
 
-//user post login
+/* ---------------------------- //user post login --------------------------- */
+
+
 const postLogin=(req,res)=>{
 //   console.log(req.body);
      userHelpers.doLogin(req.body).then((response)=>{
@@ -80,7 +90,9 @@ const postLogin=(req,res)=>{
 }
 
 
-// user logout
+/* ----------------------------- // user logout ----------------------------- */
+
+
 const logout=(req,res)=>{
     req.session.loggedIn=false
     req.session.user=null;
@@ -225,6 +237,8 @@ const cartView=async(req,res)=>{
 
 
 /* ----------------------------- // add to cart ----------------------------- */
+
+
 const addToCart=(req,res)=>{
     // console.log("api call");
     userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
@@ -246,14 +260,20 @@ const changeProductQuantity=(req,res,next)=>{
 }
 
 
-//delete cart
+/* ------------------------------ //delete cart ----------------------------- */
+
+
 const deleteCartItem=(req,res)=>{
      userHelpers.DeleteCartItem(req.body).then((response)=>{
         res.json(response)
      })
 }
 
-//user placeorder page
+
+
+/* ------------------------- //user placeorder page ------------------------- */
+
+
 const placeOrder=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -269,10 +289,15 @@ const placeOrder=async(req,res)=>{
     for(var i=0;i<products.length;i++){
         products[i].productTotal=productTotal[i].total
     }
-    res.render('user/user-placeOrder',{total,products,userDetails,cartCount,user:req.session.user})
+    res.render('user/user-placeOrder',{total,products,userDetails,cartCount,user:req.session.user,"WalletErr":req.session.walletErr})
+    req.session.walletErr=false
 }
 
-//user post placeOrder page
+
+
+/* ----------------------- //user post placeOrder page ---------------------- */
+
+
 const postPlaceOrder=async(req,res)=>{
 
  
@@ -319,6 +344,27 @@ const postPlaceOrder=async(req,res)=>{
             res.json({codSuccess:true})
             })
         }
+        else if(req.body['Payment']==='wallet'){
+            let walletAmount=await userHelpers.getWallet(req.session.user._id)
+
+            // console.log(walletAmount,'wallet amout');
+            // console.log(totalPrice,"total price");
+
+            if(walletAmount.amount > totalPrice){
+                // console.log('success wallaet');
+                userHelpers.walletPlaceOrder(req.body,req.body.address,product,totalPrice).then((orderId)=>{
+                //  console.log(orderId);
+                     userHelpers.ChangeWalletPaymentStatus(orderId,totalPrice,req.session.user._id).then((response)=>{
+                        response.wallet=true
+                     res.json(response)
+                     })
+                    })
+            }else{
+                console.log('failed wallet');
+                response.walletErr=true
+                res.json(response)
+            }
+        }
         else if(req.body['Payment']==='razorpay')
         {
             userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
@@ -333,7 +379,7 @@ const postPlaceOrder=async(req,res)=>{
             userHelpers.onlinePayment(req.body,req.body.address,product,totalPrice).then((orderId)=>{
                 userHelpers.generatePaypal(orderId,totalPrice).then((response)=>{
                     response.paypal=true
-                    // console.log(response.paypal,'sdfsadfsdfsdf');
+                    console.log(response.paypal,'sdfsadfsdfsdf');
                     res.json(response)
                 })
             })
@@ -404,7 +450,9 @@ const varifyPayment=(req,res)=>{
 
 
 
-//add address place order  page get
+/* ------------------- //add address place order  page get ------------------ */
+
+
 const getAddPlaceOrderAddress=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -414,7 +462,9 @@ const getAddPlaceOrderAddress=async(req,res)=>{
 }
 
 
-//post add place order address
+/* --------------------- //post add place order address --------------------- */
+
+
 const postAddPlaceOrderAddress=(req,res)=>{
     userHelpers.addUserAddress(req.session.user._id,req.body).then(()=>{
         res.redirect('/placeOrder')
@@ -423,9 +473,11 @@ const postAddPlaceOrderAddress=(req,res)=>{
 
 
 
-//pay pal order success
+/* ------------------------- //pay pal order success ------------------------ */
+
+
 const paypalSuccess=(req,res)=>{
-    // console.log(req.params.id,"order id");
+    console.log(req.params.id,"order id");
     let orderId=req.params.id;
     userHelpers.ChangePaymentStatus(orderId,req.session.user._id).then(()=>{
 
@@ -437,7 +489,9 @@ const paypalSuccess=(req,res)=>{
 
 
  
-//order success page
+/* -------------------------- //order success page -------------------------- */
+
+
 const orderSuccess=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -448,7 +502,9 @@ const orderSuccess=async(req,res)=>{
 
 }
 
-//orders list page
+/* --------------------------- //orders list page --------------------------- */
+
+
 const orderDetails=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -458,7 +514,10 @@ const orderDetails=async(req,res)=>{
     res.render('user/user-ordersList',{user:req.session.user,order,cartCount})
 }
 
-//order more details
+
+/* -------------------------- //order more details -------------------------- */
+
+
 const orderMoreDetails=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -471,22 +530,23 @@ const orderMoreDetails=async(req,res)=>{
 
 
 
+/* ----------------------------- // user profile ---------------------------- */
 
 
-
-
-
-// user profile
 const userProfile=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
         cartCount= await userHelpers.getCartCount(req.session.user._id)
     }
     let userDetails=await userHelpers.getuserDetails(req.session.user._id)
-    res.render('user/user-profile',{userDetails,cartCount,user:req.session.user})
+    let wallet=await userHelpers.getWallet(req.session.user._id)
+    console.log(wallet,"=+======++++ user profile wallet");
+    res.render('user/user-profile',{userDetails,cartCount,wallet,user:req.session.user})
 }
 
-// user profile add address
+/* ----------------------- // user profile add address ---------------------- */
+
+
 const userAddAddress=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -495,7 +555,9 @@ const userAddAddress=async(req,res)=>{
     res.render('user/user-profileAddAddress',{cartCount,user:req.session.user})
 }
 
-//user profile post add address
+/* --------------------- //user profile post add address -------------------- */
+
+
 const postUserAddAddress=(req,res)=>{
     console.log(req.body);
     userHelpers.addUserAddress(req.session.user._id,req.body).then(()=>{
@@ -504,7 +566,9 @@ const postUserAddAddress=(req,res)=>{
 }
 
 
-// user profile edit address
+/* ---------------------- // user profile edit address ---------------------- */
+
+
 const editUserAddress=async(req,res)=>{
     let cartCount=null;
     if(req.session.loggedIn){
@@ -517,7 +581,9 @@ const editUserAddress=async(req,res)=>{
 }
 
 
-//user profile update address
+/* ---------------------- //user profile update address --------------------- */
+
+
 const updateUserAddress=(req,res)=>{
     // console.log(req.body);
    let id=req.params.id
@@ -526,7 +592,10 @@ const updateUserAddress=(req,res)=>{
    })
 }
 
-//user profile delete address
+
+/* ---------------------- //user profile delete address --------------------- */
+
+
 const deleteUserAddress=(req,res)=>{
     let id=req.params.id
     // console.log(id);
@@ -624,7 +693,14 @@ const RemoveCoupon=(req,res)=>{
 
      
 
+/* ----------------------------- //cancel order ----------------------------- */
 
+const userCancelOrder=(req,res)=>{
+       console.log(req.params.id,'.id');
+       let userId=req.session.user._id
+       userHelpers.userCancelOrder(req.params.id,userId).then(()=>{})
+    // res.redirect('/admin/odersList')
+}
 
 
 
@@ -668,6 +744,7 @@ module.exports= {
     addWishlist,
     deleteWishlist,
     applayCoupon,
-    RemoveCoupon
+    RemoveCoupon,
+    userCancelOrder
    
 }

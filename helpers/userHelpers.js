@@ -54,10 +54,22 @@ module.exports={
                 let dt=new Date
                 userData.date=(dt.getDay()+"/"+dt.getMonth()+"/"+dt.getFullYear())
                userData.password=await bcrypt.hash(userData.password,10)
+               userData.state=true
                db.get().collection(connection.USER_COLLECTION).insertOne(userData).then((data)=>{
                 resolve(data)
                })
             }
+        })
+    },
+
+    /* ------------------------------- //doWallet ------------------------------- */
+
+    doWallet:(userId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(connection.WALLET_COLLECTION)
+            .insertOne({_id:ObjectId(userId),amount:0}).then((data)=>{
+                resolve(data)
+            })
         })
     },
 
@@ -605,7 +617,7 @@ module.exports={
         })
     },
 
-
+ /* -------------------------- //update user address ------------------------- */
 
     updateUserAddress:(Id,userId,details)=>{
         return new Promise((resolve,reject)=>{
@@ -648,9 +660,9 @@ module.exports={
     /* -------------------------------------------------------------------------- */
 
     placeOrder:(order,proAdrress,products,Total)=>{
-        console.log(proAdrress,'proaddress');
-        console.log(products,'products');
-        console.log(order,'order');
+        // console.log(proAdrress,'proaddress');
+        // console.log(products,'products');
+        // console.log(order,'order');
 
         // Total=parseInt(Total)
         return new Promise(async(resolve,reject)=>{
@@ -681,7 +693,7 @@ module.exports={
                         
                         products.forEach(element => {
                             element.quantity=parseInt(element.quantity)
-                            console.log(element.quantity,'+++++++++');
+                            // console.log(element.quantity,'+++++++++');
                             db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(element.item)},
                             {
                                 $inc:{stock:-(element.quantity)}
@@ -701,54 +713,161 @@ module.exports={
         })
     },
 
+ 
+    /* -------------------------------------------------------------------------- */
+    /*                create the order collection in wallet payment               */
+    /* -------------------------------------------------------------------------- */
+
+
+    walletPlaceOrder:(order,proAdrress,products,Total)=>{
+        // console.log(proAdrress,'proaddress');
+        // console.log(products,'products');
+        // console.log(order,'order');
+        // console.log(Total,'Total');
+        // console.log(walletAmount,'walletAmount');
+
+        // Total=parseInt(Total)
+        return new Promise(async(resolve,reject)=>{
+            //  console.log(order);
+
+             let getAddress=await db.get().collection(connection.ADDRESS_COLLECTION).findOne({_id:ObjectId(proAdrress)})
+            console.log(getAddress);
+            
+            if(getAddress){
+               
+                let status=order['Payment']==='cod'?'placed':'pending'
+                let orderObj={
+                    delivaryDtails:{
+                         name:getAddress.name,
+                         address:getAddress.address,
+                         landmark:getAddress.landmark
+                    },
+                    userId:ObjectId(order.userId),
+                    paymentMethod:order['Payment'],
+                    product:products,
+                    date:new Date(),
+                    total:Total,
+                    status:status
+                }
+                db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
+                 
+                        // db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
+                        
+                        products.forEach(element => {
+                            element.quantity=parseInt(element.quantity)
+                            // console.log(element.quantity,'+++++++++');
+                            db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(element.item)},
+                            {
+                                $inc:{stock:-(element.quantity)}
+                                
+                            })
+                        });
+                    resolve(result.insertedId)
+                })
+            }
+        })
+    },
+
+
+
+
+    /* -------- // change wallet payment status and update wallet amount -------- */
+
+   
+    ChangeWalletPaymentStatus:(orderId,Total,userId)=>{
+        // console.log(orderId,'ChangeWalletPaymentStatus');
+        console.log(Total,'ChangeWalletPaymentStatus');
+        // console.log(WalletDetails,'ChangeWalletPaymentStatus');
+        return new Promise((resolve,reject)=>{
+            db.get().collection(connection.ORDER_COLLECTION).updateOne({_id:ObjectId(orderId)},
+            {
+                $set:{
+                    status:'placed'
+                }
+            }).then((result)=>{
+                // db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(userId)})
+                
+                db.get().collection(connection.ORDER_COLLECTION).findOne({_id:ObjectId(orderId)}).then((order)=>{
+                         
+                    // console.log(order.total,"order total");
+                    db.get().collection(connection.WALLET_COLLECTION).updateOne({_id:ObjectId(userId)},
+                    {
+                        
+                        $inc:{amount:-(order.total)}
+                    }).then((data)=>{
+                    //    console.log(data,"==============");
+                    resolve(data)
+                    })
+                })
+
+            })
+        })
+    },
+
+
+
+
+
+
+
+
+
+
+
+
    /* -------------------------------------------------------------------------- */
    /*                create the order collection in online payment               */
    /* -------------------------------------------------------------------------- */
 
-   onlinePayment:(order,proAdrress,products,Total)=>{
-    console.log(proAdrress);
-    // Total=parseInt(Total)
-    return new Promise(async(resolve,reject)=>{
-        //  console.log(order);
+        onlinePayment:(order,proAdrress,products,Total)=>{
+            console.log(proAdrress);
+            // Total=parseInt(Total)
+            return new Promise(async(resolve,reject)=>{
+                //  console.log(order);
 
-         let getAddress=await db.get().collection(connection.ADDRESS_COLLECTION).findOne({_id:ObjectId(proAdrress)})
-        console.log(getAddress);
-        
-        if(getAddress){
-            let status=order['Payment']==='cod'?'placed':'pending'
-            let orderObj={
-                delivaryDtails:{
-                     name:getAddress.name,
-                     address:getAddress.address,
-                     landmark:getAddress.landmark
-                },
-                userId:ObjectId(order.userId),
-                paymentMethod:order['Payment'],
-                product:products,
-                date:new Date(),
-                total:Total,
-                status:status
-            }
-            db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
-             
-                products.forEach(element => {
-                    db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(element.item)},
-                    {
-                        $inc:{stock:-(element.quantity)}
+                let getAddress=await db.get().collection(connection.ADDRESS_COLLECTION).findOne({_id:ObjectId(proAdrress)})
+                console.log(getAddress);
+                
+                if(getAddress)
+                {
+                    let status=order['Payment']==='cod'?'placed':'pending'
+                    let orderObj={
+                        delivaryDtails:
+                        {
+                            name:getAddress.name,
+                            address:getAddress.address,
+                            landmark:getAddress.landmark
+                        },
+                        userId:ObjectId(order.userId),
+                        paymentMethod:order['Payment'],
+                        product:products,
+                        date:new Date(),
+                        total:Total,
+                        status:status
+                    }
+                    db.get().collection(connection.ORDER_COLLECTION).insertOne(orderObj).then((result)=>{
+                    
+                        products.forEach(element => {
+                            db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(element.item)},
+                            {
+                                $inc:{stock:-(element.quantity)}
+                            })
+                        });
+
+                    // console.log(result.insertedId,"hai");
+                        resolve(result.insertedId)
                     })
-                });
-
-               // console.log(result.insertedId,"hai");
-                resolve(result.insertedId)
+                }
             })
-        }
-})
-},
+        },
 
 
     /* -------------------------------------------------------------------------- */
     /*                           get cart products only                           */
     /* -------------------------------------------------------------------------- */
+
+
+
     getCartProductList:(userId)=>{
       return new Promise(async(resolve,reject)=>{
         let cart=await db.get().collection(connection.CART_COLLECTION)
@@ -757,6 +876,8 @@ module.exports={
         // console.log(cart.products);
       })
     },
+
+
 
     /* -------------------------------------------------------------------------- */
     /*                        get order in order collection                       */
@@ -791,9 +912,11 @@ module.exports={
         })
     },
 
+
     /* -------------------------------------------------------------------------- */
     /*    gnarate user order details and to get in products                       */
     /* -------------------------------------------------------------------------- */
+    
 
     getOrderDetails:(orderId)=>{
         // console.log(orderId+"hai");
@@ -862,20 +985,20 @@ module.exports={
 /* -------------------------------------------------------------------------- */
  
 
-  verifyPayment:(details)=>{
-     return new Promise((resolve,reject)=>{
-        const crypto = require('crypto');
-        let hmac = crypto.createHmac('sha256', 'ZrCRgxXVvyEVFG9zxAIMRoX6');
-        hmac.update(details.payment.razorpay_order_id + '|' + details.payment.razorpay_payment_id);
-        hmac=hmac.digest('hex')
-        // console.log(hmac,'SDJFKSLADJFKSADFKJSADFH');
-        if(hmac==details.payment.razorpay_signature){
-            resolve()
-        }else{
-            reject('didnt matching hmac == razorpay signature')
-        }
-    })
-  },
+    verifyPayment:(details)=>{
+        return new Promise((resolve,reject)=>{
+            const crypto = require('crypto');
+            let hmac = crypto.createHmac('sha256', 'ZrCRgxXVvyEVFG9zxAIMRoX6');
+            hmac.update(details.payment.razorpay_order_id + '|' + details.payment.razorpay_payment_id);
+            hmac=hmac.digest('hex')
+            // console.log(hmac,'SDJFKSLADJFKSADFKJSADFH');
+            if(hmac==details.payment.razorpay_signature){
+                resolve()
+            }else{
+                reject('didnt matching hmac == razorpay signature')
+            }
+        })
+    },
 
 
   /* -------------------------------------------------------------------------- */
@@ -883,19 +1006,19 @@ module.exports={
   /* -------------------------------------------------------------------------- */
   
 
-  ChangePaymentStatus:(orderId,userId)=>{
-     return new Promise((resolve,reject)=>{
-        db.get().collection(connection.ORDER_COLLECTION).updateOne({_id:ObjectId(orderId)},
-        {
-            $set:{
-                status:'placed'
-            }
-        }).then((result)=>{
-            db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(userId)})
-            resolve()
+    ChangePaymentStatus:(orderId,userId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(connection.ORDER_COLLECTION).updateOne({_id:ObjectId(orderId)},
+            {
+                $set:{
+                    status:'placed'
+                }
+            }).then((result)=>{
+                db.get().collection(connection.CART_COLLECTION).deleteOne({user:ObjectId(userId)})
+                resolve()
+            })
         })
-     })
-  },
+    },
 
 
   /* -------------------------------------------------------------------------- */
@@ -903,46 +1026,46 @@ module.exports={
   /* -------------------------------------------------------------------------- */
 
 
-  generatePaypal:(orderId,totalPrice)=>{
-    return new Promise((resolve,reject)=>{
-            const create_payment_json = {
-              "intent": "sale",
-              "payer": {
-                  "payment_method": "paypal"
-              },
-              "redirect_urls": {
-                  "return_url": `http://localhost:3000/paypalsuccess/${orderId}`,
-                  "cancel_url": "http://localhost:3000/cancel"
-              },
-              "transactions": [{
-                  "item_list": {
-                      "items": [{
-                          "name": "Red Sox Hat",
-                          "sku": "001",
-                          "price": totalPrice,
-                          "currency": "USD",
-                          "quantity": 1
-                      }]
-                  },
-                  "amount": {
-                      "currency": "USD",
-                      "total": totalPrice
-                  },
-                  "description": "Hat for the best team ever"
-              }]
-          };
-          
-          paypal.payment.create(create_payment_json, function (error, payment) {
-            if (error) {
-                console.log('hai')
-                throw error;
-            } else {
-                console.log(payment,'hai hello');
-              resolve(payment)
-                }
-          });
-        })
-    },
+    generatePaypal:(orderId,totalPrice)=>{
+        return new Promise((resolve,reject)=>{
+                const create_payment_json = {
+                "intent": "sale",
+                "payer": {
+                    "payment_method": "paypal"
+                },
+                "redirect_urls": {
+                    "return_url": `http://localhost:3000/paypalsuccess/${orderId}`,
+                    "cancel_url": "http://localhost:3000/cancel"
+                },
+                "transactions": [{
+                    "item_list": {
+                        "items": [{
+                            "name": "Red Sox Hat",
+                            "sku": "001",
+                            "price": totalPrice,
+                            "currency": "USD",
+                            "quantity": 1
+                        }]
+                    },
+                    "amount": {
+                        "currency": "USD",
+                        "total": totalPrice
+                    },
+                    "description": "Hat for the best team ever"
+                }]
+            };
+            
+            paypal.payment.create(create_payment_json, function (error, payment) {
+                if (error) {
+                    console.log('paypal transaction error')
+                    throw error;
+                } else {
+                    console.log(payment,'payment successfully completed');
+                resolve(payment)
+                    }
+            });
+            })
+        },
 
 
 
@@ -1154,7 +1277,60 @@ module.exports={
 
                 resolve(coupon)
             })
-        }
+        },
+
+
+
+        /* ------------------------------ //get wallet ------------------------------ */
+
+        getWallet:(userId)=>{
+            return new Promise((resolve,reject)=>{
+                db.get().collection(connection.WALLET_COLLECTION)
+                .findOne({_id:ObjectId(userId)}).then((result)=>{
+                    // console.log(result);
+                    resolve(result)
+                })
+            })
+        },
+
+
+        /* ----------------------------- //cansell order ---------------------------- */
+
+        userCancelOrder:(orderId,userId)=>{
+            console.log(userId,'hai userId ');
+            return new Promise((resolve,reject)=>{
+                db.get().collection(connection.ORDER_COLLECTION).updateOne({_id:ObjectId(orderId)},
+                {
+                    $set:{
+                        status:'Cancled'
+                    }
+                }).then((result)=>{
+                    db.get().collection(connection.ORDER_COLLECTION).findOne({_id:ObjectId(orderId)}).then((order)=>{
+                        
+                     order.product.forEach(element => {
+                        db.get().collection(connection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(element.item)},
+                        {
+                           $inc:{stock:element.quantity}
+                        }).then((result)=>{
+                            db.get().collection(connection.ORDER_COLLECTION).findOne({_id:ObjectId(orderId)}).then((order)=>{
+                          
+                                db.get().collection(connection.WALLET_COLLECTION).updateOne({_id:ObjectId(userId)},
+                                {
+                                    $inc:{
+                                        amount:order.total
+                                    }
+                                }).then((hai)=>{
+                                    // resolve(hai)
+                                    console.log(hai,'order');
+                                })
+                            })
+                        })
+                     });
+                        
+                    })
+                })
+            })
+        } 
 
      
 }

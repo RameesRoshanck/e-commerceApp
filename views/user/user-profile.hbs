@@ -9,8 +9,7 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">My Account</li>
                     </ol>
                 </div><!-- End .container -->
@@ -29,7 +28,7 @@
 								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Downloads</a>
+								        <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Wallet</a>
 								    </li>
 								    <li class="nav-item">
 								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
@@ -56,18 +55,31 @@
 								    	<a href="/odersList" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
 								    </div><!-- .End .tab-pane -->
 
+
+									{{!-- /* --------------------------------- wallet --------------------------------- */ --}}
+
 								    <div class="tab-pane fade" id="tab-downloads" role="tabpanel" aria-labelledby="tab-downloads-link">
-								    	<p>No downloads available yet.</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+										<div class="card" style="border-style: outset;">
+											<div class="card-header p-3">
+												<h3>Wallet</h3>
+											</div>
+											<div class="card-body mt-1" style="border-style: groove;">
+												<h4>Balence :  ₹<span>{{wallet.amount}}</span> </h4>
+											</div>
+											</div>
+								    	{{!-- <a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a> --}}
 								    </div><!-- .End .tab-pane -->
 
+
+
+
 								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-								    	<a href="/addAddress" class="btn btn-primary my-3">Add Address &nbsp; <b>+</b></a>
+								    	<a href="/addAddress" class="btn btn-primary my-3" style="border-style: outset;" >Add Address &nbsp; <b>+</b></a>
  
                                         <div class="row g-4">
                                          {{#each userDetails}}
                                            <div class="col-md-6">
-                                                <div class="card h-100">
+                                                <div class="card h-100" style="border-style: outset;">
                                                    <div class="card-body">
                                                      <h5 class="card-title">Card title</h5>
                                                           <p class="card-text">{{this.name}}</p>

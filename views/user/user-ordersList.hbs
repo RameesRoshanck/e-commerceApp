@@ -27,8 +27,8 @@
                                                 <th>Payment</th>
                                                 <th>Status</th>
                                                 <th>Amount</th>
-                                          {{!-- <th>Action</th> --}}
                                                 <th>More</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -44,6 +44,7 @@
                                                     <td> 
                                                    <a href="/viewOrderDetails?id={{this._id}}" class="btn btn-primary"><i class="fa-solid fa-info"></i></i></a>
                                                    </td>
+                                                   <td><a href="/cancelOrder/{{this._id}}"  type="button" class="btn btn-danger" >Cancel</a></td>
                                                 </tr>
                                                {{/each}}
                                        </tbody>

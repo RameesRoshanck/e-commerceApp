@@ -153,17 +153,22 @@
 			method:'post',
 			data: $('#checkout-form').serialize(),
 			success:(response)=>{
-				if(response.codSuccess){
+				if(response.codSuccess)
+                {
                     location.href='/orderSuccess'
-                }else if(response.razorpay){
+                }
+                else if(response.razorpay)
+                {
                   razorpayPayment(response)
                 }else if(response.paypal){
-                     for(let i = 0;i < response.links.length;i++){
-                    if(response.links[i].rel === 'approval_url'){
+                     for(let i = 0;i < response.links.length;i++)
+                     {
+                        if(response.links[i].rel === 'approval_url')
+                        {
                         alert("hai")
-                     location.href=(response.links[i].href);
-        }
-      }
+                        location.href=(response.links[i].href);
+                        }
+                        }
                 }
                
 			}
@@ -200,6 +205,7 @@
     }
 
     function verifyPayment(payment,order){
+        alert('payment gateway')
         console.log(payment,"hai",order,"hai")
         $.ajax({
             url:'/varify-payment',
@@ -210,6 +216,7 @@
             method:'post',
             success:(response)=>{
                 if(response.status){
+                    alert("success")
                    location.href='/orderSuccess' 
                 }else{
                     alert("payment failed")
@@ -217,6 +224,28 @@
             }
         })
     }
+   </script>
+
+   <script>
+    $('#checkout-form').submit((e)=>{
+		e.preventDefault()
+		$.ajax({
+			url:'/placeOrder', 
+			method:'post',
+			data: $('#checkout-form').serialize(),
+			success:(response)=>{
+                if(response.wallet)
+                {  
+                    alert("wallet succes")
+                 location.href='/orderSuccess'
+                }else if(response.walletErr)
+                {
+                   alert("eroor")
+                   document.getElementById('error1').innerHTML="No Balace in your wallat Account "
+                }
+            }
+		})
+	})
    </script>
  
 

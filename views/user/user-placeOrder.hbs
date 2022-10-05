@@ -58,6 +58,27 @@
 											</div>
 
 										</div>
+										{{!-- <div class="col-lg-3 col-md-3 pl-3">
+
+
+											<div class="coupon_code hai left" data-aos="fade-up" data-aos-delay="200">
+												<div class="hello">
+													<h3>Wallet</h3>
+													<div>
+														<h6><a href="">Wallete Balence: <span>dsfd</span></a></h6>
+													</div>
+													<div>
+														<input type="radio" id="walletAdd" name="Wallet" value="Wallet11">
+														<label><b>Use Wallet</b></label><br>
+														<input type="radio" id="walletRmv" name="Wallet" value="Wallet12">
+														<label><b>Remove Wallet</b></label><br>
+														
+													</div>
+													
+												</div>
+											</div>
+
+										</div> --}}
 									</div>
 
 
@@ -123,6 +144,10 @@
 																<td>Discount amount:</td>
 																<td><span id="discount">0</span></td>
 															</tr>
+															{{!-- <tr>
+																<td>Wallet amount:</td>
+																<td><span id="wallet-discount">0</span></td>
+															</tr> --}}
 															<tr class="summary-total">
 																<td>Total:</td>
 																{{!-- <td>₹{{total}}</td> --}}
@@ -142,6 +167,9 @@
 														<label><b>RazorPay</b></label><br>
 														<input type="radio" id="paypal" name="Payment" value="paypal">
 														<label><b>PayPal</b></label><br>
+														<input type="radio" id="wallet" name="Payment" value="wallet">
+														<label><b>Wallet</b></label><br>
+														<p id="error1" class="text-danger"></p>
 													</div>
 													<br>    
 

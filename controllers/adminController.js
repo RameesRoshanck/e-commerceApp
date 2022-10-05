@@ -200,7 +200,7 @@ const postaddProduct=(req,res)=>{
 
 const listAllProduct=(req,res)=>{
     adminHelpers.listProduct().then((products)=>{
-        console.log(products,'product list');
+        // console.log(products,'product list');
         res.render('admin/admin-allProduct',{admin:true,products})
     })
 }
